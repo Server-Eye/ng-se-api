@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
-                                                   'sesContainerMisc', 'sesContainerNote',
-  function sesAgent(SesRequest, sesContainerMisc, sesContainerNote) {
+                                                   'sesContainerMisc', 'sesContainerNote', 'sesContainerNotification', 'sesContainerProposal',
+  function sesAgent(SesRequest, sesContainerMisc, sesContainerNote, sesContainerNotification, sesContainerProposal) {
         var request = new SesRequest('container/{cId}');
 
         function get(cId) {
@@ -46,6 +46,8 @@ angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
             actionlog: sesContainerMisc.actionlog,
             inventory: sesContainerMisc.inventory,
             note: sesContainerNote,
-            pcvisit: sesContainerMisc.pcvisit
+            notification: sesContainerNotification,
+            pcvisit: sesContainerMisc.pcvisit,
+            proposal: sesContainerProposal
         };
 }]);
