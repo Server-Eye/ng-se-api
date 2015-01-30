@@ -2,8 +2,8 @@
 
 angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
                                                    'sesContainerMisc', 'sesContainerNote', 'sesContainerNotification',
-                                                   'sesContainerProposal', 'sesContainerState',
-  function sesAgent(SesRequest, sesContainerMisc, sesContainerNote, sesContainerNotification, sesContainerProposal, sesContainerState) {
+                                                   'sesContainerProposal', 'sesContainerState', 'sesContainerTemplate',
+  function sesAgent(SesRequest, sesContainerMisc, sesContainerNote, sesContainerNotification, sesContainerProposal, sesContainerState, sesContainerTemplate) {
         var request = new SesRequest('container/{cId}');
 
         function get(cId) {
@@ -50,6 +50,7 @@ angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
             notification: sesContainerNotification,
             pcvisit: sesContainerMisc.pcvisit,
             proposal: sesContainerProposal,
-            state: sesContainerState
+            state: sesContainerState,
+            template: sesContainerTemplate
         };
 }]);

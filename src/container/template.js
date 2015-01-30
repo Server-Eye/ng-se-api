@@ -4,49 +4,35 @@ angular.module('ngSeApi').factory('sesContainerTemplate', ['SesRequest',
   function sesAgent(SesRequest) {
         var request = new SesRequest('container/{cId}/template/{tId}');
 
-        function formatNote(note) {
-            note.postedOn = new Date(note.postedOn);
-            return note;
-        }
-
-        function create(params) {
-            return request.post(params).then(formatNote);
-        }
-
-        function list(cId) {
-            return request.get({
+        function create(cId) {
+            return request.post({
                 cId: cId
-            }).then(function(notes) {
-                angular.forEach(notes, formatNote);
-
-                return notes;
             });
         }
 
-        function destroy(cId, nId) {
-            return request.del({
-                aId: cId,
-                nId: nId
+        function assign(cId, tId) {
+            return request.post({
+                cId: cId,
+                tId: tId
             });
         }
 
         return {
             /**
-             * create note
-             * @param {Object} params
-             * @config {String} [cId]
-             * @config {String} [message]
+             * create template form system
+             * @param {String} cId
              */
-            create: function (params) {
-                return create(params);
+            create: function (cId) {
+                return create(cId);
             },
 
-            list: function (cId) {
-                return list(cId);
-            },
-
-            destroy: function (cId, nId) {
-                return destroy(cId, nId);
+            /**
+             * assign a template to a system
+             * @param {String} cId
+             * @param {String} tId
+             */
+            create: function (cId, tId) {
+                return assign(cId, tId);
             }
         };
 }]);

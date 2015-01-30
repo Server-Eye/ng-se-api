@@ -26,7 +26,7 @@ gulp.task('javascript', ['clean'], function () {
             './module.js', './apiConfig.js', './request.js',
             './agent/agent.js', './agent/misc.js', './agent/note.js', './agent/notification.js', './agent/setting.js', './agent/state.js', './agent/type.js',
             './auth/auth.js',
-            './container/container.js', './container/misc.js', './container/note.js', './container/notification.js', './container/proposal.js', './container/state.js'
+            './container/container.js', './container/misc.js', './container/note.js', './container/notification.js', './container/proposal.js', './container/state.js', './container/template.js'
         ],
         debug: true
     });
