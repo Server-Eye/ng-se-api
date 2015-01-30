@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('se').controller('AgentTestController', ['$scope', 'sesAgent', function($scope, sesAgent) {
+angular.module('se').controller('AgentExampleController', ['$scope', 'sesAgent', function($scope, sesAgent) {
     sesAgent.get('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('agent', result);
     });

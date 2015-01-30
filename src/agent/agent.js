@@ -43,7 +43,7 @@ angular.module('ngSeApi').factory('sesAgent', ['SesRequest',
             },
 
             /**
-             * update agent by id
+             * update agent
              * @param {Object} agent
              * @config {String} [aId]
              * @config {String} [name]

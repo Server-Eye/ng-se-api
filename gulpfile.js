@@ -25,7 +25,8 @@ gulp.task('javascript', ['clean'], function () {
         entries: [
             './module.js', './apiConfig.js', './request.js',
             './agent/agent.js', './agent/misc.js', './agent/note.js', './agent/notification.js', './agent/setting.js', './agent/state.js', './agent/type.js',
-            './auth/auth.js'
+            './auth/auth.js',
+            './container/container.js'
         ],
         debug: true
     });

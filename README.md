@@ -5,9 +5,7 @@ AngularJS wrapper for the Server-Eye web api.
 ng-se-api is a collection of AngularJS services to easily send requests to the Server-Eye cloud monitoring api.
 
 The Server-Eye cloud monitoring api provides access to a user's monitored systems, measurements, alerts and many more.
-Detailed information about parameters can be found in the official [api documentation][].
-
-[api documentation]: https://api.server-eye.de/docs/1
+Detailed information about parameters can be found in the [official api documentation](https://api.server-eye.de/docs/1).
 
 ## Setup
 Just include `dist/ng-se-api.js` in your html file and require the module `ngSeApi`.
@@ -37,8 +35,8 @@ angular.module('myApp').controller('TestController', ['$scope', 'sesAgent', func
 ```
 
 ## How to build a new version
-- install node.js and npm
-- run `npm install` in the root folder
-- Change `version` in `package.json`
-- run `gulp`
-- check folder `dist` and enjoy your new version :)
+* install node.js and npm
+* run `npm install` in the root folder
+* Change `version` in `package.json`
+* run `gulp`
+* check folder `dist` and enjoy your new version :blush:
