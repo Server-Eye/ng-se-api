@@ -2,19 +2,19 @@
 
 angular.module('ngSeApi').factory('sesAgentMisc', ['SesRequest',
   function sesAgent(SesRequest) {
-        var request = new SesRequest('agent/{aId}/{method}');
+        var request = new SesRequest('agent/{aId}/{action}');
 
         function listActionlog(aId, params) {
             params = params || {};
             params.aId = aId;
-            params.method = 'actionlog';
+            params.action = 'actionlog';
             return request.get(params);
         }
 
         function getChart(aId, params) {
             params = params || {};
             params.aId = aId;
-            params.method = 'chart';
+            params.action = 'chart';
             return request.get(params);
         }
 
@@ -22,7 +22,7 @@ angular.module('ngSeApi').factory('sesAgentMisc', ['SesRequest',
             var params = {};
             params.aId = aId;
             params.parentId = parentId;
-            params.method = 'copy';
+            params.action = 'copy';
             return request.post(params);
         }
 
