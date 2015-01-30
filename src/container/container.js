@@ -45,6 +45,7 @@ angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
 
             actionlog: sesContainerMisc.actionlog,
             inventory: sesContainerMisc.inventory,
-            note: sesContainerNote
+            note: sesContainerNote,
+            pcvisit: sesContainerMisc.pcvisit
         };
 }]);
