@@ -3,7 +3,13 @@
 angular.module('ngSeApi').factory('sesAgentState', ['SesRequest',
   function sesAgent(SesRequest) {
         var request = new SesRequest('agent/{aId}/state');
-      
+
+        function formatState(state) {
+            state.date = new Date(state.date);
+            state.lastDate = new Date(state.lastDate);
+            return state;
+        }
+
         function hint(setting) {
             return request.post(params);
         }
@@ -11,11 +17,21 @@ angular.module('ngSeApi').factory('sesAgentState', ['SesRequest',
         function list(aId, params) {
             params = params || {};
             params.aId = aId;
-            
-            if(angular.isArray(params.aId)) {
-                return request.post(params, 'agent/state');
+
+            if (angular.isArray(params.aId)) {
+                return request.post(params, 'agent/state').then(function(statesById) {
+                    angular.forEach(Object.keys(statesById), function(key) {
+                        angular.forEach(statesById[key], formatState);
+                    });
+
+                    return statesById;
+                });
             }
-            return request.get(params);
+            return request.get(params).then(function(states) {
+                angular.forEach(states, formatState);
+
+                return states;
+            });
         }
 
         return {
@@ -39,7 +55,7 @@ angular.module('ngSeApi').factory('sesAgentState', ['SesRequest',
             /**
              * list agent states
              * @param   {String}   aId
-             * @param {Object} 
+             * @param {Object}
              * @config {Number} [limit]
              * @config {Number} [start]
              * @config {Number} [end]

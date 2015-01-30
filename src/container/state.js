@@ -4,6 +4,12 @@ angular.module('ngSeApi').factory('sesContainerState', ['SesRequest',
   function sesAgent(SesRequest) {
         var request = new SesRequest('container/{cId}/state');
 
+        function formatState(state) {
+            state.date = new Date(state.date);
+            state.lastDate = new Date(state.lastDate);
+            return state;
+        }
+
         function hint(setting) {
             return request.post(params);
         }
@@ -13,9 +19,17 @@ angular.module('ngSeApi').factory('sesContainerState', ['SesRequest',
             params.cId = cId;
 
             if(angular.isArray(params.cId)) {
-                return request.post(params, 'container/state');
+                return request.post(params, 'container/state').then(function(statesById) {
+                    angular.forEach(Object.keys(statesById), function(key) {
+                        angular.forEach(statesById[key], formatState);
+                    });
+                });
             }
-            return request.get(params);
+            return request.get(params).then(function(states) {
+                angular.forEach(states, formatState);
+
+                return states;
+            });
         }
 
         return {
