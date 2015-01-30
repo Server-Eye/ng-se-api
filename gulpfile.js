@@ -28,7 +28,8 @@ gulp.task('javascript', ['clean'], function () {
             './auth/auth.js',
             './container/container.js', './container/misc.js', './container/note.js', './container/notification.js', './container/proposal.js', './container/state.js', './container/template.js',
             './customer/customer.js', './customer/setting.js', './customer/dispatchTime.js',
-            './me/me.js', './me/mobilepush.js', './me/notification.js'
+            './me/me.js', './me/mobilepush.js', './me/notification.js',
+            './group/group.js', './group/setting.js', './group/user.js'
         ],
         debug: true
     });
