@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesAgentSetting', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesAgentSetting(SesRequest) {
         var request = new SesRequest('agent/{aId}/setting/{key}');
       
         function update(setting) {

@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesAuth', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesAuth(SesRequest) {
         var request = new SesRequest('auth/{action}');
 
         function createApiKey(params) {

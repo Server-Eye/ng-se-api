@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesContainerTemplate', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesContainerTemplate(SesRequest) {
         var request = new SesRequest('container/{cId}/template/{tId}');
 
         function create(cId) {

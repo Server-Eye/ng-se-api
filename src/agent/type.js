@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesAgentType', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesAgentType(SesRequest) {
         var request = new SesRequest('agent/type');
 
         function listSettings(akId) {

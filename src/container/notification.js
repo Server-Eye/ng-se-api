@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesContainerNotification', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesContainerNotification(SesRequest) {
         var request = new SesRequest('container/{cId}/notification/{nId}');
 
         function create(params) {

@@ -3,7 +3,7 @@
 angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
                                                    'sesContainerMisc', 'sesContainerNote', 'sesContainerNotification',
                                                    'sesContainerProposal', 'sesContainerState', 'sesContainerTemplate',
-  function sesAgent(SesRequest, sesContainerMisc, sesContainerNote, sesContainerNotification, sesContainerProposal, sesContainerState, sesContainerTemplate) {
+  function sesContainer(SesRequest, sesContainerMisc, sesContainerNote, sesContainerNotification, sesContainerProposal, sesContainerState, sesContainerTemplate) {
         var request = new SesRequest('container/{cId}');
 
         function get(cId) {

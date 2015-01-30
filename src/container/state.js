@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesContainerState', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesContainerState(SesRequest) {
         var request = new SesRequest('container/{cId}/state');
 
         function formatState(state) {

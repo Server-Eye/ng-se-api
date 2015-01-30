@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('ngSeApi').factory('sesAgentNote', ['SesRequest',
-  function sesAgent(SesRequest) {
+  function sesAgentNote(SesRequest) {
         var request = new SesRequest('agent/{aId}/note/{nId}');
 
         function formatNote(note) {
