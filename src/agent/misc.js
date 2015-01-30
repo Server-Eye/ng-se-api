@@ -26,6 +26,10 @@ angular.module('ngSeApi').factory('sesAgentMisc', ['SesRequest',
             return request.post(params);
         }
 
+        function listCategories() {
+            return request.get({}, 'agent/category');
+        }
+
         return {
             actionlog: {
                 /**
@@ -54,13 +58,16 @@ angular.module('ngSeApi').factory('sesAgentMisc', ['SesRequest',
                     return getChart(aId, params);
                 }
             },
+            category : {
+                list: listCategories
+            },
             /**
              * copy agent to a parent
-             * @param   {String} aId      
+             * @param   {String} aId
              * @param   {String}   parentId
              * @returns {Object} promise
              */
-            copy: function(aId, parentId) {
+            copy: function (aId, parentId) {
                 return copy(aId, parentId);
             }
         };

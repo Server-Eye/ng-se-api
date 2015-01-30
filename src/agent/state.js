@@ -12,6 +12,9 @@ angular.module('ngSeApi').factory('sesAgentState', ['SesRequest',
             params = params || {};
             params.aId = aId;
             
+            if(angular.isArray(params.aId)) {
+                return request.post(params, 'agent/state');
+            }
             return request.get(params);
         }
 

@@ -2,8 +2,8 @@
 
 angular.module('ngSeApi').factory('sesAgent', ['SesRequest',
                                              'sesAgentNote', 'sesAgentNotification', 'sesAgentMisc', 
-                                             'sesAgentSetting', 'sesAgentState',
-  function sesAgent(SesRequest, sesAgentNote, sesAgentNotification, sesAgentMisc, sesAgentSetting, sesAgentState) {
+                                             'sesAgentSetting', 'sesAgentState', 'sesAgentType',
+  function sesAgent(SesRequest, sesAgentNote, sesAgentNotification, sesAgentMisc, sesAgentSetting, sesAgentState, sesAgentType) {
         var request = new SesRequest('agent/{aId}');
 
         function create(params) {
@@ -62,6 +62,8 @@ angular.module('ngSeApi').factory('sesAgent', ['SesRequest',
             chart: sesAgentMisc.chart,
             notification: sesAgentNotification,
             setting: sesAgentSetting,
-            state: sesAgentState
+            state: sesAgentState,
+            category: sesAgentMisc.category,
+            type: sesAgentType
         };
 }]);
