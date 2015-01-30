@@ -1,3 +1,3 @@
 "use strict";
 
-angular.module('se', [ 'seApi' ]);
+angular.module('se', [ 'ngSeApi' ]);

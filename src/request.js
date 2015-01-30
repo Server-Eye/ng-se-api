@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('seApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
+angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
   function sesRequest(sesApiConfig, $q, $http) {
         function SesRequest(urlPath) {
             this.urlPath = urlPath;

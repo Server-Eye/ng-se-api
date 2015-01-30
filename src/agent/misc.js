@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('seApi').factory('sesAgentMisc', ['SesRequest',
+angular.module('ngSeApi').factory('sesAgentMisc', ['SesRequest',
   function sesAgent(SesRequest) {
         var request = new SesRequest('agent/{aId}/{method}');
 

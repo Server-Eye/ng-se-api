@@ -1,9 +1,9 @@
 "use strict";
 
 (function () {
-    angular.module('seApi', []);
+    angular.module('ngSeApi', []);
 
-    angular.module('seApi').config(['sesApiConfigProvider', function (sesApiConfigProvider) {
+    angular.module('ngSeApi').config(['sesApiConfigProvider', function (sesApiConfigProvider) {
         
     }]);
 })();

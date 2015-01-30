@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('seApi').provider('sesApiConfig', ['$httpProvider', function SesApiConfigProvider($httpProvider) {
+angular.module('ngSeApi').provider('sesApiConfig', ['$httpProvider', function SesApiConfigProvider($httpProvider) {
     var config = {
         baseUrl: 'https://api.server-eye.de',
         apiVersion: 2,

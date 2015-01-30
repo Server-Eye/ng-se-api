@@ -1,5 +1,5 @@
 "use strict";
 
 angular.module('se').config(['sesApiConfigProvider', function(sesApiConfigProvider) {
-    sesApiConfigProvider.setApiKey('274c29a0-a7cb-11e4-8de9-cb82a6d17852');
+    sesApiConfigProvider.setApiKey('c3f505b0-a85c-11e4-8de9-cb82a6d17852');
 }]);
