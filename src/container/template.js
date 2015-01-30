@@ -31,7 +31,7 @@ angular.module('ngSeApi').factory('sesContainerTemplate', ['SesRequest',
              * @param {String} cId
              * @param {String} tId
              */
-            create: function (cId, tId) {
+            assign: function (cId, tId) {
                 return assign(cId, tId);
             }
         };
