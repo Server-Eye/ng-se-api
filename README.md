@@ -35,3 +35,10 @@ angular.module('myApp').controller('TestController', ['$scope', 'sesAgent', func
     });
 }]);
 ```
+
+## How to build a new version
+- install node.js and npm
+- run `npm install` in the root folder
+- Change `version` in `package.json`
+- run `gulp`
+- check folder `dist` and enjoy your new version :)

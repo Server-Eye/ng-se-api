@@ -1,0 +1,50 @@
+'use strict';
+
+var browserify = require('browserify'),
+    del = require('del'),
+    gulp = require('gulp'),
+    source = require('vinyl-source-stream'),
+    buffer = require('vinyl-buffer'),
+    uglify = require('gulp-uglify'),
+    sourcemaps = require('gulp-sourcemaps');
+
+function getBundleName() {
+    var version = require('./package.json').version;
+    var name = require('./package.json').name;
+    return version + '.' + name + '.' + 'min';
+}
+
+gulp.task('clean', function(cb) {
+  // You can use multiple globbing patterns as you would with `gulp.src`
+  del(['dist'], cb);
+});
+
+gulp.task('javascript', ['clean'], function () {
+    var bundler = browserify({
+        basedir: './src',
+        entries: [
+            './module.js', './apiConfig.js', './request.js',
+            './agent/agent.js', './agent/misc.js', './agent/note.js', './agent/notification.js', './agent/setting.js', './agent/state.js', './agent/type.js',
+            './auth/auth.js'
+        ],
+        debug: true
+    });
+
+    var bundle = function () {
+        return bundler
+            .bundle()
+            .pipe(source(getBundleName() + '.js'))
+            .pipe(buffer())
+            .pipe(sourcemaps.init({
+                loadMaps: true
+            }))
+            // Add transformation tasks to the pipeline here.
+            .pipe(uglify())
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest('./dist/js/'));
+    };
+
+    return bundle();
+});
+
+gulp.task('default', ['javascript']);
