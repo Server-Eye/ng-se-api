@@ -1,23 +1,23 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesGroupUser', ['SesRequest',
-  function sesGroupUser(SesRequest) {
-        var request = new SesRequest('group/{gId}/user/{uId}');
+angular.module('ngSeApi').factory('sesUserGroup', ['SesRequest',
+  function sesUserGroup(SesRequest) {
+        var request = new SesRequest('user/{uId}/group/{gId}');
 
-        function list(gId) {
+        function list(uId) {
             return request.get({
-                gId: gId
+                uId: uId
             });
         }
 
-        function addUser(gId, uId) {
+        function addUser(uId, gId) {
             return request.put({
                 uId: uId,
                 gId: gId
             });
         }
 
-        function removeUser(gId, uId) {
+        function removeUser(uId, gId) {
             return request.del({
                 uId: uId,
                 gId: gId
@@ -25,8 +25,8 @@ angular.module('ngSeApi').factory('sesGroupUser', ['SesRequest',
         }
 
         return {
-            list: function (gId) {
-                return list(gId);
+            list: function (uId) {
+                return list(uId);
             },
 
             /**
@@ -34,8 +34,8 @@ angular.module('ngSeApi').factory('sesGroupUser', ['SesRequest',
              * @param {String} gId
              * @param {String} uId
              */
-            add: function (gId, uId) {
-                return addUser(gId, uId);
+            add: function (uId, gId) {
+                return addUser(uId, gId);
             },
 
             /**
@@ -43,8 +43,8 @@ angular.module('ngSeApi').factory('sesGroupUser', ['SesRequest',
              * @param {String} gId
              * @param {String} uId
              */
-            remove: function (gId, uId) {
-                return removeUser(gId, uId);
+            remove: function (uId, gId) {
+                return removeUser(uId, gId);
             }
         };
 }]);

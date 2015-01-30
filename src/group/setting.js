@@ -11,7 +11,9 @@ angular.module('ngSeApi').factory('sesGroupSetting', ['SesRequest',
         }
 
         function update(gId, settings) {
-            return request.put(gId, settings);
+            settings = settings || {};
+            settings.gId = gId;
+            return request.put(settings);
         }
 
         return {

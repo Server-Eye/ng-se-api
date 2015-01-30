@@ -11,7 +11,9 @@ angular.module('ngSeApi').factory('sesCustomerSetting', ['SesRequest',
         }
 
         function update(cId, settings) {
-            return request.put(cId, settings);
+            settings = settings || {};
+            settings.cId = cId;
+            return request.put(settings);
         }
 
         return {
