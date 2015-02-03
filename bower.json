@@ -1,0 +1,26 @@
+{
+    "name": "ng-se-api",
+    "version": "0.1.0",
+    "authors": [
+        "Kim Schneider <kim.schneider@kraemer-it.de>"
+    ],
+    "description": "AngularJS wrapper for the Server-Eye web api",
+    "main": "dist/js/ng-se-api.min.js",
+    "moduleType": [
+        "es6"
+    ],
+    "keywords": [
+        "Server-Eye",
+        "monitoring",
+        "api"
+    ],
+    "license": "MIT",
+    "homepage": "www.server-eye.de",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
+}

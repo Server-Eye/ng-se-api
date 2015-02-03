@@ -8,6 +8,10 @@
         "name": "Kim Schneider",
         "email": "kim.schneider@server-eye.de"
     }],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Server-Eye/ng-se-api.git"
+    },
     "dependencies": {
         "gulp": "3.8.x",
         "browserify": "8.1.x",
