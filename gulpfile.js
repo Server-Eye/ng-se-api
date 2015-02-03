@@ -11,7 +11,7 @@ var browserify = require('browserify'),
 function getBundleName() {
     var version = require('./package.json').version;
     var name = require('./package.json').name;
-    return name + '.' + 'min';
+    return version + '.' + name + '.' + 'min';
 }
 
 gulp.task('clean', function(cb) {

@@ -5,7 +5,7 @@
         "Kim Schneider <kim.schneider@kraemer-it.de>"
     ],
     "description": "AngularJS wrapper for the Server-Eye web api",
-    "main": "dist/js/ng-se-api.min.js",
+    "main": "dist/js/0.1.0.ng-se-api.min.js",
     "moduleType": [
         "es6"
     ],
