@@ -4,4 +4,8 @@ angular.module('se').controller('MeExampleController', ['$scope', 'sesMe', funct
     sesMe.me().then(function(result) {
         console.log('me', result);
     });
+    
+    sesMe.nodes().then(function(result) {
+        console.log('me nodes', result);
+    });
 }]);
