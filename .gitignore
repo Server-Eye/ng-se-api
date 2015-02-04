@@ -3,3 +3,4 @@
 # Example .gitignore files: https://github.com/github/gitignore
 /node_modules/
 /examples/privateConfig.js
+/bower_components/

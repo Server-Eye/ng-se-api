@@ -6,12 +6,25 @@ var browserify = require('browserify'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     uglify = require('gulp-uglify'),
+    header = require('gulp-header'),
     sourcemaps = require('gulp-sourcemaps');
 
+var pkgInfo = require('./package.json');
+
 function getBundleName() {
-    var version = require('./package.json').version;
-    var name = require('./package.json').name;
-    return version + '.' + name + '.' + 'min';
+    var name = pkgInfo.name;
+    return name + '.' + 'min';
+}
+
+function getHeader() {
+    return [ 
+        '/**', 
+        ' * <%= name %>', 
+        ' * @version <%= version %>', 
+        ' * @link <%= repository.url %>', 
+        ' * @license <%= license %>', 
+        ' */'
+    ].join('\n');
 }
 
 gulp.task('clean', function(cb) {
@@ -46,6 +59,7 @@ gulp.task('javascript', ['clean'], function () {
             // Add transformation tasks to the pipeline here.
             .pipe(uglify())
             .pipe(sourcemaps.write('./'))
+            .pipe(header(getHeader(), pkgInfo))
             .pipe(gulp.dest('./dist/js/'));
     };
 

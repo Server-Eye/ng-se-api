@@ -35,8 +35,14 @@ angular.module('myApp').controller('TestController', ['$scope', 'sesAgent', func
 ```
 
 ## How to build a new version
-* install node.js and npm
+* install [node.js and npm](https://github.com/joyent/node)
+* install [gulp](https://github.com/gulpjs/gulp)
 * run `npm install` in the root folder
 * Change `version` in `package.json`
 * run `gulp`
 * check folder `dist` and enjoy your new version :blush:
+
+## Hot to run the examples
+* install [node.js and npm](https://github.com/joyent/node)
+* install [bower](https://github.com/bower/bower)
+* run `node scripts/web-server`
