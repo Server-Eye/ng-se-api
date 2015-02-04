@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesUserGroup', ['SesRequest',
-  function sesUserGroup(SesRequest) {
-        var request = new SesRequest('user/{uId}/group/{gId}');
+angular.module('ngSeApi').factory('seaUserGroup', ['SeaRequest',
+  function seaUserGroup(SeaRequest) {
+        var request = new SeaRequest('user/{uId}/group/{gId}');
 
         function list(uId) {
             return request.get({

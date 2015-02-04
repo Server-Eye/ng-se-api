@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesCustomerDispatchTime', ['SesRequest',
-  function sesCustomerDispatchTime(SesRequest) {
-        var request = new SesRequest('customer/dispatchTime/{dtId}');
+angular.module('ngSeApi').factory('seaCustomerDispatchTime', ['SeaRequest',
+  function seaCustomerDispatchTime(SeaRequest) {
+        var request = new SeaRequest('customer/dispatchTime/{dtId}');
 
         function create(params) {
             return request.post(params);

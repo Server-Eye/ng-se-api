@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesAgentSetting', ['SesRequest',
-  function sesAgentSetting(SesRequest) {
-        var request = new SesRequest('agent/{aId}/setting/{key}');
+angular.module('ngSeApi').factory('seaAgentSetting', ['SeaRequest',
+  function seaAgentSetting(SeaRequest) {
+        var request = new SeaRequest('agent/{aId}/setting/{key}');
       
         function update(setting) {
             return request.put(params);

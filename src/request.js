@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
-  function sesRequest(sesApiConfig, $q, $http) {
-        function SesRequest(urlPath) {
+angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http',
+  function SeaRequest(seaConfig, $q, $http) {
+        function SeaRequest(urlPath) {
             this.urlPath = urlPath;
         }
 
@@ -21,7 +21,7 @@ angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
          * @param   {Object} params request parameters
          * @returns {String}
          */
-        SesRequest.prototype.formatUrl = function formatUrl(url, params) {
+        SeaRequest.prototype.formatUrl = function formatUrl(url, params) {
             params = params || {};
 
             var keys = Object.keys(params),
@@ -40,8 +40,8 @@ angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
             return url;
         }
 
-        SesRequest.prototype.send = function send(method, params, urlPath) {
-            var fullUrl = sesApiConfig.getUrl(urlPath || this.urlPath),
+        SeaRequest.prototype.send = function send(method, params, urlPath) {
+            var fullUrl = seaConfig.getUrl(urlPath || this.urlPath),
                 deferred = $q.defer(),
                 conf = {
                     method: method
@@ -71,7 +71,7 @@ angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
          * @param {String}  urlPath only append if url is different to classes urlPath
          * @returns {Boolean} promise
          */
-        SesRequest.prototype.get = function get(params, urlPath) {
+        SeaRequest.prototype.get = function get(params, urlPath) {
             return this.send('GET', params, urlPath);
         }
         
@@ -81,7 +81,7 @@ angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
          * @param {String}  urlPath only append if url is different to classes urlPath
          * @returns {Boolean} promise
          */
-        SesRequest.prototype.post = function get(params, urlPath) {
+        SeaRequest.prototype.post = function get(params, urlPath) {
             return this.send('POST', params, urlPath);
         }
         
@@ -91,7 +91,7 @@ angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
          * @param {String}  urlPath only append if url is different to classes urlPath
          * @returns {Boolean} promise
          */
-        SesRequest.prototype.put = function get(params, urlPath) {
+        SeaRequest.prototype.put = function get(params, urlPath) {
             return this.send('PUT', params, urlPath);
         }
         
@@ -101,9 +101,9 @@ angular.module('ngSeApi').factory('SesRequest', ['sesApiConfig', '$q', '$http',
          * @param {String}  urlPath only append if url is different to classes urlPath
          * @returns {Boolean} promise
          */
-        SesRequest.prototype.del = function get(params, urlPath) {
+        SeaRequest.prototype.del = function get(params, urlPath) {
             return this.send('DELETE', params, urlPath);
         }
 
-        return SesRequest;
+        return SeaRequest;
 }]);

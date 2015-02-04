@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesContainerState', ['SesRequest',
-  function sesContainerState(SesRequest) {
-        var request = new SesRequest('container/{cId}/state');
+angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest',
+  function seaContainerState(SeaRequest) {
+        var request = new SeaRequest('container/{cId}/state');
 
         function formatState(state) {
             state.date = new Date(state.date);

@@ -1,39 +1,39 @@
 "use strict";
 
-angular.module('se').controller('AgentExampleController', ['$scope', 'sesAgent', function($scope, sesAgent) {
-    sesAgent.get('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
+angular.module('se').controller('AgentExampleController', ['$scope', 'seaAgent', function($scope, seaAgent) {
+    seaAgent.get('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('agent', result);
     });
 
-    sesAgent.note.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
+    seaAgent.note.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('notes', result);
     });
 
-    sesAgent.actionlog.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
+    seaAgent.actionlog.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('actionlog', result);
     });
 
-    sesAgent.chart.get('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
+    seaAgent.chart.get('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('chart', result);
     });
 
-    sesAgent.notification.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
+    seaAgent.notification.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('notification', result);
     });
 
-    sesAgent.setting.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
+    seaAgent.setting.list('69583931-cc47-11e2-820c-09588dabea53').then(function(result) {
         console.log('setting', result);
     });
 
-    sesAgent.category.list().then(function(result) {
+    seaAgent.category.list().then(function(result) {
         console.log('categories', result);
     });
 
-    sesAgent.type.list().then(function(result) {
+    seaAgent.type.list().then(function(result) {
         console.log('types', result);
     });
 
-    sesAgent.type.setting.list('ceaec5d31c65e0ea011c65f58a78000e').then(function(result) {
+    seaAgent.type.setting.list('ceaec5d31c65e0ea011c65f58a78000e').then(function(result) {
         console.log('type settings', result);
     });
 }]);

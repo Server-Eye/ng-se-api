@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesCustomer', ['SesRequest', 'sesCustomerSetting', 'sesCustomerDispatchTime',
-  function sesCustomer(SesRequest, sesCustomerSetting, sesCustomerDispatchTime) {
-        var request = new SesRequest('customer/{cId}');
+angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerSetting', 'seaCustomerDispatchTime',
+  function seaCustomer(SeaRequest, seaCustomerSetting, seaCustomerDispatchTime) {
+        var request = new SeaRequest('customer/{cId}');
 
         function get(cId) {
             return request.get({
@@ -37,7 +37,7 @@ angular.module('ngSeApi').factory('sesCustomer', ['SesRequest', 'sesCustomerSett
                 return update(customer);
             },
 
-            setting: sesCustomerSetting,
-            dispatchTime: sesCustomerDispatchTime
+            setting: seaCustomerSetting,
+            dispatchTime: seaCustomerDispatchTime
         };
 }]);

@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesCustomerSetting', ['SesRequest',
-  function sesCustomerSetting(SesRequest) {
-        var request = new SesRequest('customer/{cId}/setting');
+angular.module('ngSeApi').factory('seaCustomerSetting', ['SeaRequest',
+  function seaCustomerSetting(SeaRequest) {
+        var request = new SeaRequest('customer/{cId}/setting');
 
         function list(cId) {
             return request.get({

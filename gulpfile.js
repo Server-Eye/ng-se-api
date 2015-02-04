@@ -36,7 +36,7 @@ gulp.task('javascript', ['clean'], function () {
     var bundler = browserify({
         basedir: './src',
         entries: [
-            './module.js', './apiConfig.js', './request.js',
+            './module.js', './config.js', './request.js',
             './agent/agent.js', './agent/misc.js', './agent/note.js', './agent/notification.js', './agent/setting.js', './agent/state.js', './agent/type.js',
             './auth/auth.js',
             './container/container.js', './container/misc.js', './container/note.js', './container/notification.js', './container/proposal.js', './container/state.js', './container/template.js',

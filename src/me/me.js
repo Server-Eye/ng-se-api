@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesMe', ['SesRequest', 'sesMeMobilepush', 'sesMeNotification',
-  function sesMe(SesRequest, sesMeMobilepush, sesMeNotification) {
-        var request = new SesRequest('me/{action}');
+angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeMobilepush', 'seaMeNotification',
+  function seaMe(SeaRequest, seaMeMobilepush, seaMeNotification) {
+        var request = new SeaRequest('me/{action}');
 
         function _formatNode(node) {
             if (node.date && typeof (node.date) === 'string') {
@@ -73,7 +73,7 @@ angular.module('ngSeApi').factory('sesMe', ['SesRequest', 'sesMeMobilepush', 'se
                 return nodes(params);
             },
 
-            mobilepush: sesMeMobilepush,
-            notification: sesMeNotification
+            mobilepush: seaMeMobilepush,
+            notification: seaMeNotification
         };
 }]);

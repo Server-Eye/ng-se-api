@@ -1,10 +1,10 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesAgent', ['SesRequest',
-                                             'sesAgentNote', 'sesAgentNotification', 'sesAgentMisc', 
-                                             'sesAgentSetting', 'sesAgentState', 'sesAgentType',
-  function sesAgent(SesRequest, sesAgentNote, sesAgentNotification, sesAgentMisc, sesAgentSetting, sesAgentState, sesAgentType) {
-        var request = new SesRequest('agent/{aId}');
+angular.module('ngSeApi').factory('seaAgent', ['SeaRequest',
+                                             'seaAgentNote', 'seaAgentNotification', 'seaAgentMisc', 
+                                             'seaAgentSetting', 'seaAgentState', 'seaAgentType',
+  function seaAgent(SeaRequest, seaAgentNote, seaAgentNotification, seaAgentMisc, seaAgentSetting, seaAgentState, seaAgentType) {
+        var request = new SeaRequest('agent/{aId}');
 
         function create(params) {
             return request.post(params);
@@ -36,7 +36,7 @@ angular.module('ngSeApi').factory('sesAgent', ['SesRequest',
             create: function (params) {
                 return create(params);
             },
-            copy: sesAgentMisc.copy,
+            copy: seaAgentMisc.copy,
 
             get: function (aId) {
                 return get(aId);
@@ -57,13 +57,13 @@ angular.module('ngSeApi').factory('sesAgent', ['SesRequest',
                 return destroy(aId);
             },
 
-            note: sesAgentNote,
-            actionlog: sesAgentMisc.actionlog,
-            chart: sesAgentMisc.chart,
-            notification: sesAgentNotification,
-            setting: sesAgentSetting,
-            state: sesAgentState,
-            category: sesAgentMisc.category,
-            type: sesAgentType
+            note: seaAgentNote,
+            actionlog: seaAgentMisc.actionlog,
+            chart: seaAgentMisc.chart,
+            notification: seaAgentNotification,
+            setting: seaAgentSetting,
+            state: seaAgentState,
+            category: seaAgentMisc.category,
+            type: seaAgentType
         };
 }]);

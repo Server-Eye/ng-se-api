@@ -1,10 +1,10 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
-                                                   'sesContainerMisc', 'sesContainerNote', 'sesContainerNotification',
-                                                   'sesContainerProposal', 'sesContainerState', 'sesContainerTemplate',
-  function sesContainer(SesRequest, sesContainerMisc, sesContainerNote, sesContainerNotification, sesContainerProposal, sesContainerState, sesContainerTemplate) {
-        var request = new SesRequest('container/{cId}');
+angular.module('ngSeApi').factory('seaContainer', ['SeaRequest',
+                                                   'seaContainerMisc', 'seaContainerNote', 'seaContainerNotification',
+                                                   'seaContainerProposal', 'seaContainerState', 'seaContainerTemplate',
+  function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTemplate) {
+        var request = new SeaRequest('container/{cId}');
 
         function get(cId) {
             return request.get({
@@ -44,13 +44,13 @@ angular.module('ngSeApi').factory('sesContainer', ['SesRequest',
                 return destroy(cId);
             },
 
-            actionlog: sesContainerMisc.actionlog,
-            inventory: sesContainerMisc.inventory,
-            note: sesContainerNote,
-            notification: sesContainerNotification,
-            pcvisit: sesContainerMisc.pcvisit,
-            proposal: sesContainerProposal,
-            state: sesContainerState,
-            template: sesContainerTemplate
+            actionlog: seaContainerMisc.actionlog,
+            inventory: seaContainerMisc.inventory,
+            note: seaContainerNote,
+            notification: seaContainerNotification,
+            pcvisit: seaContainerMisc.pcvisit,
+            proposal: seaContainerProposal,
+            state: seaContainerState,
+            template: seaContainerTemplate
         };
 }]);

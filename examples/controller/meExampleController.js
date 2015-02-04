@@ -1,11 +1,11 @@
 "use strict";
 
-angular.module('se').controller('MeExampleController', ['$scope', 'sesMe', function($scope, sesMe) {
-    sesMe.me().then(function(result) {
+angular.module('se').controller('MeExampleController', ['$scope', 'seaMe', function($scope, seaMe) {
+    seaMe.me().then(function(result) {
         console.log('me', result);
     });
     
-    sesMe.nodes().then(function(result) {
+    seaMe.nodes().then(function(result) {
         console.log('me nodes', result);
     });
 }]);

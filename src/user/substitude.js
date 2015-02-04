@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesUserSubstitude', ['SesRequest',
-  function sesUserSubstitude(SesRequest) {
-        var request = new SesRequest('user/{uId}/substitude/{substitudeId}');
+angular.module('ngSeApi').factory('seaUserSubstitude', ['SeaRequest',
+  function seaUserSubstitude(SeaRequest) {
+        var request = new SeaRequest('user/{uId}/substitude/{substitudeId}');
 
         function set(uId, substId) {
             return request.put({

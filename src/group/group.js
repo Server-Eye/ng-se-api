@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesGroup', ['SesRequest', 'sesGroupSetting', 'sesGroupUser',
-  function sesGroup(SesRequest, sesGroupSetting, sesGroupUser) {
-        var request = new SesRequest('group/{gId}');
+angular.module('ngSeApi').factory('seaGroup', ['SeaRequest', 'seaGroupSetting', 'seaGroupUser',
+  function seaGroup(SeaRequest, seaGroupSetting, seaGroupUser) {
+        var request = new SeaRequest('group/{gId}');
 
         function create(params) {
             return request.post(params);
@@ -53,7 +53,7 @@ angular.module('ngSeApi').factory('sesGroup', ['SesRequest', 'sesGroupSetting', 
                 return destroy(gId);
             },
 
-            setting: sesGroupSetting,
-            user: sesGroupUser
+            setting: seaGroupSetting,
+            user: seaGroupUser
         };
 }]);

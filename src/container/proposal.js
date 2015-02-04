@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesContainerProposal', ['SesRequest',
-  function sesContainerProposal(SesRequest) {
-        var request = new SesRequest('container/{cId}/proposal/{pId}');
+angular.module('ngSeApi').factory('seaContainerProposal', ['SeaRequest',
+  function seaContainerProposal(SeaRequest) {
+        var request = new SeaRequest('container/{cId}/proposal/{pId}');
 
         function accept(cId, pId) {
             return request.put({

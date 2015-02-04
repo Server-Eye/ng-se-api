@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesAgentType', ['SesRequest',
-  function sesAgentType(SesRequest) {
-        var request = new SesRequest('agent/type');
+angular.module('ngSeApi').factory('seaAgentType', ['SeaRequest',
+  function seaAgentType(SeaRequest) {
+        var request = new SeaRequest('agent/type');
 
         function listSettings(akId) {
             return request.get({ akId : akId }, 'agent/type/{akId}/setting');

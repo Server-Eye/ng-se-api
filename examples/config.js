@@ -1,5 +1,5 @@
 "use strict";
 
-angular.module('se').config(['sesApiConfigProvider', function(sesApiConfigProvider) {
-    sesApiConfigProvider.setApiKey('YOUR-SERVER-EYE-API-KEY');
+angular.module('se').config(['seaConfigProvider', function(seaConfigProvider) {
+    seaConfigProvider.setApiKey('YOUR-SERVER-EYE-API-KEY');
 }]);

@@ -9,15 +9,15 @@ Detailed information about parameters can be found in the [official api document
 
 ## Setup
 Just include `dist/ng-se-api.js` in your html file and require the module `ngSeApi`.
-Below is an example that shows how to setup `ngSeApi` with an existing api key. You can set the api key at any time in your application using the service `sesApiConfig` instead of the provider.
+Below is an example that shows how to setup `ngSeApi` with an existing api key. You can set the api key at any time in your application using the service `seaApiConfig` instead of the provider.
 
 ```js
 "use strict";
 
 angular.module('myApp', [ 'ngSeApi' ]);
 
-angular.module('myApp').config(['sesApiConfigProvider', function(sesApiConfigProvider) {
-    sesApiConfigProvider.setApiKey('YOUR-SERVER-EYE-API-KEY');
+angular.module('myApp').config(['seaConfigProvider', function(seaConfigProvider) {
+    seaConfigProvider.setApiKey('YOUR-SERVER-EYE-API-KEY');
 }]);
 
 ```
@@ -26,9 +26,9 @@ angular.module('myApp').config(['sesApiConfigProvider', function(sesApiConfigPro
 More examples in the `examples` folder.
 
 ```js
-angular.module('myApp').controller('TestController', ['$scope', 'sesAgent', function($scope, sesAgent) {
+angular.module('myApp').controller('TestController', ['$scope', 'seaAgent', function($scope, seaAgent) {
     // list all available agents
-    sesAgent.type.list().then(function(result) {
+    seaAgent.type.list().then(function(result) {
         console.log('types', result);
     });
 }]);

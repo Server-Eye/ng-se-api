@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesMeMobilepush', ['SesRequest',
-  function sesMeMobilepush(SesRequest) {
-        var request = new SesRequest('me/mobilepush/{handle}');
+angular.module('ngSeApi').factory('seaMeMobilepush', ['SeaRequest',
+  function seaMeMobilepush(SeaRequest) {
+        var request = new SeaRequest('me/mobilepush/{handle}');
 
         function list() {
             return request.get();

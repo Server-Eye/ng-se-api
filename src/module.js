@@ -3,7 +3,7 @@
 (function () {
     angular.module('ngSeApi', []);
 
-    angular.module('ngSeApi').config(['sesApiConfigProvider', function (sesApiConfigProvider) {
+    angular.module('ngSeApi').config(['seaConfigProvider', function (seaApiConfigProvider) {
         
     }]);
 })();

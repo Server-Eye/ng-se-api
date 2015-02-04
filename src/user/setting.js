@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesUserSetting', ['SesRequest',
-  function sesUserSetting(SesRequest) {
-        var request = new SesRequest('user/{uId}/setting');
+angular.module('ngSeApi').factory('seaUserSetting', ['SeaRequest',
+  function seaUserSetting(SeaRequest) {
+        var request = new SeaRequest('user/{uId}/setting');
 
         function list(uId) {
             return request.get({

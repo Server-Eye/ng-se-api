@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('ngSeApi').factory('sesContainerNote', ['SesRequest',
-  function sesContainerNote(SesRequest) {
-        var request = new SesRequest('container/{cId}/note/{nId}');
+angular.module('ngSeApi').factory('seaContainerNote', ['SeaRequest',
+  function seaContainerNote(SeaRequest) {
+        var request = new SeaRequest('container/{cId}/note/{nId}');
 
         function formatNote(note) {
             note.postedOn = new Date(note.postedOn);
