@@ -11,9 +11,9 @@ var browserify = require('browserify'),
 
 var pkgInfo = require('./package.json');
 
-function getBundleName() {
+function getBundleName(minify) {
     var name = pkgInfo.name;
-    return name + '.' + 'min';
+    return name + (minify ? '.' + 'min' : '');
 }
 
 function getHeader() {
@@ -48,10 +48,10 @@ gulp.task('javascript', ['clean'], function () {
         debug: true
     });
 
-    var bundle = function () {
+    var minify = function () {
         return bundler
             .bundle()
-            .pipe(source(getBundleName() + '.js'))
+            .pipe(source(getBundleName(true) + '.js'))
             .pipe(buffer())
             .pipe(sourcemaps.init({
                 loadMaps: true
@@ -62,8 +62,18 @@ gulp.task('javascript', ['clean'], function () {
             .pipe(header(getHeader(), pkgInfo))
             .pipe(gulp.dest('./dist/js/'));
     };
+    
+    var bundle = function () {
+        return bundler
+            .bundle()
+            .pipe(source(getBundleName(false) + '.js'))
+            .pipe(buffer())
+            .pipe(header(getHeader(), pkgInfo))
+            .pipe(gulp.dest('./dist/js/'));
+    };
 
-    return bundle();
+    minify();
+    bundle();
 });
 
 gulp.task('default', ['javascript']);
