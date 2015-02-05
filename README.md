@@ -8,7 +8,7 @@ The Server-Eye cloud monitoring api provides access to a user's monitored system
 Detailed information about parameters can be found in the [official api documentation](https://api.server-eye.de/docs/1).
 
 ## Setup
-Just include `dist/ng-se-api.js` in your html file and require the module `ngSeApi`.
+Just include `dist/ng-se-api.min.js` in your html file and require the module `ngSeApi`.
 Below is an example that shows how to setup `ngSeApi` with an existing api key. You can set the api key at any time in your application using the service `seaApiConfig` instead of the provider.
 
 ```js
@@ -45,4 +45,5 @@ angular.module('myApp').controller('TestController', ['$scope', 'seaAgent', func
 ## Hot to run the examples
 * install [node.js and npm](https://github.com/joyent/node)
 * install [bower](https://github.com/bower/bower)
+* run `bower install`
 * run `node scripts/web-server`
