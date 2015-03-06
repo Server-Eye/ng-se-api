@@ -1,79 +1,81 @@
-"use strict";
+(function () {
+    "use strict";
 
-angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeMobilepush', 'seaMeNotification',
-  function seaMe(SeaRequest, seaMeMobilepush, seaMeNotification) {
-        var request = new SeaRequest('me/{action}');
+    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeMobilepush', 'seaMeNotification',
+    function seaMe(SeaRequest, seaMeMobilepush, seaMeNotification) {
+            var request = new SeaRequest('me/{action}');
 
-        function _formatNode(node) {
-            if (node.date && typeof (node.date) === 'string') {
-                node.date = new Date(node.date);
+            function _formatNode(node) {
+                if (node.date && typeof (node.date) === 'string') {
+                    node.date = new Date(node.date);
+                }
+
+                if (node.lastDate && typeof (node.lastDate) === 'string') {
+                    node.lastDate = new Date(node.lastDate);
+                }
+
+                return node;
             }
 
-            if (node.lastDate && typeof (node.lastDate) === 'string') {
-                node.lastDate = new Date(node.lastDate);
+            function _formatData(data) {
+                var idx = data.indexOf('loadfinish');
+                if (idx >= 0) {
+                    data.splice(idx, 1);
+                }
+
+                for (var i = 0, len = data.length; i < len; i++) {
+                    _formatNode(data[i]);
+                }
+
+                return data;
             }
-            
-            return node;
-        }
 
-        function _formatData(data) {
-            var idx = data.indexOf('loadfinish');
-            if (idx >= 0) {
-                data.splice(idx, 1);
+            function me() {
+                return request.get();
             }
 
-            for (var i = 0, len = data.length; i < len; i++) {
-                _formatNode(data[i]);
+            function customer() {
+                return request.get({
+                    action: 'customer'
+                });
             }
-            
-            return data;
-        }
 
-        function me() {
-            return request.get();
-        }
+            function feed(params) {
+                params = params || {};
+                params.action = 'feed';
 
-        function customer() {
-            return request.get({
-                action: 'customer'
-            });
-        }
+                return request.get(params);
+            }
 
-        function feed(params) {
-            params = params || {};
-            params.action = 'feed';
+            function key(name) {
+                return request.get({
+                    action: 'key',
+                    name: name
+                });
+            }
 
-            return request.get(params);
-        }
+            function nodes(params) {
+                params = params || {};
+                params.action = 'nodes';
 
-        function key(name) {
-            return request.get({
-                action: 'key',
-                name: name
-            });
-        }
+                return request.get(params).then(_formatData);
+            }
 
-        function nodes(params) {
-            params = params || {};
-            params.action = 'nodes';
+            return {
+                me: me,
+                customer: customer,
+                feed: function (params) {
+                    return feed(params);
+                },
+                key: function (name) {
+                    return key(name);
+                },
+                nodes: function (params) {
+                    return nodes(params);
+                },
 
-            return request.get(params).then(_formatData);
-        }
-
-        return {
-            me: me,
-            customer: customer,
-            feed: function (params) {
-                return feed(params);
-            },
-            key: function (name) {
-                return key(name);
-            },
-            nodes: function (params) {
-                return nodes(params);
-            },
-
-            mobilepush: seaMeMobilepush,
-            notification: seaMeNotification
-        };
-}]);
+                mobilepush: seaMeMobilepush,
+                notification: seaMeNotification
+            };
+    }]);
+})();
