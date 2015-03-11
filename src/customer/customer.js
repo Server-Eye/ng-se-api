@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerSetting', 'seaCustomerDispatchTime',
-    function seaCustomer(SeaRequest, seaCustomerSetting, seaCustomerDispatchTime) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerSetting', 'seaCustomerDispatchTime', 'seaCustomerTag',
+    function seaCustomer(SeaRequest, seaCustomerSetting, seaCustomerDispatchTime, seaCustomerTag) {
             var request = new SeaRequest('customer/{cId}');
 
             function get(cId) {
@@ -39,7 +39,8 @@
                 },
 
                 setting: seaCustomerSetting,
-                dispatchTime: seaCustomerDispatchTime
+                dispatchTime: seaCustomerDispatchTime,
+                tag: seaCustomerTag
             };
     }]);
 })();
