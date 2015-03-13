@@ -2,7 +2,7 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaCustomerTag', ['SeaRequest',
-    function seaCustomerDispatchTime(SeaRequest) {
+    function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/tag/{tId}');
 
             function create(params) {
