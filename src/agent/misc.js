@@ -5,6 +5,13 @@
     function seaAgentMisc(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/{action}');
 
+            function formatActionlog(entry) {
+                entry.changeDate = new Date(entry.changeDate);
+                entry.changed = JSON.parse(entry.changed);
+                entry.userName = JSON.parse(entry.userName);
+                return entry;
+            }
+
             function listActionlog(aId, params) {
                 params = params || {};
                 params.aId = aId;
@@ -42,7 +49,11 @@
                      * @returns {Object} promise
                      */
                     list: function (aId, params) {
-                        return listActionlog(aId, params);
+                        return listActionlog(aId, params).then(function (entries) {
+                            angular.forEach(entries, formatActionlog);
+                            
+                            return entries;
+                        });
                     }
                 },
                 chart: {

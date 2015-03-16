@@ -7,10 +7,17 @@
     function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTemplate) {
             var request = new SeaRequest('container/{cId}');
 
+            function formatContainer(container) {
+                if (container.lastBootUpTime) {
+                    container.lastBootUpTime = new Date(container.lastBootUpTime);
+                }
+                return container;
+            }
+
             function get(cId) {
                 return request.get({
                     cId: cId
-                });
+                }).then(formatContainer);
             }
 
             function update(container) {
