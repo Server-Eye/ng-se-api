@@ -11,6 +11,11 @@
                 entry.userName = JSON.parse(entry.userName);
                 return entry;
             }
+        
+            function formatMeasurement(m) {
+                m.ts = new Date(m.name);
+                return m;
+            }
 
             function listActionlog(aId, params) {
                 params = params || {};
@@ -67,7 +72,11 @@
                      * @returns {Object} promise
                      */
                     get: function (aId, params) {
-                        return getChart(aId, params);
+                        return getChart(aId, params).then(function (chartConfig) {
+                            angular.forEach(chartConfig.measurements, formatMeasurement);
+                            
+                            return chartConfig;
+                        });
                     }
                 },
                 category: {
