@@ -12,6 +12,7 @@
     <div ng-controller="MeExampleController"></div>
     <div ng-controller="GroupExampleController"></div>
     <div ng-controller="UserExampleController"></div>
+    <div ng-controller="SocketExampleController"></div>
     
     <!-- jQuery and Bootstrap -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -20,14 +21,17 @@
     <script src="bower_components/angular/angular.js"></script>
     
     <!-- test -->
+    <script src="https://api.server-eye.de/socket.io/socket.io.js"></script>
+    
     <script src="examples/app.js"></script>
-    <script src="examples/config.js"></script>
+    <script src="examples/privateConfig.js"></script>
     <script src="examples/controller/agentExampleController.js"></script>
     <script src="examples/controller/containerExampleController.js"></script>
     <script src="examples/controller/customerExampleController.js"></script>
     <script src="examples/controller/meExampleController.js"></script>
     <script src="examples/controller/groupExampleController.js"></script>
     <script src="examples/controller/userExampleController.js"></script>
+    <script src="examples/controller/socketExampleController.js"></script>
 
     <!-- dist -->
 <!--    <script src="dist/js/0.1.0.ng-se-api.min.js"></script>-->
@@ -36,6 +40,7 @@
     <script src="src/module.js"></script>
     <script src="src/config.js"></script>
     <script src="src/request.js"></script>
+    <script src="src/socket.js"></script>
     
     <script src="src/agent/agent.js"></script>
     <script src="src/agent/note.js"></script>
