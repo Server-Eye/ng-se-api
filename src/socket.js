@@ -91,6 +91,16 @@
             }
 
             function ondata(type, data) {
+                if(data && data.targetNode) {
+                    if(data.targetNode.date) {
+                        data.targetNode.date = new Date(data.targetNode.date);
+                    }
+                    
+                    if(data.targetNode.lastDate) {
+                        data.targetNode.lastDate = new Date(data.targetNode.lastDate);
+                    }
+                }
+                
                 fireEvent(type.toLowerCase(), data);
             }
 
