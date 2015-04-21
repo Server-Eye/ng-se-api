@@ -3,8 +3,8 @@
 
     angular.module('ngSeApi').factory('seaAgent', ['SeaRequest',
                                              'seaAgentNote', 'seaAgentNotification', 'seaAgentMisc',
-                                             'seaAgentSetting', 'seaAgentState', 'seaAgentType',
-    function seaAgent(SeaRequest, seaAgentNote, seaAgentNotification, seaAgentMisc, seaAgentSetting, seaAgentState, seaAgentType) {
+                                             'seaAgentSetting', 'seaAgentState', 'seaAgentTag', 'seaAgentType',
+    function seaAgent(SeaRequest, seaAgentNote, seaAgentNotification, seaAgentMisc, seaAgentSetting, seaAgentState, seaAgentTag, seaAgentType) {
             var request = new SeaRequest('agent/{aId}');
 
             function create(params) {
@@ -65,6 +65,7 @@
                 setting: seaAgentSetting,
                 state: seaAgentState,
                 category: seaAgentMisc.category,
+                tag: seaAgentTag,
                 type: seaAgentType
             };
     }]);

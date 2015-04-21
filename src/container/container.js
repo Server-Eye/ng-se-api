@@ -3,8 +3,8 @@
 
     angular.module('ngSeApi').factory('seaContainer', ['SeaRequest',
                                                    'seaContainerMisc', 'seaContainerNote', 'seaContainerNotification',
-                                                   'seaContainerProposal', 'seaContainerState', 'seaContainerTemplate',
-    function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTemplate) {
+                                                   'seaContainerProposal', 'seaContainerState', 'seaContainerTag', 'seaContainerTemplate',
+    function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTag, seaContainerTemplate) {
             var request = new SeaRequest('container/{cId}');
 
             function formatContainer(container) {
@@ -59,6 +59,7 @@
                 pcvisit: seaContainerMisc.pcvisit,
                 proposal: seaContainerProposal,
                 state: seaContainerState,
+                tag: seaContainerTag,
                 template: seaContainerTemplate
             };
     }]);

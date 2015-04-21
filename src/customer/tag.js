@@ -14,7 +14,7 @@
             }
 
             function update(tag) {
-                return request.put(disptagatchTime);
+                return request.put(tag);
             }
 
             function destroy(tId) {
