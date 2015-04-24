@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaUser', ['SeaRequest', 'seaUserGroup', 'seaUserSetting', 'seaUserSubstitude',
     function seaUser(SeaRequest, seaUserGroup, seaUserSetting, seaUserSubstitude) {
             var request = new SeaRequest('user/{uId}');
-
+        
             function create(params) {
                 return request.post(params);
             }

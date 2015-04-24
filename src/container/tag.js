@@ -6,7 +6,7 @@
             var request = new SeaRequest('container/{cId}/tag/{tId}');
 
             function create(params) {
-                return request.post(params);
+                return request.put(params);
             }
 
             function list(cId) {
