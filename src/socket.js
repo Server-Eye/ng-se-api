@@ -24,7 +24,16 @@
                     return;
                 }
 
-                sio = io(seaConfig.getBaseUrl());
+                var connectUrl = seaConfig.getBaseUrl();
+                
+                if(credentials) {
+                    connectUrl += Object.keys(credentials).reduce(function (p, key) {
+                        p += [ key, credentials[key] ].join('=');
+                        return p;
+                    }, '?');
+                }
+                
+                sio = io(connectUrl);
 
                 settings.rooms = rooms;
 
