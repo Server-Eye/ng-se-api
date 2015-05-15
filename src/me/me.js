@@ -6,13 +6,11 @@
             var request = new SeaRequest('me/{action}');
 
             function _formatNode(node) {
-                if (node.date && typeof (node.date) === 'string') {
-                    node.date = new Date(node.date);
-                }
-
-                if (node.lastDate && typeof (node.lastDate) === 'string') {
-                    node.lastDate = new Date(node.lastDate);
-                }
+                ['date', 'lastDate', 'silencedUntil'].forEach(function (key) {
+                    if (node[key] && typeof (node[key]) === 'string') {
+                        node[key] = new Date(node[key]);
+                    }
+                });
 
                 return node;
             }

@@ -3,16 +3,31 @@
 
     angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest',
     function seaContainerState(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/state');
+            var request = new SeaRequest('container/{cId}/state'),
+                hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
 
             function formatState(state) {
                 state.date = new Date(state.date);
                 state.lastDate = new Date(state.lastDate);
+                
+                if(state.silencedUntil) {
+                    state.silencedUntil = new Date(state.silencedUntil);
+                }
+                
+                if(state.hints) {
+                    angular.forEach(state.hints, formatHint);
+                }
+                
                 return state;
             }
+        
+            function formatHint(hint) {
+                hint.date = new Date(hint.date);
+                return hint;
+            }
 
-            function hint(setting) {
-                return request.post(params);
+            function hint(params) {
+                return hintRequest.post(params).then(formatHint);
             }
 
             function list(cId, params) {

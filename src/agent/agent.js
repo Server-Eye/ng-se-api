@@ -65,6 +65,7 @@
                 setting: seaAgentSetting,
                 state: seaAgentState,
                 category: seaAgentMisc.category,
+                restart: seaAgentMisc.restart,
                 tag: seaAgentTag,
                 type: seaAgentType
             };

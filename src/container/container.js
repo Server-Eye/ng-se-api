@@ -58,6 +58,7 @@
                 notification: seaContainerNotification,
                 pcvisit: seaContainerMisc.pcvisit,
                 proposal: seaContainerProposal,
+                restart: seaContainerMisc.restart,
                 state: seaContainerState,
                 tag: seaContainerTag,
                 template: seaContainerTemplate

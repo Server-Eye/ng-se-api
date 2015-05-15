@@ -23,6 +23,13 @@
                     return notes;
                 });
             }
+        
+            function count(aId) {
+                return request.get({
+                    aId: aId,
+                    nId: 'count'
+                });
+            }
 
             function destroy(aId, nId) {
                 return request.del({
@@ -44,6 +51,10 @@
 
                 list: function (aId) {
                     return list(aId);
+                },
+                
+                count: function (aId) {
+                    return count(aId);
                 },
 
                 destroy: function (aId, nId) {

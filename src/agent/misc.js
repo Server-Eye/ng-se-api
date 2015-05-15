@@ -38,6 +38,13 @@
                 params.action = 'copy';
                 return request.post(params);
             }
+        
+            function restart(aId) {
+                var params = {};
+                params.aId = aId;
+                params.action = 'restart';
+                return request.post(params);
+            }
 
             function listCategories() {
                 return request.get({}, 'agent/category');
@@ -90,6 +97,15 @@
                  */
                 copy: function (aId, parentId) {
                     return copy(aId, parentId);
+                },
+                
+                /**
+                 * restart an agent
+                 * @param   {String} aId
+                 * @returns {Object} promise
+                 */
+                restart: function(aId) {
+                    return restart(aId);
                 }
             };
     }]);

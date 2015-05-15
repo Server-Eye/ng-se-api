@@ -24,9 +24,16 @@
                 });
             }
 
+            function count(cId) {
+                return request.get({
+                    cId: cId,
+                    nId: 'count'
+                });
+            }
+        
             function destroy(cId, nId) {
                 return request.del({
-                    aId: cId,
+                    cId: cId,
                     nId: nId
                 });
             }
@@ -44,6 +51,10 @@
 
                 list: function (cId) {
                     return list(cId);
+                },
+                
+                count: function (cId) {
+                    return count(cId);
                 },
 
                 destroy: function (cId, nId) {

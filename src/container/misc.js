@@ -32,6 +32,13 @@
                 params.action = 'pcvisit';
                 return request.get(params);
             }
+        
+            function restart(cId) {
+                var params = {};
+                params.cId = cId;
+                params.action = 'restart';
+                return request.post(params);
+            }
 
             return {
                 actionlog: {
@@ -79,6 +86,15 @@
                     connect: function (cId, params) {
                         return connectPcvisit(cId, params);
                     }
+                },
+                
+                /**
+                 * restart a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                restart: function(cId) {
+                    return restart(cId);
                 }
             };
     }]);
