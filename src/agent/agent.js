@@ -6,7 +6,7 @@
                                              'seaAgentSetting', 'seaAgentState', 'seaAgentTag', 'seaAgentType',
     function seaAgent(SeaRequest, seaAgentNote, seaAgentNotification, seaAgentMisc, seaAgentSetting, seaAgentState, seaAgentTag, seaAgentType) {
             var request = new SeaRequest('agent/{aId}');
-
+                
             function create(params) {
                 return request.post(params);
             }
