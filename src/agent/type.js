@@ -11,8 +11,8 @@
                 }, 'agent/type/{akId}/setting');
             }
 
-            function list() {
-                return request.get();
+            function list(params) {
+                return request.get(params);
             }
 
             return {
