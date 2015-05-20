@@ -5,6 +5,14 @@
     function seaAgentType(SeaRequest) {
             var request = new SeaRequest('agent/type');
 
+            function format(agentKnown) {
+                if(agentKnown.updateDate) {
+                    agentKnown.updateDate = new Date(agentKnown.updateDate);
+                }
+                
+                return agentKnown;
+            }
+        
             function listSettings(akId) {
                 return request.get({
                     akId: akId
@@ -12,7 +20,7 @@
             }
 
             function list(params) {
-                return request.get(params);
+                return request.get(params).then(function (aks) { return aks.map(format); });
             }
 
             return {
