@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerSetting', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerTag', 'seaCustomerTemplate',
-    function seaCustomer(SeaRequest, seaCustomerSetting, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerTag, seaCustomerTemplate) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerSetting', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerManager', 'seaCustomerTag', 'seaCustomerTemplate',
+    function seaCustomer(SeaRequest, seaCustomerSetting, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerManager, seaCustomerTag, seaCustomerTemplate) {
             var request = new SeaRequest('customer/{cId}');
 
             function get(cId) {
@@ -41,6 +41,7 @@
                 setting: seaCustomerSetting,
                 bucket: seaCustomerBucket,
                 dispatchTime: seaCustomerDispatchTime,
+                manager: seaCustomerManager,
                 tag: seaCustomerTag,
                 template: seaCustomerTemplate
             };

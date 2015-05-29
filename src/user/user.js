@@ -3,7 +3,8 @@
 
     angular.module('ngSeApi').factory('seaUser', ['SeaRequest', 'seaUserGroup', 'seaUserSetting', 'seaUserSubstitude',
     function seaUser(SeaRequest, seaUserGroup, seaUserSetting, seaUserSubstitude) {
-            var request = new SeaRequest('user/{uId}');
+            var request = new SeaRequest('user/{uId}'),
+                requestCustomer = new SeaRequest('user/{uId}/customer');
         
             function create(params) {
                 return request.post(params);
@@ -27,6 +28,12 @@
 
             function search(params) {
                 return request.get(params);
+            }
+        
+            function listCustomers(uId) {
+                return requestCustomer.get({
+                    uId: uId
+                });
             }
 
             return {
@@ -79,7 +86,12 @@
 
                 setting: seaUserSetting,
                 group: seaUserGroup,
-                substitude: seaUserSubstitude
+                substitude: seaUserSubstitude,
+                customer: {
+                    list: function (uId) {
+                        return listCustomers(uId);
+                    }
+                }
             };
     }]);
 })();
