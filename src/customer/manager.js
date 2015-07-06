@@ -6,7 +6,9 @@
             var request = new SeaRequest('customer/{cId}/manager/{uId}');
 
             function list(cId) {
-                return request.get(cId);
+                return request.get({
+                    cId: cId
+                });
             }
 
             function addUser(cId, email) {
