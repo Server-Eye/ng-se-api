@@ -1442,13 +1442,33 @@
             var request = new SeaRequest('customer/{cId}/apiKey/{apiKey}'),
                 requestDistri = new SeaRequest('customer/apiKey/{apiKey}');
 
-            function list(cId) {
-                if(!cId) {
-                    return requestDistri.get();
+            function format(apiKey) {
+                if(apiKey.validUntil) {
+                    apiKey.validUntil = new Date(apiKey.validUntil);
                 }
                 
-                return request.get({
-                    cId: cId
+                if(apiKey.createdOn) {
+                    apiKey.createdOn = new Date(apiKey.createdOn);
+                }
+                
+                return apiKey;
+            }
+        
+            function list(cId) {
+                var p;
+                
+                if(!cId) {
+                    p = requestDistri.get();
+                } else {
+                    p = request.get({
+                        cId: cId
+                    });
+                }
+                
+                return p.then(function (apiKeys) {
+                    angular.forEach(apiKeys, format);
+                    
+                    return apiKeys;
                 });
             }
         
@@ -1456,7 +1476,7 @@
                 return request.get({
                     cId: cId,
                     apiKey: apiKey
-                });
+                }).then(format);
             }
 
             function destroy(cId, apiKey) {
@@ -1586,8 +1606,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerSetting', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerManager', 'seaCustomerTag', 'seaCustomerTemplate',
-    function seaCustomer(SeaRequest, seaCustomerSetting, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerManager, seaCustomerTag, seaCustomerTemplate) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate',
+    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate) {
             var request = new SeaRequest('customer/{cId}');
 
             function get(cId) {
@@ -1623,10 +1643,11 @@
                     return update(customer);
                 },
 
-                setting: seaCustomerSetting,
+                apiKey: seaCustomerApiKey,
                 bucket: seaCustomerBucket,
                 dispatchTime: seaCustomerDispatchTime,
                 manager: seaCustomerManager,
+                setting: seaCustomerSetting,
                 tag: seaCustomerTag,
                 template: seaCustomerTemplate
             };
