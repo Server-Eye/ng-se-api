@@ -1606,8 +1606,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate',
-    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate',
+    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate) {
             var request = new SeaRequest('customer/{cId}');
 
             function get(cId) {
@@ -1646,6 +1646,7 @@
                 apiKey: seaCustomerApiKey,
                 bucket: seaCustomerBucket,
                 dispatchTime: seaCustomerDispatchTime,
+                externalCall: seaCustomerExternalCall,
                 manager: seaCustomerManager,
                 setting: seaCustomerSetting,
                 tag: seaCustomerTag,
@@ -1706,6 +1707,39 @@
 
                 destroy: function (dtId) {
                     return destroy(dtId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaCustomerExternalCall', ['SeaRequest',
+    function seaCustomerTag(SeaRequest) {
+            var requestDistri = new SeaRequest('customer/externalCall');
+
+            function format(ecall) {
+                if(ecall.lastDate) {
+                    ecall.lastDate = new Date(ecall.lastDate);
+                }
+                
+                return ecall;
+            }
+        
+            function list() {
+                return requestDistri.get().then(function (ecalls) {
+                    angular.forEach(ecalls, format);
+                    
+                    return ecalls;
+                });
+            }
+        
+            return {
+                /**
+                 * list all external url calls of your customers
+                 */
+                list: function () {
+                    return list();
                 }
             };
     }]);
