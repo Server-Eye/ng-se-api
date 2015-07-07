@@ -1606,10 +1606,14 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate',
-    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage',
+    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage) {
             var request = new SeaRequest('customer/{cId}');
 
+            function list() {
+                return request.get();
+            }
+        
             function get(cId) {
                 return request.get({
                     cId: cId
@@ -1621,6 +1625,10 @@
             }
 
             return {
+                list: function () {
+                    return list();
+                },
+                
                 get: function (cId) {
                     return get(cId);
                 },
@@ -1650,7 +1658,8 @@
                 manager: seaCustomerManager,
                 setting: seaCustomerSetting,
                 tag: seaCustomerTag,
-                template: seaCustomerTemplate
+                template: seaCustomerTemplate,
+                usage: seaCustomerUsage
             };
     }]);
 })();
@@ -1929,6 +1938,60 @@
                     destroy: function(tId, aId) {
                         return destroyAgent(tId, aId);
                     }
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaCustomerUsage', ['SeaRequest',
+    function seaCustomerTag(SeaRequest) {
+            var request = new SeaRequest('customer/{cId}/usage?start={start}&end={end}'),
+                requestDistri = new SeaRequest('customer/usage?start={start}&end={end}');
+
+            function format(u) {
+                if(u.date) {
+                    u.date = new Date(u.date);
+                }
+                
+                return u;
+            }
+        
+            function list(start, end, cId) {
+                var p,
+                    tStart = start.getTime(),
+                    tEnd = end.getTime();
+                
+                if(!cId) {
+                    p = requestDistri.get({
+                        start: tStart,
+                        end: tEnd
+                    });
+                } else {
+                    p = request.get({
+                        cId: cId,
+                        start: tStart,
+                        end: tEnd
+                    });
+                }
+                
+                return p.then(function (usage) {
+                    angular.forEach(usage, format);
+                    
+                    return usage;
+                });
+            }
+        
+            return {
+                /**
+                 * list the max usage of all customers or the usage graph of a specific customer
+                 * @param   {Date} start of the required timespan, i.e. first of month
+                 * @param   {Date} end of the required timespan, i.e. last of month
+                 * @param   {String} cId empty or customerId
+                 */
+                list: function (start, end, cId) {
+                    return list(start, end, cId);
                 }
             };
     }]);
