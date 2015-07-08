@@ -3,51 +3,44 @@
 
     angular.module('ngSeApi').factory('seaCustomerUsage', ['SeaRequest',
     function seaCustomerTag(SeaRequest) {
-            var request = new SeaRequest('customer/{cId}/usage?start={start}&end={end}'),
-                requestDistri = new SeaRequest('customer/usage?start={start}&end={end}');
+            var request = new SeaRequest('customer/{cId}/usage'),
+                requestDistri = new SeaRequest('customer/usage');
 
             function format(u) {
-                if(u.date) {
+                if (u.date) {
                     u.date = new Date(u.date);
                 }
-                
+
                 return u;
             }
-        
-            function list(start, end, cId) {
-                var p,
-                    tStart = start.getTime(),
-                    tEnd = end.getTime();
-                
-                if(!cId) {
-                    p = requestDistri.get({
-                        start: tStart,
-                        end: tEnd
-                    });
-                } else {
-                    p = request.get({
-                        cId: cId,
-                        start: tStart,
-                        end: tEnd
-                    });
+
+            function list(year, month, cId) {
+                var params = {
+                    year: year,
+                    month: month
+                };
+
+                if (cId) {
+                    params.cId = cId;
+
                 }
-                
-                return p.then(function (usage) {
+
+                return requestDistri.get(params).then(function (usage) {
                     angular.forEach(usage, format);
-                    
+
                     return usage;
                 });
             }
-        
+
             return {
                 /**
                  * list the max usage of all customers or the usage graph of a specific customer
-                 * @param   {Date} start of the required timespan, i.e. first of month
-                 * @param   {Date} end of the required timespan, i.e. last of month
+                 * @param   {Date} year of the required usage
+                 * @param   {Date} month of the required usage
                  * @param   {String} cId empty or customerId
                  */
-                list: function (start, end, cId) {
-                    return list(start, end, cId);
+                list: function (year, month, cId) {
+                    return list(year, month, cId);
                 }
             };
     }]);
