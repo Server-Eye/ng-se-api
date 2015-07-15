@@ -23,7 +23,7 @@
                 /**
                  * list all notifications
                  * @param   {Object} params
-                 * @config  {Boolean}  includeGroups
+                 * @config  {Boolean}  type
                  * @returns {Object} promise
                  */
                 list: function (params) {
