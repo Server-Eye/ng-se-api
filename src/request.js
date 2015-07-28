@@ -22,8 +22,9 @@
              * @param   {Object} params request parameters
              * @returns {String}
              */
-            SeaRequest.prototype.formatUrl = function formatUrl(url, params) {
-                params = params || {};
+            SeaRequest.prototype.formatUrl = function formatUrl(params, url) {
+                url = seaConfig.getUrl(url || this.urlPath)
+                params = params ? angular.copy(params) : {};
 
                 var keys = Object.keys(params),
                     i = keys.length;
@@ -42,14 +43,12 @@
             }
 
             SeaRequest.prototype.send = function send(method, params, urlPath) {
-                var fullUrl = seaConfig.getUrl(urlPath || this.urlPath),
-                    deferred = $q.defer(),
+                var deferred = $q.defer(),
                     conf = {
                         method: method
                     };
 
-                params = angular.copy(params);
-                conf.url = this.formatUrl(fullUrl, params);
+                conf.url = this.formatUrl(params, urlPath);
 
                 if (method === 'POST' || method === 'PUT') {
                     conf.data = params || {};
@@ -65,7 +64,7 @@
 
                 return deferred.promise;
             }
-
+            
             /**
              * perform GET request
              * @param {Object}  params  The request parameters

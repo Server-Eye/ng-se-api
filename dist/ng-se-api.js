@@ -96,8 +96,9 @@
              * @param   {Object} params request parameters
              * @returns {String}
              */
-            SeaRequest.prototype.formatUrl = function formatUrl(url, params) {
-                params = params || {};
+            SeaRequest.prototype.formatUrl = function formatUrl(params, url) {
+                url = seaConfig.getUrl(url || this.urlPath)
+                params = params ? angular.copy(params) : {};
 
                 var keys = Object.keys(params),
                     i = keys.length;
@@ -116,14 +117,12 @@
             }
 
             SeaRequest.prototype.send = function send(method, params, urlPath) {
-                var fullUrl = seaConfig.getUrl(urlPath || this.urlPath),
-                    deferred = $q.defer(),
+                var deferred = $q.defer(),
                     conf = {
                         method: method
                     };
 
-                params = angular.copy(params);
-                conf.url = this.formatUrl(fullUrl, params);
+                conf.url = this.formatUrl(params, urlPath);
 
                 if (method === 'POST' || method === 'PUT') {
                     conf.data = params || {};
@@ -139,7 +138,7 @@
 
                 return deferred.promise;
             }
-
+            
             /**
              * perform GET request
              * @param {Object}  params  The request parameters
@@ -1205,6 +1204,50 @@
 
                 destroy: function (cId, nId) {
                     return destroy(cId, nId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerPcvisit', ['SeaRequest',
+    function seaContainerNote(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/pcvisit/{action}');
+
+            function start(params) {
+                return request.post(params);
+            }
+
+            function isInstalled(cId) {
+                return request.get({
+                    cId: cId
+                });
+            }
+
+            return {
+                /**
+                 * install pcvisit on remote system
+                 * @param {Object} params
+                 * @config {String} [cId]
+                 * @config {String} [supporterId]
+                 * @config {String} [supporterPassword]
+                 * @config {String} [user]
+                 * @config {String} [domain]
+                 * @config {String} [password]
+                 */
+                installAndStart: function (params) {
+                    return start(params);
+                },
+                
+                isInstalled: function (cId) {
+                    return isInstalled(cId);
+                },
+                
+                getConnectFileLink: function (cId) {
+                    return request.formatUrl({
+                        cId: cId
+                    });
                 }
             };
     }]);
