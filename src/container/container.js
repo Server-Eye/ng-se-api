@@ -56,7 +56,6 @@
                 inventory: seaContainerMisc.inventory,
                 note: seaContainerNote,
                 notification: seaContainerNotification,
-                pcvisit: seaContainerMisc.pcvisit,
                 proposal: seaContainerProposal,
                 restart: seaContainerMisc.restart,
                 state: seaContainerState,

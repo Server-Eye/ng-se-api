@@ -965,7 +965,6 @@
                 inventory: seaContainerMisc.inventory,
                 note: seaContainerNote,
                 notification: seaContainerNotification,
-                pcvisit: seaContainerMisc.pcvisit,
                 proposal: seaContainerProposal,
                 restart: seaContainerMisc.restart,
                 state: seaContainerState,
@@ -999,13 +998,6 @@
                 params = params || {};
                 params.cId = cId;
                 params.action = 'inventory';
-                return request.get(params);
-            }
-
-            function connectPcvisit(cId, params) {
-                params = params || {};
-                params.cId = cId;
-                params.action = 'pcvisit';
                 return request.get(params);
             }
         
@@ -1045,22 +1037,6 @@
                      */
                     get: function (cId, params) {
                         return getInventory(cId, params);
-                    }
-                },
-                pcvisit: {
-                    /**
-                     * install and connect to pcvisit
-                     * @param   {String} cId
-                     * @param   {Object}   params
-                     * @config  {String}   [supporterId]
-                     * @config  {String}   [supporterPassword]
-                     * @config  {String}   [user]
-                     * @config  {String}   [password]
-                     * @config  {String}   [domain]
-                     * @returns {Object} promise
-                     */
-                    connect: function (cId, params) {
-                        return connectPcvisit(cId, params);
                     }
                 },
                 
@@ -1204,50 +1180,6 @@
 
                 destroy: function (cId, nId) {
                     return destroy(cId, nId);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaContainerPcvisit', ['SeaRequest',
-    function seaContainerNote(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/pcvisit/{action}');
-
-            function start(params) {
-                return request.post(params);
-            }
-
-            function isInstalled(cId) {
-                return request.get({
-                    cId: cId
-                });
-            }
-
-            return {
-                /**
-                 * install pcvisit on remote system
-                 * @param {Object} params
-                 * @config {String} [cId]
-                 * @config {String} [supporterId]
-                 * @config {String} [supporterPassword]
-                 * @config {String} [user]
-                 * @config {String} [domain]
-                 * @config {String} [password]
-                 */
-                installAndStart: function (params) {
-                    return start(params);
-                },
-                
-                isInstalled: function (cId) {
-                    return isInstalled(cId);
-                },
-                
-                getConnectFileLink: function (cId) {
-                    return request.formatUrl({
-                        cId: cId
-                    });
                 }
             };
     }]);
@@ -2358,6 +2290,69 @@
 
                 destroy: function (nId) {
                     return destroy(nId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest',
+    function seaContainerNote(SeaRequest) {
+            var request = new SeaRequest('remoting/{customerId}/{cId}/{action}');
+
+            function get(customerId, cId) {
+                return request.get({
+                    customerId: customerId,
+                    cId: cId
+                });
+            }
+        
+            function start(params) {
+                params = params || {};
+                params.action = 'start';
+                
+                return request.post(params);
+            }
+
+            function isInstalled(customerId, cId) {
+                return request.get({
+                    customerId: customerId,
+                    cId: cId,
+                    action: 'check'
+                });
+            }
+
+            return {
+                get: function(customerId, cId) {
+                    return get(customerId, cId);
+                },
+                
+                /**
+                 * install pcvisit on remote system
+                 * @param {Object} params
+                 * @config {String} [customerId]
+                 * @config {String} [cId]
+                 * @config {String} [supporterId]
+                 * @config {String} [supporterPassword]
+                 * @config {String} [user]
+                 * @config {String} [domain]
+                 * @config {String} [password]
+                 */
+                installAndStart: function (params) {
+                    return start(params);
+                },
+                
+                isInstalled: function (customerId, cId) {
+                    return isInstalled(customerId, cId);
+                },
+                
+                getConnectFileLink: function (customerId, cId) {
+                    return request.formatUrl({
+                        customerId: customerId,
+                        cId: cId,
+                        action: 'file'
+                    });
                 }
             };
     }]);
