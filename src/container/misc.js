@@ -29,6 +29,7 @@
             function action(cId, action) {
                 var params = {};
                 params.cId = cId;
+                params.action = action;
                 return request.post(params);
             }
 
