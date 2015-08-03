@@ -1001,10 +1001,9 @@
                 return request.get(params);
             }
         
-            function restart(cId) {
+            function action(cId, action) {
                 var params = {};
                 params.cId = cId;
-                params.action = 'restart';
                 return request.post(params);
             }
 
@@ -1046,7 +1045,25 @@
                  * @returns {Object} promise
                  */
                 restart: function(cId) {
-                    return restart(cId);
+                    return action(cId, 'restart');
+                },
+                
+                /**
+                 * stop a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                stop: function(cId) {
+                    return action(cId, 'stop');
+                },
+                
+                /**
+                 * start a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                start: function(cId) {
+                    return action(cId, 'start');
                 }
             };
     }]);
@@ -2115,6 +2132,176 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest',
+    function seaContainerNote(SeaRequest) {
+            var request = new SeaRequest('remoting/{customerId}/{cId}/{action}');
+
+            function format(access) {
+                if(access && access.date) {
+                    access.data = new Date(access.date);
+                }
+                
+                return access;
+            }
+        
+            function get(customerId, cId) {
+                return request.get({
+                    customerId: customerId,
+                    cId: cId
+                }).then(function (system) {
+                    format(system.lastAccess);
+                    return system;
+                });
+            }
+        
+            function start(params) {
+                params = params || {};
+                params.action = 'start';
+                
+                return request.post(params);
+            }
+
+            function isInstalled(customerId, cId) {
+                return request.get({
+                    customerId: customerId,
+                    cId: cId,
+                    action: 'check'
+                });
+            }
+
+            return {
+                get: function(customerId, cId) {
+                    return get(customerId, cId);
+                },
+                
+                /**
+                 * install pcvisit on remote system
+                 * @param {Object} params
+                 * @config {String} [customerId]
+                 * @config {String} [cId]
+                 * @config {String} [supporterId]
+                 * @config {String} [supporterPassword]
+                 * @config {String} [user]
+                 * @config {String} [domain]
+                 * @config {String} [password]
+                 */
+                installAndStart: function (params) {
+                    return start(params);
+                },
+                
+                isInstalled: function (customerId, cId) {
+                    return isInstalled(customerId, cId);
+                },
+                
+                getConnectFileLink: function (customerId, cId) {
+                    return request.formatUrl({
+                        customerId: customerId,
+                        cId: cId,
+                        action: 'file'
+                    });
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaReporting', ['SeaRequest',
+    function seaCustomer(SeaRequest) {
+            var request = new SeaRequest('reporting/{cId}'),
+                reportRequest = new SeaRequest('reporting/{cId}/{rId}');
+
+            function formatReport(report) {
+                ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
+                    if(report[prop]) {
+                        report[prop] = new Date(report[prop]);
+                    }
+                });
+                
+                if(report.history) {
+                    report.history.forEach(function (generated) {
+                        generated.generatedDate = new Date(generated.generatedDate);
+                    });
+                }
+                
+                return report;
+            }
+        
+            function create(params) {
+                return request.post(params);
+            }
+        
+            function list(cId) {
+                return request.get({
+                    cId: cId
+                }).then(function (reports) {
+                    reports.forEach(formatReport);
+                    return reports;
+                });
+            }
+        
+            function listTypes(cId) {
+                return reportRequest.get({
+                    cId: cId,
+                    rId: 'type'
+                });
+            }
+
+            function get(cId, rId) {
+                return reportRequest.get({
+                    cId: cId,
+                    rId: rId
+                }).then(function (report) {
+                    return formatReport(report);
+                });
+            }
+        
+            function destroy(cId, rId) {
+                return reportRequest.del({
+                    cId: cId,
+                    rId: rId
+                });
+            }
+
+            return {
+                list: function (cId) {
+                    return list(cId);
+                },
+
+                type: {
+                    list: function (cId) {
+                        return listTypes(cId);
+                    }
+                },
+                
+                report: {
+                    get: function (cId, rId) {
+                        return get(cId, rId);
+                    },
+                    
+                    /**
+                     * create report
+                     * @param {Object} params
+                     * @config {String} [cId]
+                     * @config {String} [rtId]
+                     * @config {String} [targetId]
+                     * @config {String} [repeatInterval]
+                     * @config {String} [recipients]
+                     */
+                    create: function(params) {
+                        return create(params);
+                    },
+                    
+                    destroy: function (cId, rId) {
+                        return destroy(cId, rId);
+                    }
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeMobilepush', 'seaMeNotification',
     function seaMe(SeaRequest, seaMeMobilepush, seaMeNotification) {
             var request = new SeaRequest('me/{action}');
@@ -2290,165 +2477,6 @@
 
                 destroy: function (nId) {
                     return destroy(nId);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest',
-    function seaContainerNote(SeaRequest) {
-            var request = new SeaRequest('remoting/{customerId}/{cId}/{action}');
-
-            function get(customerId, cId) {
-                return request.get({
-                    customerId: customerId,
-                    cId: cId
-                });
-            }
-        
-            function start(params) {
-                params = params || {};
-                params.action = 'start';
-                
-                return request.post(params);
-            }
-
-            function isInstalled(customerId, cId) {
-                return request.get({
-                    customerId: customerId,
-                    cId: cId,
-                    action: 'check'
-                });
-            }
-
-            return {
-                get: function(customerId, cId) {
-                    return get(customerId, cId);
-                },
-                
-                /**
-                 * install pcvisit on remote system
-                 * @param {Object} params
-                 * @config {String} [customerId]
-                 * @config {String} [cId]
-                 * @config {String} [supporterId]
-                 * @config {String} [supporterPassword]
-                 * @config {String} [user]
-                 * @config {String} [domain]
-                 * @config {String} [password]
-                 */
-                installAndStart: function (params) {
-                    return start(params);
-                },
-                
-                isInstalled: function (customerId, cId) {
-                    return isInstalled(customerId, cId);
-                },
-                
-                getConnectFileLink: function (customerId, cId) {
-                    return request.formatUrl({
-                        customerId: customerId,
-                        cId: cId,
-                        action: 'file'
-                    });
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaReporting', ['SeaRequest',
-    function seaCustomer(SeaRequest) {
-            var request = new SeaRequest('reporting/{cId}'),
-                reportRequest = new SeaRequest('reporting/{cId}/{rId}');
-
-            function formatReport(report) {
-                ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
-                    if(report[prop]) {
-                        report[prop] = new Date(report[prop]);
-                    }
-                });
-                
-                if(report.history) {
-                    report.history.forEach(function (generated) {
-                        generated.generatedDate = new Date(generated.generatedDate);
-                    });
-                }
-                
-                return report;
-            }
-        
-            function create(params) {
-                return request.post(params);
-            }
-        
-            function list(cId) {
-                return request.get({
-                    cId: cId
-                }).then(function (reports) {
-                    reports.forEach(formatReport);
-                    return reports;
-                });
-            }
-        
-            function listTypes(cId) {
-                return reportRequest.get({
-                    cId: cId,
-                    rId: 'type'
-                });
-            }
-
-            function get(cId, rId) {
-                return reportRequest.get({
-                    cId: cId,
-                    rId: rId
-                }).then(function (report) {
-                    return formatReport(report);
-                });
-            }
-        
-            function destroy(cId, rId) {
-                return reportRequest.del({
-                    cId: cId,
-                    rId: rId
-                });
-            }
-
-            return {
-                list: function (cId) {
-                    return list(cId);
-                },
-
-                type: {
-                    list: function (cId) {
-                        return listTypes(cId);
-                    }
-                },
-                
-                report: {
-                    get: function (cId, rId) {
-                        return get(cId, rId);
-                    },
-                    
-                    /**
-                     * create report
-                     * @param {Object} params
-                     * @config {String} [cId]
-                     * @config {String} [rtId]
-                     * @config {String} [targetId]
-                     * @config {String} [repeatInterval]
-                     * @config {String} [recipients]
-                     */
-                    create: function(params) {
-                        return create(params);
-                    },
-                    
-                    destroy: function (cId, rId) {
-                        return destroy(cId, rId);
-                    }
                 }
             };
     }]);

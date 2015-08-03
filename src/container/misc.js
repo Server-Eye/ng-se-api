@@ -26,10 +26,9 @@
                 return request.get(params);
             }
         
-            function restart(cId) {
+            function action(cId, action) {
                 var params = {};
                 params.cId = cId;
-                params.action = 'restart';
                 return request.post(params);
             }
 
@@ -71,7 +70,25 @@
                  * @returns {Object} promise
                  */
                 restart: function(cId) {
-                    return restart(cId);
+                    return action(cId, 'restart');
+                },
+                
+                /**
+                 * stop a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                stop: function(cId) {
+                    return action(cId, 'stop');
+                },
+                
+                /**
+                 * start a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                start: function(cId) {
+                    return action(cId, 'start');
                 }
             };
     }]);

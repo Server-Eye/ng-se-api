@@ -5,10 +5,21 @@
     function seaContainerNote(SeaRequest) {
             var request = new SeaRequest('remoting/{customerId}/{cId}/{action}');
 
+            function format(access) {
+                if(access && access.date) {
+                    access.data = new Date(access.date);
+                }
+                
+                return access;
+            }
+        
             function get(customerId, cId) {
                 return request.get({
                     customerId: customerId,
                     cId: cId
+                }).then(function (system) {
+                    format(system.lastAccess);
+                    return system;
                 });
             }
         
