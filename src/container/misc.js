@@ -11,7 +11,7 @@
                 entry.userName = JSON.parse(entry.userName);
                 return entry;
             }
-        
+
             function listActionlog(cId, params) {
                 params = params || {};
                 params.cId = cId;
@@ -25,7 +25,7 @@
                 params.action = 'inventory';
                 return request.get(params);
             }
-        
+
             function action(cId, action) {
                 var params = {};
                 params.cId = cId;
@@ -46,7 +46,7 @@
                     list: function (cId, params) {
                         return listActionlog(cId, params).then(function (entries) {
                             angular.forEach(entries, formatActionlog);
-                            
+
                             return entries;
                         });
                     }
@@ -62,33 +62,41 @@
                      */
                     get: function (cId, params) {
                         return getInventory(cId, params);
+                    },
+
+                    getFileLink: function (cId, params) {
+                        params = params || {};
+                        params.cId = cId;
+                        params.action = 'inventory';
+
+                        return request.formatUrl(params);
                     }
                 },
-                
+
                 /**
                  * restart a container
                  * @param   {String} cId
                  * @returns {Object} promise
                  */
-                restart: function(cId) {
+                restart: function (cId) {
                     return action(cId, 'restart');
                 },
-                
+
                 /**
                  * stop a container
                  * @param   {String} cId
                  * @returns {Object} promise
                  */
-                stop: function(cId) {
+                stop: function (cId) {
                     return action(cId, 'stop');
                 },
-                
+
                 /**
                  * start a container
                  * @param   {String} cId
                  * @returns {Object} promise
                  */
-                start: function(cId) {
+                start: function (cId) {
                     return action(cId, 'start');
                 }
             };

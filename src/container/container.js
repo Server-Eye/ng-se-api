@@ -30,7 +30,7 @@
                 });
             }
 
-            return {
+            var api = {
                 get: function (cId) {
                     return get(cId);
                 },
@@ -52,15 +52,16 @@
                     return destroy(cId);
                 },
 
-                actionlog: seaContainerMisc.actionlog,
-                inventory: seaContainerMisc.inventory,
                 note: seaContainerNote,
                 notification: seaContainerNotification,
                 proposal: seaContainerProposal,
-                restart: seaContainerMisc.restart,
                 state: seaContainerState,
                 tag: seaContainerTag,
                 template: seaContainerTemplate
             };
+                
+            angular.extend(api, seaContainerMisc);
+        
+            return api;
     }]);
 })();
