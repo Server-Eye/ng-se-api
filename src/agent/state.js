@@ -3,7 +3,7 @@
 
     angular.module('ngSeApi').factory('seaAgentState', ['SeaRequest',
     function seaAgentState(SeaRequest) {
-            var request = new SeaRequest('agent/{aId}/state'),
+            var request = new SeaRequest('agent/{aId}/state/{method}'),
                 hintRequest = new SeaRequest('agent/{aId}/state/{sId}/hint');
 
             function formatState(state) {
@@ -30,6 +30,14 @@
                 return hintRequest.post(params).then(formatHint);
             }
 
+            function stats(aId, params) {
+                params = params || {};
+                params.aId = aId;
+                params.method = 'stats';
+                
+                return request.get(params);
+            }
+        
             function list(aId, params) {
                 params = params || {};
                 params.aId = aId;
@@ -81,6 +89,17 @@
                  */
                 list: function (aId, params) {
                     return list(aId, params);
+                },
+                
+                /**
+                 * list agent state stats
+                 * @param   {String}   aId
+                 * @param {Object}
+                 * @config {Number} [start] : now
+                 * @config {Number} [end]   : now - 12 months
+                 */
+                stats: function (aId, params) {
+                    return stats(aId, params);
                 }
             };
     }]);

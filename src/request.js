@@ -57,6 +57,12 @@
                 }
 
                 $http(conf).then(function (resp) {
+                    var total = resp.headers('x-total-count');
+                    
+                    if(total != null) {
+                        resp.data.totalCount = total;
+                    }
+                    
                     deferred.resolve(resp.data);
                 }, function (err) {
                     deferred.reject(err);
