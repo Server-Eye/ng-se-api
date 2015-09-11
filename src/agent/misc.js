@@ -8,7 +8,14 @@
             function formatActionlog(entry) {
                 entry.changeDate = new Date(entry.changeDate);
                 entry.changed = JSON.parse(entry.changed);
-                entry.userName = JSON.parse(entry.userName);
+                try {
+                    entry.userName = JSON.parse(entry.userName);
+                } catch(e) {
+                    entry.userName = {
+                        email : entry.userName,
+                        sur: entry.userName
+                    };
+                }
                 return entry;
             }
         
