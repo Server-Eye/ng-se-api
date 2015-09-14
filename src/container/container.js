@@ -5,7 +5,7 @@
                                                    'seaContainerMisc', 'seaContainerNote', 'seaContainerNotification',
                                                    'seaContainerProposal', 'seaContainerState', 'seaContainerTag', 'seaContainerTemplate',
     function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTag, seaContainerTemplate) {
-            var request = new SeaRequest('container/{cId}');
+            var request = new SeaRequest('container/{cId}/{action}');
 
             function formatContainer(container) {
                 if (container.lastBootUpTime) {
@@ -18,6 +18,13 @@
                 return request.get({
                     cId: cId
                 }).then(formatContainer);
+            }
+        
+            function listAgents(cId) {
+                return request.get({
+                    cId: cId,
+                    action: 'agents'
+                });
             }
 
             function update(container) {
@@ -50,6 +57,12 @@
 
                 destroy: function (cId) {
                     return destroy(cId);
+                },
+                
+                agent: {
+                    list: function (cId) {
+                        return listAgents(cId);
+                    }
                 },
 
                 note: seaContainerNote,
