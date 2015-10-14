@@ -23,8 +23,13 @@
              * @returns {String}
              */
             SeaRequest.prototype.formatUrl = function formatUrl(params, url) {
-                url = seaConfig.getUrl(url || this.urlPath)
-                params = params ? angular.copy(params) : {};
+                url = url || this.urlPath;
+                
+                if(url.indexOf('https://') < 0) {
+                    url = seaConfig.getUrl(url || this.urlPath)
+                }
+                
+                params = params || {};
 
                 var keys = Object.keys(params),
                     i = keys.length;
@@ -37,7 +42,7 @@
                     }
                 }
 
-                url = url.replace(/\/{[a-z0-9]*}$/i, '');
+                url = url.replace(/\/{[a-z0-9]*}/ig, '');
 
                 return url;
             }

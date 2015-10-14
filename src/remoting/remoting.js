@@ -1,11 +1,12 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest', 'seaRemotingPcvisit', 'seaRemotingNetwork',
-    function seaRemoting(SeaRequest, seaRemotingPcvisit, seaRemotingNetwork) {
+    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest', 'seaRemotingPcvisit', 'seaRemotingNetwork', 'seaRemotingPatch',
+    function seaRemoting(SeaRequest, seaRemotingPcvisit, seaRemotingNetwork, seaRemotingPatch) {
             return {
                 pcvisit: seaRemotingPcvisit,
-                network: seaRemotingNetwork
+                network: seaRemotingNetwork,
+                patch: seaRemotingPatch
             };
     }]);
 })();
