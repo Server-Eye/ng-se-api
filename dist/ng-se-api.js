@@ -3128,7 +3128,8 @@
                     containerId = params.containerId,
                     categories = params.categories,
                     software = params.softwareId,
-                    cron = params.cron;
+                    cron = params.cron,
+                    postInstall = params.postInstall;
                                 
                 var reqParams = {
                     Cron: cron
@@ -3142,8 +3143,13 @@
                 if(software) {
                     reqParams = angular.extend(reqParams, helper.getSoftwareIds(software));
                 }
+                if(postInstall == null) {
+                    postInstall = 'NOTHING';
+                }
+                
+                reqParams.PostAction = postInstall;
                                 
-                return request.post(reqParams).then(help.idListResult);
+                return request.post(reqParams).then(helper.idListResult);
             }
         
             function destroy(customerId, jobId) {
