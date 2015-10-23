@@ -53,6 +53,9 @@
                         method: method
                     };
 
+                params = params || {};
+                params = angular.copy(params);
+                
                 conf.url = this.formatUrl(params, urlPath);
 
                 if (method === 'POST' || method === 'PUT') {
