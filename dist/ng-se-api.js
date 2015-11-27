@@ -132,8 +132,11 @@
                 
                 conf.url = this.formatUrl(params, urlPath);
 
-                if (method === 'POST' || method === 'PUT') {
+                if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
                     conf.data = params || {};
+                    conf.headers = {
+                        'Content-Type': 'application/json'
+                    };
                 } else {
                     conf.params = params || {};
                 }
@@ -3050,7 +3053,7 @@
                 }
                 
                 container.JobList.forEach(function (job) {
-                    ['StartTime', 'EndTime'].forEach(function (key) {
+                    ['StartTime', 'EndTime', 'PlannedStartTime'].forEach(function (key) {
                         if(job[key]) {
                             job[key] = new Date(job[key]);
                         }
@@ -3100,7 +3103,7 @@
                 }
                 
                 container.JobList.forEach(function (job) {
-                    ['StartTime', 'EndTime'].forEach(function (key) {
+                    ['StartTime', 'EndTime', 'PlannedStartTime'].forEach(function (key) {
                         if(job[key]) {
                             job[key] = new Date(job[key]);
                         }

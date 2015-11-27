@@ -58,8 +58,11 @@
                 
                 conf.url = this.formatUrl(params, urlPath);
 
-                if (method === 'POST' || method === 'PUT') {
+                if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
                     conf.data = params || {};
+                    conf.headers = {
+                        'Content-Type': 'application/json'
+                    };
                 } else {
                     conf.params = params || {};
                 }

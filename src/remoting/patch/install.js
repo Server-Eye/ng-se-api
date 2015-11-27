@@ -11,7 +11,7 @@
                 }
                 
                 container.JobList.forEach(function (job) {
-                    ['StartTime', 'EndTime'].forEach(function (key) {
+                    ['StartTime', 'EndTime', 'PlannedStartTime'].forEach(function (key) {
                         if(job[key]) {
                             job[key] = new Date(job[key]);
                         }
