@@ -21,15 +21,20 @@
                 return container;
             }
                 
-            function get(customerId, cId) {
-                return list(customerId, [cId]).then(function (history) {
+            function get(customerId, cId, paging) {
+                return list(customerId, [cId], paging).then(function (history) {
                     return (history[0] || {}).JobList;
                 });
             }
 
-            function list(customerId, containerIds) {
+            function list(customerId, containerIds, paging) {
                 var query = helper.getContainerIds(containerIds);
                 query.action = 'get';
+                
+                if(paging) {
+                    query.Index = paging.index;
+                    query.Count = paging.count;
+                }
                 
                 return request.post(query).then(function (containers) {
                     containers.forEach(format);
@@ -38,12 +43,12 @@
             }
 
             return {
-                get: function (customerId, cId) {
-                    return get(customerId, cId);
+                get: function (customerId, cId, paging) {
+                    return get(customerId, cId, paging);
                 },
 
-                list: function (customerId, containerIds) {
-                    return list(customerId, containerIds);
+                list: function (customerId, containerIds, paging) {
+                    return list(customerId, containerIds, paging);
                 }
             };
     }]);
