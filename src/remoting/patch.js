@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingPatchHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware', 'seaAgent',
-    function seaRemotingPcvisit($http, SeaRequest, helper, seaRemotingPatchHistory, seaRemotingPatchInstall, seaRemotingPatchScan, seaRemotingPatchSoftware, seaAgent) {
+    angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingPatchHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware',
+    function seaRemotingPcvisit($http, SeaRequest, helper, seaRemotingPatchHistory, seaRemotingPatchInstall, seaRemotingPatchScan, seaRemotingPatchSoftware) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/{section}/{action}');
         
             function format(container) {
@@ -46,19 +46,6 @@
                 return request.post({
                     ContainerList: containerConfig,
                     Cron: cron
-                }).then(function () {
-                    containerConfig.forEach(function (config) {
-                        seaAgent.create({
-                            parentId: config.ContainerId,
-                            type: '9537CBB5-9023-4248-AFF3-F1ACCC0CE7A4'
-                        }).then(function (agent) {
-                            seaAgent.setting.update({
-                                aId: agent.aId,
-                                key: 'accessToken',
-                                value: config.Token
-                            });
-                        });
-                    });
                 });
             }
 
