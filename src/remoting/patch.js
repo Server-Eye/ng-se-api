@@ -48,6 +48,12 @@
                     Cron: cron
                 });
             }
+        
+            function destroy(customerId, containerIds) {
+                var query = helper.getContainerIds(containerIds);
+                
+                return request.del(query)
+            }
 
             return {
                 get: function (customerId, cId) {
@@ -69,6 +75,9 @@
                  */
                 activate: function (params) {
                     return activate(params);
+                },
+                deactivate: function (customerId, containerIds) {
+                    return destroy(customerId, containerIds);
                 },
                 
                 history: seaRemotingPatchHistory,
