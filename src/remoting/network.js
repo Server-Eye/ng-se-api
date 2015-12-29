@@ -5,12 +5,12 @@
     function seaRemotingPcvisit(SeaRequest) {
             var request = new SeaRequest('network/{customerId}/{cId}/system/{action}');
 
-            function format(access) {
-                if (access && access.date) {
-                    access.data = new Date(access.date);
+            function format(job) {
+                if (job && job.createdAt) {
+                    job.createdAta = new Date(job.createdAt);
                 }
 
-                return access;
+                return job;
             }
 
             function list(params) {
@@ -21,11 +21,15 @@
                 return request.post(params);
             }
         
-            function getInstallStatus(customerId, cId) {
+            function getInstallStatus(customerId, cId, version) {
                 return request.get({
                     customerId: customerId,
                     cId: cId,
-                    action: 'installstatus'
+                    action: 'installstatus',
+                    v: version
+                }).then(function (jobs) {
+                   jobs.forEach(format);
+                    return jobs;
                 });
             }
 
@@ -58,8 +62,8 @@
                         return install(params);
                     },
 
-                    installStatus: function (customerId, cId) {
-                        return getInstallStatus(customerId, cId);
+                    installStatus: function (customerId, cId, version) {
+                        return getInstallStatus(customerId, cId, version);
                     }
                 }
             };
