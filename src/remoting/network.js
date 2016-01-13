@@ -21,12 +21,20 @@
                 return request.post(params);
             }
         
-            function getInstallStatus(customerId, cId, version) {
+            function getInstallStatus(params) {
+                params = params || {};
+                
+                var customerId = params.customerId,
+                    cId = params.cId,
+                    version = params.version,
+                    jobIds = params.jobIds;
+                
                 return request.get({
                     customerId: customerId,
                     cId: cId,
                     action: 'installstatus',
-                    v: version
+                    v: version,
+                    jobIds: jobIds
                 }).then(function (jobs) {
                    jobs.forEach(format);
                     return jobs;
@@ -62,8 +70,16 @@
                         return install(params);
                     },
 
-                    installStatus: function (customerId, cId, version) {
-                        return getInstallStatus(customerId, cId, version);
+                    /**
+                     * get the install status of install jobs
+                     * @param {Object} params
+                     * @config {String} [customerId]
+                     * @config {String} [cId] ID of the OCC Connector
+                     * @config {Array}  [jobIds]
+                     * @config {Integer} [version] remote install version
+                     */
+                    installStatus: function (params) {
+                        return getInstallStatus(params);
                     }
                 }
             };
