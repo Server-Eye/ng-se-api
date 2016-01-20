@@ -1065,8 +1065,8 @@
                 return request.get(params);
             }
 
-            function action(cId, action) {
-                var params = {};
+            function action(cId, action, params) {
+                params = params || {};
                 params.cId = cId;
                 params.action = action;
                 return request.post(params);
@@ -1124,10 +1124,13 @@
                 /**
                  * stop a container
                  * @param   {String} cId
+                 * @param   {Int}    until timestamp
                  * @returns {Object} promise
                  */
-                stop: function (cId) {
-                    return action(cId, 'stop');
+                stop: function (cId, until) {
+                    return action(cId, 'stop', {
+                        until: until
+                    });
                 },
 
                 /**
