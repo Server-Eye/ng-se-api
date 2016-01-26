@@ -1693,8 +1693,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage',
-    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
+    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
             var request = new SeaRequest('customer/{cId}');
 
             function list() {
@@ -1746,7 +1746,8 @@
                 setting: seaCustomerSetting,
                 tag: seaCustomerTag,
                 template: seaCustomerTemplate,
-                usage: seaCustomerUsage
+                usage: seaCustomerUsage,
+                viewFilter: seaCustomerViewFilter
             };
     }]);
 })();
@@ -2072,6 +2073,63 @@
                  */
                 list: function (year, month, cId) {
                     return list(year, month, cId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaCustomerViewFilter', ['SeaRequest',
+    function seaCustomerDispatchTime(SeaRequest) {
+            var request = new SeaRequest('customer/viewFilter/{vfId}');
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function list() {
+                return request.get();
+            }
+
+            function update(viewFilter) {
+                return request.put(viewFilter);
+            }
+
+            function destroy(vfId) {
+                return request.del({
+                    vfId: vfId
+                });
+            }
+
+            return {
+                /**
+                 * create viewFilter
+                 * @param {Object} params
+                 * @config {String} [name]
+                 * @config {Object} [query]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                list: function () {
+                    return list();
+                },
+
+                /**
+                 * update viewFilter
+                 * @param {Object} params
+                 * @config {String} [vfId]
+                 * @config {String} [name]
+                 * @config {Object} [query]
+                 */
+                update: function (viewFilter) {
+                    return update(viewFilter);
+                },
+
+                destroy: function (vfId) {
+                    return destroy(vfId);
                 }
             };
     }]);
