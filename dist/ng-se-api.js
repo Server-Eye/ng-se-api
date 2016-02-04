@@ -2467,6 +2467,166 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaRemotingAntivirus', [ '$http', 'SeaRequest', 'seaRemotingIasHelper',
+    function seaRemotingPcvisit($http, SeaRequest, helper) {
+            var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/virus/1.0/{section}/{action}');
+        
+            function format(container) {
+                if(!container.EventList) {
+                    return container;
+                }
+                
+                container.EventList.forEach(function (job) {
+                    ['Timestamp'].forEach(function (key) {
+                        if(job[key]) {
+                            job[key] = new Date(job[key]);
+                        }
+                    });
+                });
+                
+                return container;
+            }
+                
+            function activate(params) {
+                var customerId = params.customerId,
+                    containerConfig = params.containerConfig;
+                
+                if(!angular.isArray(containerConfig)) {
+                    containerConfig = [ containerConfig ];
+                }
+                
+                containerConfig = containerConfig.map(function (c) {
+                    return {
+                        ContainerId: c.containerId,
+                        Token: c.token
+                    };
+                });
+                
+                return request.post({
+                    section: 'container',
+                    ContainerList: containerConfig
+                });
+            }
+        
+            function get(customerId, cId, paging) {
+                return list(customerId, [cId], paging).then(function (history) {
+                    return (history[0] || {}).EventList;
+                });
+            }
+
+            function list(customerId, containerIds, paging) {
+                var query = helper.getContainerIds(containerIds);
+                query.section = 'event';
+                query.action = 'get';
+                
+                if(paging) {
+                    query.Index = paging.index;
+                    query.Count = paging.count;
+                }
+                
+                return request.post(query).then(function (containers) {
+                    containers.forEach(format);
+                    return containers;
+                });
+            }
+
+            return {
+                get: function (customerId, cId, paging) {
+                    return get(customerId, cId, paging);
+                },
+
+                list: function (customerId, containerIds, paging) {
+                    return list(customerId, containerIds, paging);
+                },
+                
+                /**
+                 * activate antivirus on a client
+                 * @param {Object} params
+                 * @config {String} [customerId]
+                 * @config {Array|Object} [containerConfig]
+                 * @config {String} [config.id]
+                 * @config {String} [config.token]
+                 */
+                activate: function (params) {
+                    return activate(params);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaRemotingIasHelper', [ '$q',
+    function seaRemotingPcvisit($q) {
+            function getContainerIds(containerIds) {
+                if (!angular.isArray(containerIds)) {
+                    containerIds = [containerIds];
+                }
+
+                var query = containerIds.map(function (containerId) {
+                    return {
+                        ContainerId: containerId
+                    };
+                });
+
+                return {
+                    ContainerIdList: query
+                };
+            }
+
+            function getSoftwareIds(softwareIds) {
+                if (!angular.isArray(softwareIds)) {
+                    softwareIds = [softwareIds];
+                }
+
+                var query = softwareIds.map(function (softwareId) {
+                    return {
+                        SoftwareId: softwareId
+                    };
+                });
+
+                return {
+                    SoftwareIdList: query
+                };
+            }
+
+            function getJobIds(jobIds) {
+                if (!angular.isArray(jobIds)) {
+                    jobIds = [jobIds];
+                }
+
+                var query = jobIds.map(function (jobId) {
+                    return {
+                        JobId: jobId
+                    };
+                });
+
+                return {
+                    JobIdList: query
+                };
+            }
+
+            function idListResult(result) {
+                if (result.Msg == 'success') {
+                    return $q.resolve(result.IdList.map(function (entry) {
+                        return entry.Id;
+                    }));
+                }
+
+                return $q.reject(new Error(result.Msg));
+            }
+
+            return {
+                getContainerIds: getContainerIds,
+                getSoftwareIds: getSoftwareIds,
+                getJobIds: getJobIds,
+                idListResult: idListResult
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaRemotingNetwork', ['SeaRequest',
     function seaRemotingPcvisit(SeaRequest) {
             var request = new SeaRequest('network/{customerId}/{cId}/system/{action}');
@@ -2554,7 +2714,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingPatchHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware',
+    angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingIasHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware',
     function seaRemotingPcvisit($http, SeaRequest, helper, seaRemotingPatchHistory, seaRemotingPatchInstall, seaRemotingPatchScan, seaRemotingPatchSoftware) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/{section}/{action}');
         
@@ -2717,9 +2877,10 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest', 'seaRemotingPcvisit', 'seaRemotingNetwork', 'seaRemotingPatch',
-    function seaRemoting(SeaRequest, seaRemotingPcvisit, seaRemotingNetwork, seaRemotingPatch) {
+    angular.module('ngSeApi').factory('seaRemoting', ['SeaRequest', 'seaRemotingPcvisit', 'seaRemotingNetwork', 'seaRemotingAntivirus', 'seaRemotingPatch',
+    function seaRemoting(SeaRequest, seaRemotingPcvisit, seaRemotingNetwork, seaRemotingAntivirus, seaRemotingPatch) {
             return {
+                antivirus: seaRemotingAntivirus,
                 pcvisit: seaRemotingPcvisit,
                 network: seaRemotingNetwork,
                 patch: seaRemotingPatch
@@ -3049,78 +3210,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatchHelper', [ '$q',
-    function seaRemotingPcvisit($q) {
-            function getContainerIds(containerIds) {
-                if (!angular.isArray(containerIds)) {
-                    containerIds = [containerIds];
-                }
-
-                var query = containerIds.map(function (containerId) {
-                    return {
-                        ContainerId: containerId
-                    };
-                });
-
-                return {
-                    ContainerIdList: query
-                };
-            }
-
-            function getSoftwareIds(softwareIds) {
-                if (!angular.isArray(softwareIds)) {
-                    softwareIds = [softwareIds];
-                }
-
-                var query = softwareIds.map(function (softwareId) {
-                    return {
-                        SoftwareId: softwareId
-                    };
-                });
-
-                return {
-                    SoftwareIdList: query
-                };
-            }
-
-            function getJobIds(jobIds) {
-                if (!angular.isArray(jobIds)) {
-                    jobIds = [jobIds];
-                }
-
-                var query = jobIds.map(function (jobId) {
-                    return {
-                        JobId: jobId
-                    };
-                });
-
-                return {
-                    JobIdList: query
-                };
-            }
-
-            function idListResult(result) {
-                if (result.Msg == 'success') {
-                    return $q.resolve(result.IdList.map(function (entry) {
-                        return entry.Id;
-                    }));
-                }
-
-                return $q.reject(new Error(result.Msg));
-            }
-
-            return {
-                getContainerIds: getContainerIds,
-                getSoftwareIds: getSoftwareIds,
-                getJobIds: getJobIds,
-                idListResult: idListResult
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaRemotingPatchHistory', ['$http', 'SeaRequest', 'seaRemotingPatchHelper',
+    angular.module('ngSeApi').factory('seaRemotingPatchHistory', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/history/{action}');
         
@@ -3175,7 +3265,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatchInstall', ['$http', 'SeaRequest', 'seaRemotingPatchHelper',
+    angular.module('ngSeApi').factory('seaRemotingPatchInstall', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/install/{action}');
         
@@ -3277,7 +3367,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatchScan', ['$http', 'SeaRequest', 'seaRemotingPatchHelper',
+    angular.module('ngSeApi').factory('seaRemotingPatchScan', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/scan/{action}');
         
@@ -3345,7 +3435,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatchSoftware', ['$http', 'SeaRequest', 'seaRemotingPatchHelper',
+    angular.module('ngSeApi').factory('seaRemotingPatchSoftware', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/software/{action}');
 

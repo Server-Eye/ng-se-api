@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatchHelper', [ '$q',
+    angular.module('ngSeApi').factory('seaRemotingIasHelper', [ '$q',
     function seaRemotingPcvisit($q) {
             function getContainerIds(containerIds) {
                 if (!angular.isArray(containerIds)) {

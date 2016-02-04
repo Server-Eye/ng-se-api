@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatchHistory', ['$http', 'SeaRequest', 'seaRemotingPatchHelper',
+    angular.module('ngSeApi').factory('seaRemotingPatchHistory', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/history/{action}');
         
