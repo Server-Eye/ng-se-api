@@ -4,51 +4,36 @@
     angular.module('ngSeApi').factory('seaRemotingIasHelper', [ '$q',
     function seaRemotingPcvisit($q) {
             function getContainerIds(containerIds) {
-                if (!angular.isArray(containerIds)) {
-                    containerIds = [containerIds];
-                }
-
-                var query = containerIds.map(function (containerId) {
-                    return {
-                        ContainerId: containerId
-                    };
-                });
-
-                return {
-                    ContainerIdList: query
-                };
+                return convertIds(containerIds, 'ContainerIdList', 'ContainerId');
             }
 
             function getSoftwareIds(softwareIds) {
-                if (!angular.isArray(softwareIds)) {
-                    softwareIds = [softwareIds];
-                }
-
-                var query = softwareIds.map(function (softwareId) {
-                    return {
-                        SoftwareId: softwareId
-                    };
-                });
-
-                return {
-                    SoftwareIdList: query
-                };
+                return convertIds(softwareIds, 'SoftwareIdList', 'SoftwareId');
             }
 
-            function getJobIds(jobIds) {
-                if (!angular.isArray(jobIds)) {
-                    jobIds = [jobIds];
+            function getJobIds(jobIds) {                
+                return convertIds(jobIds, 'JobIdList', 'JobId');
+            }
+        
+            function getEventIds(eventIds) {
+                return convertIds(eventIds, 'EventIdList', 'EventId');
+            }
+        
+            function convertIds(ids, rootName, subName) {
+                if (!angular.isArray(ids)) {
+                    ids = [ids];
                 }
 
-                var query = jobIds.map(function (jobId) {
-                    return {
-                        JobId: jobId
-                    };
+                var query = ids.map(function (id) {
+                    var o = {};
+                    o[subName] = id;
+                    return o;
                 });
 
-                return {
-                    JobIdList: query
-                };
+                var o = {};
+                o[rootName] = query;
+                
+                return o;
             }
 
             function idListResult(result) {
@@ -65,6 +50,7 @@
                 getContainerIds: getContainerIds,
                 getSoftwareIds: getSoftwareIds,
                 getJobIds: getJobIds,
+                getEventIds: getEventIds,
                 idListResult: idListResult
             };
     }]);
