@@ -4,7 +4,6 @@
     angular.module('ngSeApi').factory('seaRemotingAntivirus', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/virus/1.0/{section}/{action}');
-            var requestContainerList = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/{action}');
 
             function format(container) {
                 if (!container.EventList) {
@@ -49,9 +48,10 @@
 
             function list(customerId, containerIds) {
                 var query = helper.getContainerIds(containerIds);
+                query.section = 'container';
                 query.action = 'get';
                 
-                return requestContainerList.post(query);
+                return request.post(query);
             }
         
             function getEvents(customerId, cId, paging) {
