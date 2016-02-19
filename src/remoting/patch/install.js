@@ -72,6 +72,19 @@
                 return request.del(query).then(helper.idListResult);
             }
         
+            function getSoftware(customerId, jobId) {
+                return listSoftware(customerId, [jobId]).then(function (install) {
+                    return (install[0] || {}).SoftwareInfoList || [];
+                });
+            }
+
+            function listSoftware(customerId, jobIds) {
+                var query = helper.getJobIds(jobIds);
+                query.action = 'software';
+                
+                return request.post(query);
+            }
+        
             return {
                 get: function (customerId, cId) {
                     return get(customerId, cId);
@@ -96,6 +109,14 @@
                 
                 destroy: function (customerId, jobId) {
                     return destroy(customerId, jobId);
+                },
+                
+                getSoftware: function (customerId, jobId) {
+                    return getSoftware(customerId, jobId);
+                },
+                
+                listSoftware: function (customerId, jobIds) {
+                    return listSoftware(customerId, jobIds);
                 }
             };
     }]);
