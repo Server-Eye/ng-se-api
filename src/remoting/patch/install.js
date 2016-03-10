@@ -82,7 +82,7 @@
 
             function getSoftware(customerId, jobId) {
                 return listSoftware(customerId, [jobId]).then(function (install) {
-                    return (install[0] || {}).SoftwareInfoList || [];
+                    return (install[0] || {});
                 });
             }
 
@@ -90,7 +90,10 @@
                 var query = helper.getJobIds(jobIds);
                 query.action = 'software';
 
-                return request.post(query);
+                return request.post(query).then(function(containers) {
+                    containers.forEach(format);
+                    return containers;
+                });
             }
 
             return {
