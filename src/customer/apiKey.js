@@ -36,11 +36,11 @@
                 });
             }
         
-            function get(cId, apiKey) {
-                return request.get({
-                    cId: cId,
-                    apiKey: apiKey
-                }).then(format);
+            function get(cId, query) {
+                query = query || {};
+                query.cId = cId;
+                
+                return request.get(query).then(format);
             }
 
             function destroy(cId, apiKey) {
@@ -59,8 +59,8 @@
                     return list(cId);
                 },
                 
-                get: function (cId, apiKey) {
-                    return get(cId, apiKey);
+                get: function (cId, query) {
+                    return get(cId, query);
                 },
 
                 destroy: function (cId, apiKey) {
