@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingIasHelper', [ '$q',
-    function seaRemotingPcvisit($q) {
+    angular.module('ngSeApi').factory('seaRemotingIasHelper', [ '$q', 'seaConfig',
+    function seaRemotingPcvisit($q, seaConfig) {
             function getContainerIds(containerIds) {
                 return convertIds(containerIds, 'ContainerIdList', 'ContainerId');
             }
@@ -45,13 +45,18 @@
 
                 return $q.reject(new Error(result.Msg));
             }
+        
+            function getUrl(path) {
+                return [seaConfig.getPatchUrl(), path].join('/');
+            }
 
             return {
                 getContainerIds: getContainerIds,
                 getSoftwareIds: getSoftwareIds,
                 getJobIds: getJobIds,
                 getEventIds: getEventIds,
-                idListResult: idListResult
+                idListResult: idListResult,
+                getUrl: getUrl
             };
     }]);
 })();

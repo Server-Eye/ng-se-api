@@ -3,8 +3,8 @@
 
     angular.module('ngSeApi').factory('seaRemotingPatchSoftware', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
-            var request = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/container/software/{action}'),
-                requestSoftware = new SeaRequest('https://patch.server-eye.de/seias/rest/seocc/patch/1.0/software/{method}/{action}');
+            var request = new SeaRequest(helper.getUrl('seias/rest/seocc/patch/1.0/container/software/{action}')),
+                requestSoftware = new SeaRequest(helper.getUrl('seias/rest/seocc/patch/1.0/software/{method}/{action}'));
 
             function get(customerId, softwareId) {
                 var query = helper.getSoftwareIds(softwareId);

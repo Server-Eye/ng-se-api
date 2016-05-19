@@ -5,6 +5,7 @@
         function SeaConfigProvider($httpProvider) {
             var config = {
                 baseUrl: 'https://api.server-eye.de',
+                patchUrl: 'https://patch.server-eye.de',
                 apiVersion: 2,
                 apiKey: null,
                 getUrl: function (path) {
@@ -31,6 +32,10 @@
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
             }
+            
+            this.setPatchUrl = function (patchUrl) {
+                config.patchUrl = patchUrl;
+            }
 
             this.setApiVersion = function (apiVersion) {
                 config.apiVersion = apiVersion;
@@ -44,6 +49,9 @@
                 return {
                     getBaseUrl: function () {
                         return config.baseUrl;
+                    },
+                    getPatchUrl: function () {
+                        return config.patchUrl;
                     },
                     getApiVersion: function () {
                         return config.apiVersion;
