@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingIasHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware',
-    function seaRemotingPcvisit($http, SeaRequest, helper, seaRemotingPatchHistory, seaRemotingPatchInstall, seaRemotingPatchScan, seaRemotingPatchSoftware) {
+    angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingIasHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchReboot', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware',
+    function seaRemotingPcvisit($http, SeaRequest, helper, seaRemotingPatchHistory, seaRemotingPatchInstall, seaRemotingPatchReboot, seaRemotingPatchScan, seaRemotingPatchSoftware) {
             var request = new SeaRequest(helper.getUrl('seias/rest/seocc/patch/1.0/container/{section}/{action}'));
         
             function format(container) {
@@ -82,6 +82,7 @@
                 
                 history: seaRemotingPatchHistory,
                 install: seaRemotingPatchInstall,
+                reboot: seaRemotingPatchReboot,
                 scan: seaRemotingPatchScan,
                 software: seaRemotingPatchSoftware
             };
