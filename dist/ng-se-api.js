@@ -2760,7 +2760,7 @@
             }
                 
             function get(customerId, cId) {
-                return list(customer, [cId]);
+                return list(customerId, [cId]);
             }
 
             function list(customerId, containerIds) {
