@@ -23,6 +23,11 @@
         
             function formatHint(hint) {
                 hint.date = new Date(hint.date);
+                
+                if(hint.until) {
+                    hint.until = new Date(hint.until);
+                }
+                
                 return hint;
             }
 
