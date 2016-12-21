@@ -2,7 +2,7 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaContainerMisc', ['SeaRequest',
-    function seaContainerMisc(SeaRequest) {
+        function seaContainerMisc(SeaRequest) {
             var request = new SeaRequest('container/{cId}/{action}');
 
             function formatActionlog(entry) {
@@ -10,12 +10,21 @@
                 entry.changed = JSON.parse(entry.changed);
                 try {
                     entry.userName = JSON.parse(entry.userName);
-                } catch(e) {
+                } catch (e) {
                     entry.userName = {
-                        email : entry.userName,
+                        email: entry.userName,
                         sur: entry.userName
                     };
                 }
+
+                if (entry.information) {
+                    try {
+                        entry.information = JSON.parse(entry.information);
+                    } catch (e) {
+                        entry.information = null;
+                    }
+                }
+
                 return entry;
             }
 
@@ -110,5 +119,5 @@
                     return action(cId, 'start');
                 }
             };
-    }]);
+        }]);
 })();

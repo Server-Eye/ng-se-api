@@ -2,7 +2,7 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaAgentMisc', ['SeaRequest',
-    function seaAgentMisc(SeaRequest) {
+        function seaAgentMisc(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/{action}');
 
             function formatActionlog(entry) {
@@ -10,15 +10,24 @@
                 entry.changed = JSON.parse(entry.changed);
                 try {
                     entry.userName = JSON.parse(entry.userName);
-                } catch(e) {
+                } catch (e) {
                     entry.userName = {
-                        email : entry.userName,
+                        email: entry.userName,
                         sur: entry.userName
                     };
                 }
+
+                if (entry.information) {
+                    try {
+                        entry.information = JSON.parse(entry.information);
+                    } catch (e) {
+                        entry.information = null;
+                    }
+                }
+
                 return entry;
             }
-        
+
             function formatMeasurement(m) {
                 m.ts = new Date(m.name);
                 return m;
@@ -45,7 +54,7 @@
                 params.action = 'copy';
                 return request.post(params);
             }
-        
+
             function restart(aId) {
                 var params = {};
                 params.aId = aId;
@@ -70,7 +79,7 @@
                     list: function (aId, params) {
                         return listActionlog(aId, params).then(function (entries) {
                             angular.forEach(entries, formatActionlog);
-                            
+
                             return entries;
                         });
                     }
@@ -88,7 +97,7 @@
                     get: function (aId, params) {
                         return getChart(aId, params).then(function (chartConfig) {
                             angular.forEach(chartConfig.measurements, formatMeasurement);
-                            
+
                             return chartConfig;
                         });
                     }
@@ -105,15 +114,15 @@
                 copy: function (aId, parentId) {
                     return copy(aId, parentId);
                 },
-                
+
                 /**
                  * restart an agent
                  * @param   {String} aId
                  * @returns {Object} promise
                  */
-                restart: function(aId) {
+                restart: function (aId) {
                     return restart(aId);
                 }
             };
-    }]);
+        }]);
 })();
