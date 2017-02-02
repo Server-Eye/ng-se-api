@@ -15,7 +15,7 @@
     "dependencies": {
         "gulp": "3.9.x",
         "del": "2.2.x",
-        "gulp-bundle-assets": "^2.24.0"
+        "gulp-bundle-assets": "^2.27.1"
     },
     "analyze": false,
     "license": "MIT",

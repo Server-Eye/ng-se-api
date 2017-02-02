@@ -8,7 +8,7 @@ module.exports = {
             options: {
                 rev: false,
                 useMin: true,
-                uglify: true
+                uglify: false
             }
         },
         'ng-se-api': {
