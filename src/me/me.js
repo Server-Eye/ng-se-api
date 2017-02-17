@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeMobilepush', 'seaMeNotification',
-    function seaMe(SeaRequest, seaMeMobilepush, seaMeNotification) {
+    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification',
+        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification) {
             var request = new SeaRequest('me/{action}');
 
             function _formatNode(node) {
@@ -72,8 +72,9 @@
                     return nodes(params);
                 },
 
+                location: seaMeLocation,
                 mobilepush: seaMeMobilepush,
                 notification: seaMeNotification
             };
-    }]);
+        }]);
 })();

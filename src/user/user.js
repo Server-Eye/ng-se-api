@@ -1,11 +1,11 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaUser', ['SeaRequest', 'seaUserGroup', 'seaUserSetting', 'seaUserSubstitude',
-    function seaUser(SeaRequest, seaUserGroup, seaUserSetting, seaUserSubstitude) {
+    angular.module('ngSeApi').factory('seaUser', ['SeaRequest', 'seaUserGroup', 'seaUserLocation', 'seaUserSetting', 'seaUserSubstitude',
+        function seaUser(SeaRequest, seaUserGroup, seaUserLocation, seaUserSetting, seaUserSubstitude) {
             var request = new SeaRequest('user/{uId}'),
                 requestCustomer = new SeaRequest('user/{uId}/customer');
-        
+
             function create(params) {
                 return request.post(params);
             }
@@ -29,7 +29,7 @@
             function search(params) {
                 return request.get(params);
             }
-        
+
             function listCustomers(uId) {
                 return requestCustomer.get({
                     uId: uId
@@ -84,8 +84,9 @@
                     return search(params);
                 },
 
-                setting: seaUserSetting,
                 group: seaUserGroup,
+                location: seaUserLocation,
+                setting: seaUserSetting,
                 substitude: seaUserSubstitude,
                 customer: {
                     list: function (uId) {
@@ -93,5 +94,5 @@
                     }
                 }
             };
-    }]);
+        }]);
 })();
