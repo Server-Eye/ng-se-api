@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
-    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerLocation', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
+        function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerLocation, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
             var request = new SeaRequest('customer/{cId}');
 
             function list() {
                 return request.get();
             }
-        
+
             function get(cId) {
                 return request.get({
                     cId: cId
@@ -23,7 +23,7 @@
                 list: function () {
                     return list();
                 },
-                
+
                 get: function (cId) {
                     return get(cId);
                 },
@@ -50,6 +50,7 @@
                 bucket: seaCustomerBucket,
                 dispatchTime: seaCustomerDispatchTime,
                 externalCall: seaCustomerExternalCall,
+                location: seaCustomerLocation,
                 manager: seaCustomerManager,
                 setting: seaCustomerSetting,
                 tag: seaCustomerTag,
@@ -57,5 +58,5 @@
                 usage: seaCustomerUsage,
                 viewFilter: seaCustomerViewFilter
             };
-    }]);
+        }]);
 })();

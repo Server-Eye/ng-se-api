@@ -10,7 +10,7 @@
     angular.module('ngSeApi').provider('seaConfig', ['$httpProvider',
         function SeaConfigProvider($httpProvider) {
             var config = {
-                baseUrl: 'https://api.server-eye.de',
+                baseUrl: 'http://127.0.0.1:8080',
                 patchUrl: 'https://patch.server-eye.de',
                 apiVersion: 2,
                 apiKey: null,
@@ -38,7 +38,7 @@
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
             }
-            
+
             this.setPatchUrl = function (patchUrl) {
                 config.patchUrl = patchUrl;
             }
@@ -73,12 +73,12 @@
                     }
                 }
             };
-    }]);
+        }]);
 
     angular.module('ngSeApi').config(['seaConfigProvider',
         function (seaApiConfigProvider) {
 
-    }]);
+        }]);
 })();
 (function () {
     "use strict";
@@ -1729,14 +1729,14 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
-    function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
+    angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerLocation', 'seaCustomerManager', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
+        function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerLocation, seaCustomerManager, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
             var request = new SeaRequest('customer/{cId}');
 
             function list() {
                 return request.get();
             }
-        
+
             function get(cId) {
                 return request.get({
                     cId: cId
@@ -1751,7 +1751,7 @@
                 list: function () {
                     return list();
                 },
-                
+
                 get: function (cId) {
                     return get(cId);
                 },
@@ -1778,6 +1778,7 @@
                 bucket: seaCustomerBucket,
                 dispatchTime: seaCustomerDispatchTime,
                 externalCall: seaCustomerExternalCall,
+                location: seaCustomerLocation,
                 manager: seaCustomerManager,
                 setting: seaCustomerSetting,
                 tag: seaCustomerTag,
@@ -1785,7 +1786,7 @@
                 usage: seaCustomerUsage,
                 viewFilter: seaCustomerViewFilter
             };
-    }]);
+        }]);
 })();
 (function () {
     "use strict";
@@ -1876,6 +1877,53 @@
                 }
             };
     }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaCustomerLocation', ['SeaRequest',
+        function seaCustomerLocation(SeaRequest) {
+            var request = new SeaRequest('customer/{cId}/location');
+
+            function get(cId) {
+                return request.get({
+                    cId: cId
+                });
+            }
+
+            function update(params) {
+                return request.post(params);
+            }
+
+            return {
+                /**
+                 * get location
+                 * @param {String} cId
+                 */
+                get: function (cId) {
+                    return get(cId);
+                },
+
+                /**
+                 * update location
+                 * @param {Object} params
+                 * @config {String} [cId]
+                 * @config {Object} [geo]
+                 * @config {Number} [geo.lat]
+                 * @config {Number} [geo.lon]
+                 * @config {Object} [geo.address]
+                 * @config {String} [geo.address.country]
+                 * @config {String} [geo.address.state]
+                 * @config {String} [geo.address.postcode]
+                 * @config {String} [geo.address.city]
+                 * @config {String} [geo.address.road]
+                 * @config {String} [geo.address.house_number]
+                 */
+                update: function (params) {
+                    return update(params);
+                }
+            };
+        }]);
 })();
 (function () {
     "use strict";
