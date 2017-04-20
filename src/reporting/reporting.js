@@ -1,10 +1,10 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaReporting', ['SeaRequest',
-    function seaCustomer(SeaRequest) {
-            var request = new SeaRequest('reporting/{cId}'),
-                reportRequest = new SeaRequest('reporting/{cId}/{rId}');
+    angular.module('ngSeApi').factory('seaReporting', ['SeaRequest', 'seaReportingTemplate',
+    function seaCustomer(SeaRequest, seaReportingTemplate) {
+            var request = new SeaRequest('reporting/{cId}/report'),
+                reportRequest = new SeaRequest('reporting/{cId}/report/{rId}');
 
             function formatReport(report) {
                 ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
@@ -79,8 +79,7 @@
                      * @param {Object} params
                      * @config {String} [cId]
                      * @config {String} [rtId]
-                     * @config {String} [targetId]
-                     * @config {String} [repeatInterval]
+                     * @config {String} [repeatCron]
                      * @config {String} [recipients]
                      */
                     create: function(params) {
@@ -90,7 +89,9 @@
                     destroy: function (cId, rId) {
                         return destroy(cId, rId);
                     }
-                }
+                },
+
+                template: seaReportingTemplate
             };
     }]);
 })();
