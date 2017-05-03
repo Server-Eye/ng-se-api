@@ -1,6 +1,6 @@
 {
   "name": "ng-se-api",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "authors": [
     "Kim Schneider <kim.schneider@kraemer-it.de>"
   ],
@@ -25,6 +25,6 @@
   ],
   "dependencies": {
     "jquery": "~2.1.4",
-    "angular": "1.6.1"
+    "angular": "1.6.*"
   }
 }
