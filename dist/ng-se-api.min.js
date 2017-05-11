@@ -3436,6 +3436,7 @@
     angular.module('ngSeApi').factory('seaUser', ['SeaRequest', 'seaUserGroup', 'seaUserLocation', 'seaUserSetting', 'seaUserSubstitude',
         function seaUser(SeaRequest, seaUserGroup, seaUserLocation, seaUserSetting, seaUserSubstitude) {
             var request = new SeaRequest('user/{uId}'),
+                requestUser = new SeaRequest('user/{uId}/{sub}'),
                 requestCustomer = new SeaRequest('user/{uId}/customer');
 
             function create(params) {
@@ -3465,6 +3466,14 @@
             function listCustomers(uId) {
                 return requestCustomer.get({
                     uId: uId
+                });
+            }
+
+            function deactivateTwoFactor(uId, password) {
+                return requestUser.del({
+                    uId: uId,
+                    password: password,
+                    sub: 'twofactor'
                 });
             }
 
@@ -3523,6 +3532,16 @@
                 customer: {
                     list: function (uId) {
                         return listCustomers(uId);
+                    }
+                },
+                twofactor: {
+                    /**
+                     * deactivate two-factor
+                     * @param   {String}   uId
+                     * @param   {String}   password
+                     */
+                    deactivate: function (uId, password) {
+                        return deactivateTwoFactor(uId, password);
                     }
                 }
             };
