@@ -1,13 +1,15 @@
 {
     "name": "ng-se-api",
     "preferGlobal": true,
-    "version": "0.8.3",
+    "version": "0.8.4",
     "author": "Kim Schneider <kim.schneider@server-eye.de>",
     "description": "AngularJS Server-Eye api services",
-    "contributors": [{
-        "name": "Kim Schneider",
-        "email": "kim.schneider@server-eye.de"
-    }],
+    "contributors": [
+        {
+            "name": "Kim Schneider",
+            "email": "kim.schneider@server-eye.de"
+        }
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/Server-Eye/ng-se-api.git"
