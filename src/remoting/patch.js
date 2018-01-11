@@ -4,11 +4,14 @@
     angular.module('ngSeApi').factory('seaRemotingPatch', ['$http', 'SeaRequest', 'seaRemotingIasHelper', 'seaRemotingPatchHistory', 'seaRemotingPatchInstall', 'seaRemotingPatchReboot', 'seaRemotingPatchScan', 'seaRemotingPatchSoftware',
     function seaRemotingPcvisit($http, SeaRequest, helper, seaRemotingPatchHistory, seaRemotingPatchInstall, seaRemotingPatchReboot, seaRemotingPatchScan, seaRemotingPatchSoftware) {
             var request = new SeaRequest(helper.getUrl('seias/rest/seocc/patch/1.0/container/{section}/{action}'));
+            var dateKeys = ["LastScanTime", "LastInstallJobTime", "NextInstallJobTime"];
         
             function format(container) {
-                if(container.LastScanTime) {
-                    container.LastScanTime = new Date(container.LastScanTime);
-                }
+                dateKeys.forEach(function (key) {
+                    if(container[key]) {
+                        container[key] = new Date(container[key]);
+                    }
+                });
                 
                 return container;
             }

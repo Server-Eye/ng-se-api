@@ -2,7 +2,7 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaRemotingPatchInstall', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
-    function seaRemotingPcvisit($http, SeaRequest, helper) {
+        function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest(helper.getUrl('seias/rest/seocc/patch/1.0/container/install/{action}'));
 
             function format(container) {
@@ -51,6 +51,7 @@
                     categories = params.categories,
                     software = params.softwareId,
                     cron = params.cron,
+                    updateManualRelease = params.updateManualRelease,
                     postInstall = params.postInstall;
 
                 var reqParams = {
@@ -64,6 +65,9 @@
                 }
                 if (software) {
                     reqParams = angular.extend(reqParams, helper.getSoftwareIds(software));
+                }
+                if (updateManualRelease != null) {
+                    reqParams.InstallManualReleaseSW = updateManualRelease;
                 }
                 if (postInstall == null) {
                     postInstall = 'NOTHING';
@@ -90,7 +94,7 @@
                 var query = helper.getJobIds(jobIds);
                 query.action = 'software';
 
-                return request.post(query).then(function(containers) {
+                return request.post(query).then(function (containers) {
                     containers.forEach(format);
                     return containers;
                 });
@@ -130,5 +134,5 @@
                     return listSoftware(customerId, jobIds);
                 }
             };
-    }]);
+        }]);
 })();
