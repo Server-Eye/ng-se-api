@@ -1,12 +1,12 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCompliance', ['SeaRequest', 'SeaComplianceConfig', 'SeaComplianceFix', 'SeaComplianceViolation', 
-    function seaCompliance(SeaRequest, SeaComplianceConfig, SeaComplianceFix, SeaComplianceViolation) {
+    angular.module('ngSeApi').factory('seaCompliance', ['SeaRequest', 'seaComplianceConfig', 'seaComplianceFix', 'seaComplianceViolation', 
+    function seaCompliance(SeaRequest, seaComplianceConfig, seaComplianceFix, seaComplianceViolation) {
             return {
-                config: SeaComplianceConfig,
-                fix: SeaComplianceFix,
-                violation: SeaComplianceViolation
+                config: seaComplianceConfig,
+                fix: seaComplianceFix,
+                violation: seaComplianceViolation
             };
     }]);
 })();

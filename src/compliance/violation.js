@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaComplianceFix', ['SeaRequest',
-        function seaComplianceConfig(SeaRequest) {
+    angular.module('ngSeApi').factory('seaComplianceViolation', ['SeaRequest',
+        function seaComplianceViolation(SeaRequest) {
             var request = new SeaRequest('compliance/violation');
 
             function get(cId, tId, checks, messageFormat) {

@@ -975,12 +975,12 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaCompliance', ['SeaRequest', 'SeaComplianceConfig', 'SeaComplianceFix', 'SeaComplianceViolation', 
-    function seaCompliance(SeaRequest, SeaComplianceConfig, SeaComplianceFix, SeaComplianceViolation) {
+    angular.module('ngSeApi').factory('seaCompliance', ['SeaRequest', 'seaComplianceConfig', 'seaComplianceFix', 'seaComplianceViolation', 
+    function seaCompliance(SeaRequest, seaComplianceConfig, seaComplianceFix, seaComplianceViolation) {
             return {
-                config: SeaComplianceConfig,
-                fix: SeaComplianceFix,
-                violation: SeaComplianceViolation
+                config: seaComplianceConfig,
+                fix: seaComplianceFix,
+                violation: seaComplianceViolation
             };
     }]);
 })();
@@ -1049,8 +1049,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaComplianceFix', ['SeaRequest',
-        function seaComplianceConfig(SeaRequest) {
+    angular.module('ngSeApi').factory('seaComplianceViolation', ['SeaRequest',
+        function seaComplianceViolation(SeaRequest) {
             var request = new SeaRequest('compliance/violation');
 
             function get(cId, tId, checks, messageFormat) {
