@@ -4,9 +4,9 @@
     angular.module('ngSeApi').factory('seaCompliance', ['SeaRequest', 'SeaComplianceConfig', 'SeaComplianceFix', 'SeaComplianceViolation', 
     function seaCompliance(SeaRequest, SeaComplianceConfig, SeaComplianceFix, SeaComplianceViolation) {
             return {
-                config: seaComplianceConfig,
-                fix: seaComplianceFix,
-                violation: seaComplianceViolation
+                config: SeaComplianceConfig,
+                fix: SeaComplianceFix,
+                violation: SeaComplianceViolation
             };
     }]);
 })();
