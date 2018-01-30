@@ -914,6 +914,103 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaCompliance', ['SeaRequest', 'SeaComplianceConfig', 'SeaComplianceFix', 'SeaComplianceViolation', 
+    function seaCompliance(SeaRequest, SeaComplianceConfig, SeaComplianceFix, SeaComplianceViolation) {
+            return {
+                config: seaComplianceConfig,
+                fix: seaComplianceFix,
+                violation: seaComplianceViolation
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaComplianceConfig', ['SeaRequest',
+        function seaComplianceConfig(SeaRequest) {
+            var request = new SeaRequest('compliance/config');
+
+            function get(vfId) {
+                return request.get({
+                    vfId: vfId
+                });
+            }
+
+            function update(vfId, tId, checks) {
+                return request.put({
+                    vfId: vfId,
+                    tId: tId,
+                    checks: checks,
+                });
+            }
+
+            function destroy(vfId) {
+                return request.del({
+                    vfId: vfId
+                });
+            }
+
+            return {
+                get: function (vfId) {
+                    return get(vfId);
+                },
+
+                update: function (vfId, tId, checks) {
+                    return update(vfId, tId, checks);
+                },
+
+                destroy: function (vfId) {
+                    return destroy(vfId);
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaComplianceFix', ['SeaRequest',
+        function seaComplianceConfig(SeaRequest) {
+            var request = new SeaRequest('compliance/fix');
+
+            function update(changes) {
+                return request.put({
+                    changes: changes
+                });
+            }
+
+            return {
+                update: function (changes) {
+                    return update(changes);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaComplianceFix', ['SeaRequest',
+        function seaComplianceConfig(SeaRequest) {
+            var request = new SeaRequest('compliance/violation');
+
+            function get(cId, tId, checks, messageFormat) {
+                return request.get({
+                    cId: cId,
+                    tId: tId,
+                    checks: checks,
+                    messageFormat: messageFormat
+                });
+            }
+
+            return {
+                get: function (cId, tId, checks, messageFormat) {
+                    return get(cId, tId, checks, messageFormat);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
     function seaAuth(SeaRequest) {
             var request = new SeaRequest('auth/{action}');
