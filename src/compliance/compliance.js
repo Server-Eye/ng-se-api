@@ -16,7 +16,10 @@
                     });
                 });
 
-                return $q.all(loopPromises);
+                $q.all(loopPromises).then(function () {
+                    console.log(violationList);
+                    return new Promise((resolve, reject) => { resolve(violationList); });
+                });
             }
 
             return {
