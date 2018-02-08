@@ -3,14 +3,15 @@
 
     angular.module('ngSeApi').factory('seaCompliance', ['$q', 'SeaRequest', 'seaComplianceConfig', 'seaComplianceFix', 'seaComplianceViolation', 'seaRemotingIasHelper',
         function seaCompliance($q, SeaRequest, seaComplianceConfig, seaComplianceFix, seaComplianceViolation, helper) {
-            function list(customerId, containerIds) {
+            function list(customerId, containerIds, tId, checks) {
                 var violationList = [];
                 var loopPromises = [];
+
                 angular.forEach(containerIds, function (cId) {
                     var deferred = $q.defer();
                     loopPromises.push(deferred.promise);
-                    
-                    seaComplianceViolation.get(cId, tId, checks, messageFormat).then((res) => {
+
+                    seaComplianceViolation.get(cId, tId, checks).then((res) => {
                         violationList.push(res);
                         deffered.resolve();
                     });
@@ -23,8 +24,8 @@
             }
 
             return {
-                list: function (customerId, containerIds) {
-                    return list(customerId, containerIds);
+                list: function (customerId, containerIds, tId, checks) {
+                    return list(customerId, containerIds, tId, checks);
                 },
 
                 config: seaComplianceConfig,
