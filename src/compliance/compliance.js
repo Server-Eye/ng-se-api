@@ -13,7 +13,7 @@
 
                     seaComplianceViolation.get(cId, tId, checks).then((res) => {
                         violationList.push(res);
-                        deffered.resolve();
+                        deferred.resolve();
                     });
                 });
 
