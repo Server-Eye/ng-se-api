@@ -37,13 +37,7 @@
 
                 });
 
-                $q.all(loopPromises).then(function (res) {
-                    console.log('#####');
-                    console.log(res);
-                    console.log(loopPromises);
-                    console.log('#####');
-                    console.log('foreach loop completed. Do something after it...');
-                });
+                return $q.all(loopPromises);
             }
 
             return {
