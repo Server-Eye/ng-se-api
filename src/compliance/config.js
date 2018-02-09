@@ -31,7 +31,7 @@
                     var deferred = $q.defer();
                     loopPromises.push(deferred.promise);
                     
-                    this.get(vfId).then((res) => {
+                    get(vfId).then((res) => {
                         deferred.resolve(res);
                     });
 
