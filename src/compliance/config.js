@@ -5,56 +5,58 @@
         function seaComplianceConfig($q, SeaRequest) {
             var request = new SeaRequest('compliance/config');
 
-            function get(vfId) {
+            function get(viewFilterId, customerId) {
                 return request.get({
-                    vfId: vfId
+                    viewFilterId: viewFilterId,
+                    customerId: customerId
                 });
             }
 
-            function update(vfId, tId, checks) {
+            function update(viewFilterId, customerId, templateId, checks) {
                 return request.put({
-                    vfId: vfId,
-                    tId: tId,
-                    checks: checks,
+                    viewFilterId: viewFilterId,
+                    customerId: customerId,
+                    templateId: templateId,
+                    checks: checks
                 });
             }
 
-            function destroy(vfId) {
+            function destroy(viewFilterId, customerId) {
                 return request.del({
-                    vfId: vfId
+                    viewFilterId: viewFilterId,
+                    customerId: customerId
                 });
             }
 
-            function list(vfIds) {
+            function list(viewFilterIds, customerId) {
                 var loopPromises = [];
-                angular.forEach(vfIds, function (vfId) {
+                angular.forEach(viewFilterIds, function (viewFilterId) {
                     var deferred = $q.defer();
                     loopPromises.push(deferred.promise);
                     
-                    get(vfId).then(function (res) {
+                    get(viewFilterId, customerId).then(function (res) {
                         deferred.resolve(res);
                     }).catch(function (e) {});
-
                 });
 
                 return $q.all(loopPromises);
             }
 
             return {
-                get: function (vfId) {
-                    return get(vfId);
+                get: function (viewFilterId, customerId) {
+                    return get(viewFilterId, customerId);
                 },
 
-                update: function (vfId, tId, checks) {
-                    return update(vfId, tId, checks);
+                update: function (viewFilterId, customerId, templateId, checks) {
+                    return update(viewFilterId, customerId, templateId, checks);
                 },
 
-                destroy: function (vfId) {
-                    return destroy(vfId);
+                destroy: function (viewFilterId, customerId) {
+                    return destroy(viewFilterId, customerId);
                 },
 
-                list: function (vfIds) {
-                    return list(vfIds);
+                list: function (viewFilterIds, customerId) {
+                    return list(viewFilterIds, customerId);
                 },
             };
         }]);
