@@ -36,7 +36,9 @@
                     
                     get(viewFilterId, customerId).then(function (res) {
                         deferred.resolve(res);
-                    }).catch(function (e) {});
+                    }).catch(function (e) {
+                        deferred.resolve(null);
+                    });
                 });
 
                 return $q.all(loopPromises);
