@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaComplianceConfig', ['$q', 'SeaRequest',
-        function seaComplianceConfig($q, SeaRequest) {
+    angular.module('ngSeApi').factory('seaComplianceConfig', ['$q', 'SeaRequest', 'seaComplianceCustomer', 
+        function seaComplianceConfig($q, SeaRequest, seaComplianceCustomer) {
             var request = new SeaRequest('compliance/config');
 
             function get(viewFilterId, customerId) {
@@ -60,6 +60,8 @@
                 list: function (viewFilterIds, customerId) {
                     return list(viewFilterIds, customerId);
                 },
+
+                customer: seaComplianceCustomer
             };
         }]);
 })();
