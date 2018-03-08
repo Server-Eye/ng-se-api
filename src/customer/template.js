@@ -2,7 +2,7 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaCustomerTemplate', ['SeaRequest',
-    function seaCustomerTag(SeaRequest) {
+    function seaCustomerTemplate(SeaRequest) {
             var request = new SeaRequest('customer/template/{tId}'),
                 requestAgent = new SeaRequest('customer/template/{tId}/agent/{aId}');
 
