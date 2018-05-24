@@ -1145,6 +1145,7 @@
                                                    'seaContainerProposal', 'seaContainerState', 'seaContainerTag', 'seaContainerTemplate',
     function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTag, seaContainerTemplate) {
             var request = new SeaRequest('container/{cId}/{action}');
+            var multiRequest = new SeaRequest('container/{action}');
 
             function formatContainer(container) {
                 if (container.lastBootUpTime) {
@@ -1163,6 +1164,13 @@
                 return request.get({
                     cId: cId,
                     action: 'agents'
+                });
+            }
+
+            function listProposals(cId) {
+                return multiRequest.post({
+                    cId: cId,
+                    action: 'proposal'
                 });
             }
 
@@ -1209,7 +1217,8 @@
                 proposal: seaContainerProposal,
                 state: seaContainerState,
                 tag: seaContainerTag,
-                template: seaContainerTemplate
+                template: seaContainerTemplate,
+                listProposals: listProposals,
             };
                 
             angular.extend(api, seaContainerMisc);
