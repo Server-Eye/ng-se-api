@@ -2,8 +2,9 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaCustomerProperty', ['SeaRequest',
-    function seaCustomerSetting(SeaRequest) {
+    function seaCustomerProperty(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/property/{key}');
+            var requestPost = new SeaRequest('customer/{cId}/property');
 
             function list(cId) {
                 return request.get({
@@ -12,7 +13,7 @@
             }
 
             function create(cId, key, value) {
-                return request.post({
+                return requestPost.post({
                     cId: cId,
                     key: key,
                     value: value
