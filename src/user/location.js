@@ -6,9 +6,10 @@
             var request = new SeaRequest('user/{uId}/location');
 
             function get(uId) {
-                return request.get(uId);
+                return request.get({
+                    uId: uId
+                });
             }
-
             function update(params) {
                 return request.post(params);
             }

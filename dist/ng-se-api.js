@@ -210,7 +210,14 @@
 (function () {
     "use strict";
 
-    var VALID_EVENTS = ['USER_UPDATE', 'NODE_ADD', 'NODE_UPDATE', 'NODE_REMOVE', 'REMOTE_RESULT'];
+    var VALID_EVENTS = [
+        'USER_UPDATE',
+        'NODE_ADD',
+        'NODE_UPDATE',
+        'NODE_REMOVE',
+        'REMOTE_RESULT',
+        'user_location_change',
+    ];
 
     angular.module('ngSeApi').factory('seaSocket', ['$rootScope', 'seaConfig',
     function ($rootScope, seaConfig) {
@@ -914,6 +921,67 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
+    function seaAuth(SeaRequest) {
+            var request = new SeaRequest('auth/{action}');
+
+            function createApiKey(params) {
+                params = params || {};
+                params.action = 'key';
+
+                return request.post(params);
+            }
+
+            function login(params) {
+                params = params || {};
+                params.action = 'login';
+
+                return request.post(params);
+            }
+
+            function logout(params) {
+                params = params || {};
+                params.action = 'logout';
+
+                return request.get(params);
+            }
+
+            return {
+                /**
+                 * create apiKey
+                 * @param {Object} params
+                 * @config {String} [email]
+                 * @config {String} [password]
+                 * @config {Number} [type]
+                 * @config {Number} [validUntil]
+                 * @config {Number} [maxUses]
+                 */
+                createApiKey: function (params) {
+                    return createApiKey(params);
+                },
+
+                /**
+                 * login
+                 * @param {Object} params
+                 * @config {String} [apiKey]
+                 * @config {String} [email]
+                 * @config {String} [password]
+                 * @config {Boolean} [createApiKey]
+                 * @config {String} [apiKeyName]
+                 */
+                login: function (params) {
+                    return login(params);
+                },
+
+                logout: function () {
+                    return logout();
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaComplianceCheck', ['SeaRequest',
         function seaComplianceCheck(SeaRequest) {
             var request = new SeaRequest('compliance/check');
@@ -1075,67 +1143,6 @@
                 }
             };
         }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
-    function seaAuth(SeaRequest) {
-            var request = new SeaRequest('auth/{action}');
-
-            function createApiKey(params) {
-                params = params || {};
-                params.action = 'key';
-
-                return request.post(params);
-            }
-
-            function login(params) {
-                params = params || {};
-                params.action = 'login';
-
-                return request.post(params);
-            }
-
-            function logout(params) {
-                params = params || {};
-                params.action = 'logout';
-
-                return request.get(params);
-            }
-
-            return {
-                /**
-                 * create apiKey
-                 * @param {Object} params
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Number} [type]
-                 * @config {Number} [validUntil]
-                 * @config {Number} [maxUses]
-                 */
-                createApiKey: function (params) {
-                    return createApiKey(params);
-                },
-
-                /**
-                 * login
-                 * @param {Object} params
-                 * @config {String} [apiKey]
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Boolean} [createApiKey]
-                 * @config {String} [apiKeyName]
-                 */
-                login: function (params) {
-                    return login(params);
-                },
-
-                logout: function () {
-                    return logout();
-                }
-            };
-    }]);
 })();
 (function () {
     "use strict";
@@ -3574,9 +3581,10 @@
             var request = new SeaRequest('user/{uId}/location');
 
             function get(uId) {
-                return request.get(uId);
+                return request.get({
+                    uId: uId
+                });
             }
-
             function update(params) {
                 return request.post(params);
             }
@@ -3693,7 +3701,8 @@
         function seaUser(SeaRequest, seaUserGroup, seaUserLocation, seaUserSetting, seaUserSubstitude) {
             var request = new SeaRequest('user/{uId}'),
                 requestUser = new SeaRequest('user/{uId}/{sub}'),
-                requestCustomer = new SeaRequest('user/{uId}/customer');
+                requestCustomer = new SeaRequest('user/{uId}/customer'),
+                requestUsers = new SeaRequest('user');
 
             function create(params) {
                 return request.post(params);
@@ -3722,6 +3731,13 @@
             function listCustomers(uId) {
                 return requestCustomer.get({
                     uId: uId
+                });
+            }
+
+            function listUsers(cId, includeLocation) {
+                return requestUsers.get({
+                    customerId: cId,
+                    includeLocation: includeLocation
                 });
             }
 
@@ -3780,7 +3796,11 @@
                 search: function (params) {
                     return search(params);
                 },
-
+                
+                list: function(cId, includeLocation) {
+                    return listUsers(cId, includeLocation);
+                },
+                
                 group: seaUserGroup,
                 location: seaUserLocation,
                 setting: seaUserSetting,
