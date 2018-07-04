@@ -5,7 +5,8 @@
         function seaUser(SeaRequest, seaUserGroup, seaUserLocation, seaUserSetting, seaUserSubstitude) {
             var request = new SeaRequest('user/{uId}'),
                 requestUser = new SeaRequest('user/{uId}/{sub}'),
-                requestCustomer = new SeaRequest('user/{uId}/customer');
+                requestCustomer = new SeaRequest('user/{uId}/customer'),
+                requestUsers = new SeaRequest('user');
 
             function create(params) {
                 return request.post(params);
@@ -34,6 +35,13 @@
             function listCustomers(uId) {
                 return requestCustomer.get({
                     uId: uId
+                });
+            }
+
+            function listUsers(cId, includeLocation) {
+                return requestUsers.get({
+                    customerId: cId,
+                    includeLocation: includeLocation
                 });
             }
 
@@ -92,7 +100,11 @@
                 search: function (params) {
                     return search(params);
                 },
-
+                
+                list: function(cId, includeLocation) {
+                    return listUsers(cId, includeLocation);
+                },
+                
                 group: seaUserGroup,
                 location: seaUserLocation,
                 setting: seaUserSetting,

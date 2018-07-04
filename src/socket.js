@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    var VALID_EVENTS = ['USER_UPDATE', 'NODE_ADD', 'NODE_UPDATE', 'NODE_REMOVE', 'REMOTE_RESULT'];
+    var VALID_EVENTS = [
+        'USER_UPDATE',
+        'NODE_ADD',
+        'NODE_UPDATE',
+        'NODE_REMOVE',
+        'REMOTE_RESULT',
+        'user_location_change',
+    ];
 
     angular.module('ngSeApi').factory('seaSocket', ['$rootScope', 'seaConfig',
     function ($rootScope, seaConfig) {
