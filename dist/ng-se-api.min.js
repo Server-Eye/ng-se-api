@@ -2644,8 +2644,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor',
-        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor) {
+    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting',
+        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting) {
             var request = new SeaRequest('me/{action}');
 
             function _formatNode(node) {
@@ -2718,7 +2718,8 @@
                 location: seaMeLocation,
                 mobilepush: seaMeMobilepush,
                 notification: seaMeNotification,
-                twofactor: seaMeTwoFactor
+                twofactor: seaMeTwoFactor,
+                setting: seaMeSetting
             };
         }]);
 })();
@@ -2821,6 +2822,37 @@
 
                 destroy: function (nId) {
                     return destroy(nId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMeSetting', ['SeaRequest',
+    function seaMeSetting(SeaRequest) {
+            var request = new SeaRequest('me/setting');
+
+            function list() {
+                return request.get();
+            }
+
+            function update(settings) {
+                settings = settings || {};
+                return request.put(settings);
+            }
+
+            return {
+                list: function (uId) {
+                    return list(uId);
+                },
+
+                /**
+                 * update user
+                 * @param {Object} settings
+                 */
+                update: function (settings) {
+                    return update(settings);
                 }
             };
     }]);
