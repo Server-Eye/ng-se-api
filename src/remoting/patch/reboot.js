@@ -7,13 +7,15 @@
 
             function create(params) {
                 var customerId = params.customerId,
+                    userId = params.userId,
                     containerId = params.containerId,
                     cron = params.cron,
                     action = params.action;
 
                 var reqParams = {
                     Cron: cron,
-                    Action: action
+                    Action: action,
+                    UserId: userId
                 };
 
                 reqParams = angular.extend(reqParams, helper.getContainerIds(containerId));

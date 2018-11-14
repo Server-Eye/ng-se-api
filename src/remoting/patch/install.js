@@ -47,6 +47,7 @@
 
             function create(params) {
                 var customerId = params.customerId,
+                    userId = params.userId,
                     containerId = params.containerId,
                     categories = params.categories,
                     software = params.softwareId,
@@ -55,7 +56,8 @@
                     postInstall = params.postInstall;
 
                 var reqParams = {
-                    Cron: cron
+                    Cron: cron,
+                    UserId: userId
                 };
 
                 reqParams = angular.extend(reqParams, helper.getContainerIds(containerId));
