@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaPatchContainer', ['SeaRequest', 'seaPatchHelper',
         function seaUser(SeaRequest, seaPatchHelper) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}')),
-                requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}')),
+                requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}'));
 
             function get(customerId, cId, action) {
                 if (action) {
@@ -48,19 +48,19 @@
                 disable: function (customerId, cId) {
                     return disable(customerId, cId);
                 },
-                categories: {
+                category: {
                     list: function (customerId, cId) {
                         return get(customerId, cId, 'categories');
                     }
                 },
-                jobs: {
+                job: {
                     list: function (customerId, cId) {
-                        return get(customerId, cId, 'categories');
+                        return get(customerId, cId, 'jobs');
                     }
                 },
-                patches: {
+                patch: {
                     list: function (customerId, cId) {
-                        return get(customerId, cId, 'categories');
+                        return get(customerId, cId, 'patches');
                     }
                 },
             };

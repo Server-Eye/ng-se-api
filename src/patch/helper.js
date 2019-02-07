@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaPatchHelper', ['seaConfig',
     function (seaConfig) {        
             function getUrl(path) {
-                return [seaConfig.getPatchUrl(), path].join('/');
+                return ['http://localhost:3001', path].join('/');
             }
 
             return {

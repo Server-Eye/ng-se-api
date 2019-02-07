@@ -3,7 +3,7 @@
 
     angular.module('ngSeApi').factory('seaPatchViewFilter', ['SeaRequest', 'seaPatchHelper',
         function seaUser(SeaRequest, seaPatchHelper) {
-            var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter')),
+            var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilters')),
                 requestVf = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}/{action}'));
 
                 function get(customerId, vfId, action) {
@@ -37,23 +37,23 @@
                 create: function(customerId, body) {
                     return post(customerId, false, body);
                 },
-                containers: {
-                    list: function() {
+                container: {
+                    list: function(customerId, vfId) {
                         return get(customerId, vfId, 'containers');
                     }
                 },
-                jobs: {
-                    list: function() {
+                job: {
+                    list: function(customerId, vfId) {
                         return get(customerId, vfId, 'jobs');
                     }
                 },
-                patches: {
-                    list: function() {
+                patch: {
+                    list: function(customerId, vfId) {
                         return get(customerId, vfId, 'patches');
                     }
                 },
-                settings: {
-                    list: function() {
+                setting: {
+                    list: function(customerId, vfId) {
                         return get(customerId, vfId, 'settings');
                     },
 

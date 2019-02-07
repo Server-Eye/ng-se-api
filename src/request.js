@@ -25,7 +25,7 @@
             SeaRequest.prototype.formatUrl = function formatUrl(params, url) {
                 url = url || this.urlPath;
                 
-                if(url.indexOf('https://') < 0) {
+                if(url.indexOf('http') < 0) {
                     url = seaConfig.getUrl(url || this.urlPath)
                 }
                 
