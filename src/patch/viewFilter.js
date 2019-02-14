@@ -4,7 +4,9 @@
     angular.module('ngSeApi').factory('seaPatchViewFilter', ['SeaRequest', 'seaPatchHelper',
         function seaUser(SeaRequest, seaPatchHelper) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilters')),
-                requestVf = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}/{action}'));
+                requestVf = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}/{action}')),
+                requestPost = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter')),
+                requestDel = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}'));
 
                 function get(customerId, vfId, action) {
                     if(vfId) {
@@ -27,7 +29,11 @@
                     }
                     
                     var params = angular.extend({}, {customerId: customerId}, body);
-                    return request.post(params);
+                    return requestPost.post(params);
+                }
+
+                function del(customerId, vfId) {
+                    return requestDel.del({customerId: customerId, vfId: vfId});
                 }
 
             return {
@@ -36,6 +42,9 @@
                 },
                 create: function(customerId, body) {
                     return post(customerId, false, body);
+                },
+                destroy: function(customerId, vfId) {
+                    return del(customerId, vfId);
                 },
                 container: {
                     list: function(customerId, vfId) {
