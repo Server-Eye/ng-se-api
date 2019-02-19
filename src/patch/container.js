@@ -5,6 +5,7 @@
         function seaUser(SeaRequest, seaPatchHelper) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}')),
                 requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}'));
+                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}'));
 
             function get(customerId, cId, action) {
                 if (action) {
@@ -37,6 +38,13 @@
                 });
             }
 
+            function getJobsByPatchId(customerId, cId, patchId) {
+                return requestPatch.get({
+                    customerId: customerId,
+                    cId: cId,
+                    patchId: patchId,
+                });
+            }
 
             return {
                 get: function (customerId, cId) {
@@ -61,7 +69,12 @@
                 patch: {
                     list: function (customerId, cId) {
                         return get(customerId, cId, 'patches');
-                    }
+                    },
+                    job: {
+                        list: function(customerId, cId, patchId) {
+                            return getJobsByPatchId(customerId, cId,patchId);
+                        },
+                    },
                 },
             };
         }]);
