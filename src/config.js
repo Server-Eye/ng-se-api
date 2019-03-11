@@ -6,6 +6,7 @@
             var config = {
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
+                pmUrl: 'https://pm.server-eye.de',
                 apiVersion: 2,
                 apiKey: null,
                 getUrl: function (path) {
@@ -37,6 +38,10 @@
                 config.patchUrl = patchUrl;
             }
 
+            this.setPmUrl = function (pmUrl) {
+                config.pmUrl = pmUrl;
+            }
+
             this.setApiVersion = function (apiVersion) {
                 config.apiVersion = apiVersion;
             }
@@ -52,6 +57,9 @@
                     },
                     getPatchUrl: function () {
                         return config.patchUrl;
+                    },
+                    getPmUrl: function () {
+                        return config.pmUrl;
                     },
                     getApiVersion: function () {
                         return config.apiVersion;
