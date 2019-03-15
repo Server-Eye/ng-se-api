@@ -9,7 +9,7 @@
                 params = params || {};
                 params.sub = 'actionlog';
 
-                return request.get(params);
+                return request.post(params);
             }
 
             return {
