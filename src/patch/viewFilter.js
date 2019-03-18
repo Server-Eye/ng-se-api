@@ -30,7 +30,7 @@
 
             function post(customerId, vfId, body, action) {
                 if (vfId) {
-                    var params = angular.extend({}, { customerId: customerId, vfId, vfId, action: action }, body);
+                    var params = angular.extend({}, { customerId: customerId, vfId: vfId, action: action }, body);
                     return requestVf.post(params);
                 }
 
