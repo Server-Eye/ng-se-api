@@ -5,7 +5,7 @@
         function seaUser(SeaRequest, seaPatchHelper) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}')),
                 requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}')),
-                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}'));
+                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}/jobs'));
 
             function get(customerId, cId, action, queryParameters) {
                 if (action) {
