@@ -5,7 +5,8 @@
         function seaUser(SeaRequest, seaPatchHelper) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}')),
                 requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}')),
-                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}/jobs'));
+                requestPatchJobs = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}/jobs')),
+                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}'));
 
             function get(customerId, cId, action, queryParameters) {
                 if (action) {
@@ -53,7 +54,15 @@
                 if (queryParameters) {
                     params = angular.extend({}, params, queryParameters);
                 }
-                return requestPatch.get(params);
+                return requestPatchJobs.get(params);
+            }
+
+            function getPatchById(customerId, cId, patchId) {
+                return requestPatch.get({
+                    customerId: customerId,
+                    cId: cId,
+                    patchId: patchId,
+                });
             }
 
             return {
@@ -74,7 +83,10 @@
                 job: {
                     list: function (customerId, cId, queryParameters) {
                         return get(customerId, cId, 'jobs', queryParameters);
-                    }
+                    },
+                    get: function(customerId, cId, patchId) {
+                        return getPatchById(customerId, cId, patchId);
+                    },
                 },
                 patch: {
                     list: function (customerId, cId, queryParameters) {
