@@ -92,6 +92,9 @@
                     list: function (customerId, cId, queryParameters) {
                         return get(customerId, cId, 'patches', queryParameters);
                     },
+                    get: function (customerId, cId, patchId) {
+                        return getPatchById(customerId, cId, patchId);
+                    },
                     job: {
                         list: function (customerId, cId, queryParameters, patchId) {
                             return getJobsByPatchId(customerId, cId, queryParameters, patchId);
