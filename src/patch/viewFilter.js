@@ -60,12 +60,18 @@
                 job: {
                     list: function (customerId, vfId, queryParameters) {
                         return get(customerId, vfId, 'jobs', queryParameters);
-                    }
+                    },
+                    history: function (customerId, vfId, queryParameters) {
+                        return get(customerId, vfId, 'jobs/history', queryParameters);
+                    },
                 },
                 patch: {
                     list: function (customerId, vfId, queryParameters) {
                         return get(customerId, vfId, 'patches', queryParameters);
-                    }
+                    },
+                    history: function (customerId, vfId, queryParameters) {
+                        return get(customerId, vfId, 'patches/history', queryParameters);
+                    },
                 },
                 setting: {
                     list: function (customerId, vfId) {

@@ -87,6 +87,9 @@
                     get: function(customerId, cId, patchId) {
                         return getPatchById(customerId, cId, patchId);
                     },
+                    history: function (customerId, cId, queryParameters) {
+                        return get(customerId, cId, 'jobs/history', queryParameters);
+                    },
                 },
                 patch: {
                     list: function (customerId, cId, queryParameters) {
@@ -94,6 +97,9 @@
                     },
                     get: function (customerId, cId, patchId) {
                         return getPatchById(customerId, cId, patchId);
+                    },
+                    history: function (customerId, cId, queryParameters) {
+                        return get(customerId, cId, 'patches/history', queryParameters);
                     },
                     job: {
                         list: function (customerId, cId, queryParameters, patchId) {
