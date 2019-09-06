@@ -1,3 +1,5 @@
+import { stat } from "fs";
+
 (function () {
     "use strict";
 
@@ -50,7 +52,9 @@
                 if (angular.isArray(params.cId)) {
                     return request.post(params, 'container/state').then(function (statesById) {
                         if(angular.isArray(statesById)) {
-                            statesById[params.cId[0]] = statesById;
+                            var n = {}
+                            n[params.cId[0]] = statesById;
+                            statesById = n;
                         }
 
                         angular.forEach(Object.keys(statesById), function (key) {
