@@ -50,7 +50,7 @@
                 if (angular.isArray(params.aId)) {
                     return request.post(params, 'agent/state').then(function (statesById) {
                         if(angular.isArray(statesById)) {
-                            var n = {}
+                            var n = {};
                             n[params.aId[0]] = statesById;
                             statesById = n;
                         }

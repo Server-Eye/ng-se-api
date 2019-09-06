@@ -842,7 +842,7 @@
                 if (angular.isArray(params.aId)) {
                     return request.post(params, 'agent/state').then(function (statesById) {
                         if(angular.isArray(statesById)) {
-                            var n = {}
+                            var n = {};
                             n[params.aId[0]] = statesById;
                             statesById = n;
                         }
@@ -1612,7 +1612,7 @@ import { stat } from "fs";
                 if (angular.isArray(params.cId)) {
                     return request.post(params, 'container/state').then(function (statesById) {
                         if(angular.isArray(statesById)) {
-                            var n = {}
+                            var n = {};
                             n[params.cId[0]] = statesById;
                             statesById = n;
                         }
@@ -3340,34 +3340,6 @@ import { stat } from "fs";
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
-        function seaSearch(SeaRequest) {
-            var request = new SeaRequest('search/{sub}');
-
-            function actionlog(params) {
-                params = params || {};
-                params.sub = 'actionlog';
-
-                return request.post(params);
-            }
-
-            return {
-                /**
-                 * search through actionlog
-                 * @param {Object} params
-                 * @config {Object} [query]
-                 * @config {Number} [limit]
-                 * @config {Number} [start]
-                 */
-                actionlog: function (params) {
-                    return actionlog(params);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
     angular.module('ngSeApi').factory('seaRemotingAntivirus', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest(helper.getUrl('seias/rest/seocc/virus/1.0/{section}/{action}'));
@@ -3863,6 +3835,34 @@ import { stat } from "fs";
         }]);
 })();
 
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
+        function seaSearch(SeaRequest) {
+            var request = new SeaRequest('search/{sub}');
+
+            function actionlog(params) {
+                params = params || {};
+                params.sub = 'actionlog';
+
+                return request.post(params);
+            }
+
+            return {
+                /**
+                 * search through actionlog
+                 * @param {Object} params
+                 * @config {Object} [query]
+                 * @config {Number} [limit]
+                 * @config {Number} [start]
+                 */
+                actionlog: function (params) {
+                    return actionlog(params);
+                }
+            };
+        }]);
+})();
 (function () {
     "use strict";
 

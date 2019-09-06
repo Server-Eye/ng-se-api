@@ -52,7 +52,7 @@ import { stat } from "fs";
                 if (angular.isArray(params.cId)) {
                     return request.post(params, 'container/state').then(function (statesById) {
                         if(angular.isArray(statesById)) {
-                            var n = {}
+                            var n = {};
                             n[params.cId[0]] = statesById;
                             statesById = n;
                         }
