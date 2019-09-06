@@ -49,6 +49,10 @@
 
                 if (angular.isArray(params.aId)) {
                     return request.post(params, 'agent/state').then(function (statesById) {
+                        if(angular.isArray(statesById)) {
+                            statesById[params.aId[0]] = statesById;
+                        }
+                        
                         angular.forEach(Object.keys(statesById), function (key) {
                             angular.forEach(statesById[key], formatState);
                         });
