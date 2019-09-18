@@ -1150,6 +1150,652 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaContainer', ['SeaRequest',
+                                                   'seaContainerMisc', 'seaContainerNote', 'seaContainerNotification',
+                                                   'seaContainerProposal', 'seaContainerState', 'seaContainerTag', 'seaContainerTemplate',
+    function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTag, seaContainerTemplate) {
+            var request = new SeaRequest('container/{cId}/{action}');
+            var multiRequest = new SeaRequest('container/{action}');
+
+            function formatContainer(container) {
+                if (container.lastBootUpTime) {
+                    container.lastBootUpTime = new Date(container.lastBootUpTime);
+                }
+                return container;
+            }
+
+            function get(cId) {
+                return request.get({
+                    cId: cId
+                }).then(formatContainer);
+            }
+        
+            function listAgents(cId) {
+                return request.get({
+                    cId: cId,
+                    action: 'agents'
+                });
+            }
+
+            function listProposals(cId) {
+                return multiRequest.post({
+                    cId: cId,
+                    action: 'proposal'
+                });
+            }
+
+            function update(container) {
+                return request.put(container);
+            }
+
+            function destroy(cId) {
+                return request.del({
+                    cId: cId
+                });
+            }
+
+            var api = {
+                get: function (cId) {
+                    return get(cId);
+                },
+
+                /**
+                 * update container
+                 * @param {Object} container
+                 * @config {String} [cId]
+                 * @config {String} [name]
+                 * @config {Boolean} [alertOffline]
+                 * @config {Boolean} [alertShutdown]
+                 * @config {Number} [maxHeartbeatTimeout]
+                 */
+                update: function (container) {
+                    return update(container);
+                },
+
+                destroy: function (cId) {
+                    return destroy(cId);
+                },
+                
+                agent: {
+                    list: function (cId) {
+                        return listAgents(cId);
+                    }
+                },
+
+                note: seaContainerNote,
+                notification: seaContainerNotification,
+                proposal: seaContainerProposal,
+                state: seaContainerState,
+                tag: seaContainerTag,
+                template: seaContainerTemplate,
+                listProposals: listProposals,
+            };
+                
+            angular.extend(api, seaContainerMisc);
+        
+            return api;
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerMisc', ['SeaRequest',
+        function seaContainerMisc(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/{action}');
+
+            function formatActionlog(entry) {
+                entry.changeDate = new Date(entry.changeDate);
+                entry.changed = JSON.parse(entry.changed);
+                try {
+                    entry.userName = JSON.parse(entry.userName);
+                } catch (e) {
+                    entry.userName = {
+                        email: entry.userName,
+                        sur: entry.userName
+                    };
+                }
+
+                if (entry.information) {
+                    try {
+                        entry.information = JSON.parse(entry.information);
+                    } catch (e) {
+                        entry.information = null;
+                    }
+                }
+
+                return entry;
+            }
+
+            function listActionlog(cId, params) {
+                params = params || {};
+                params.cId = cId;
+                params.action = 'actionlog';
+                return request.get(params);
+            }
+
+            function listEvents(cId, params) {
+                params = params || {};
+                params.cId = cId;
+                params.action = 'events';
+                return request.get(params);
+            }
+
+            function getInventory(cId, params) {
+                params = params || {};
+                params.cId = cId;
+                params.action = 'inventory';
+                return request.get(params);
+            }
+
+            function action(cId, action, params) {
+                params = params || {};
+                params.cId = cId;
+                params.action = action;
+                return request.post(params);
+            }
+
+            return {
+                actionlog: {
+                    /**
+                     * list action log entries
+                     * @param   {String} cId
+                     * @param   {Object} params
+                     * @config  {Number} [start]
+                     * @config  {Number} [limit]
+                     * @returns {Object} promise
+                     */
+                    list: function (cId, params) {
+                        return listActionlog(cId, params).then(function (entries) {
+                            angular.forEach(entries, formatActionlog);
+
+                            return entries;
+                        });
+                    }
+                },
+
+                events: {
+                    /**
+                     * list action log entries
+                     * @param   {String} cId
+                     * @param   {Object} params
+                     * @config  {Number} start
+                     * @config  {Number} end
+                     * @returns {Object} promise
+                     */
+                    list: function (cId, params) {
+                        return listEvents(cId, params);
+                    }
+                },
+
+                inventory: {
+                    /**
+                     * get inventory of the container
+                     * @param   {String}   cId
+                     * @param   {String}   params
+                     * @config {String} [format]
+                     * @returns {Object} promise
+                     */
+                    get: function (cId, params) {
+                        return getInventory(cId, params);
+                    },
+
+                    getFileLink: function (cId, params) {
+                        params = params || {};
+                        params.cId = cId;
+                        params.action = 'inventory';
+
+                        return request.formatUrl(params);
+                    }
+                },
+
+                /**
+                 * restart a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                restart: function (cId) {
+                    return action(cId, 'restart');
+                },
+
+                /**
+                 * stop a container
+                 * @param   {String} cId
+                 * @param   {Int}    until timestamp
+                 * @returns {Object} promise
+                 */
+                stop: function (cId, until) {
+                    return action(cId, 'stop', {
+                        until: until
+                    });
+                },
+
+                /**
+                 * start a container
+                 * @param   {String} cId
+                 * @returns {Object} promise
+                 */
+                start: function (cId) {
+                    return action(cId, 'start');
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerNote', ['SeaRequest',
+    function seaContainerNote(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/note/{nId}');
+
+            function formatNote(note) {
+                note.postedOn = new Date(note.postedOn);
+                return note;
+            }
+
+            function create(params) {
+                return request.post(params).then(formatNote);
+            }
+
+            function list(cId) {
+                return request.get({
+                    cId: cId
+                }).then(function (notes) {
+                    angular.forEach(notes, formatNote);
+
+                    return notes;
+                });
+            }
+
+            function count(cId) {
+                return request.get({
+                    cId: cId,
+                    nId: 'count'
+                });
+            }
+        
+            function destroy(cId, nId) {
+                return request.del({
+                    cId: cId,
+                    nId: nId
+                });
+            }
+
+            return {
+                /**
+                 * create note
+                 * @param {Object} params
+                 * @config {String} [cId]
+                 * @config {String} [message]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                list: function (cId) {
+                    return list(cId);
+                },
+                
+                count: function (cId) {
+                    return count(cId);
+                },
+
+                destroy: function (cId, nId) {
+                    return destroy(cId, nId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerNotification', ['SeaRequest',
+    function seaContainerNotification(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/notification/{nId}');
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function update(notification) {
+                return request.put(notification);
+            }
+
+            function list(cId) {
+                return request.get({
+                    cId: cId
+                });
+            }
+
+            function destroy(cId, nId) {
+                return request.del({
+                    cId: cId,
+                    nId: nId
+                });
+            }
+
+            return {
+                /**
+                 * create notification
+                 * @param {Object} params
+                 * @config {String} [cId]
+                 * @config {String} [userId]
+                 * @config {Boolean} [mail]
+                 * @config {Boolean} [phone]
+                 * @config {Boolean} [ticket]
+                 * @config {String} [deferId]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                /**
+                 * update notification
+                 * @param {Object} params
+                 * @config {String} [nId]
+                 * @config {String} [cId]
+                 * @config {String} [userId]
+                 * @config {Boolean} [mail]
+                 * @config {Boolean} [phone]
+                 * @config {Boolean} [ticket]
+                 * @config {String} [deferId]
+                 */
+                update: function (notification) {
+                    return update(notification);
+                },
+
+                list: function (cId) {
+                    return list(cId);
+                },
+
+                destroy: function (cId, nId) {
+                    return destroy(cId, nId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerProposal', ['SeaRequest',
+    function seaContainerProposal(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/proposal/{pId}');
+
+            function accept(cId, pId) {
+                return request.put({
+                    cId: cId,
+                    pId: pId
+                });
+            }
+
+            function list(cId) {
+                return request.get({
+                    cId: cId
+                });
+            }
+
+            function deny(cId, pId) {
+                return request.del({
+                    cId: cId,
+                    pId: pId
+                });
+            }
+
+            function listSettings(cId, pId) {
+                return request.get({
+                    cId: cId,
+                    pId: pId
+                }, 'container/{cId}/proposal/{pId}/setting');
+            }
+
+            return {
+                accept: function (cId, pId) {
+                    return accept(cId, pId);
+                },
+
+                list: function (cId) {
+                    return list(cId);
+                },
+
+                deny: function (cId, pId) {
+                    return deny(cId, pId);
+                },
+
+                settings: {
+                    list: function (cId, pId) {
+                        return listSettings(cId, pId);
+                    }
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest',
+        function seaContainerState(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/state/{method}'),
+                stateRequest = new SeaRequest('container/{cId}/state/{sId}'),
+                hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
+
+            function formatState(state) {
+                state.date = new Date(state.date);
+                state.lastDate = new Date(state.lastDate);
+
+                if (state.silencedUntil) {
+                    state.silencedUntil = new Date(state.silencedUntil);
+                }
+
+                if (state.hints) {
+                    angular.forEach(state.hints, formatHint);
+                }
+
+                return state;
+            }
+
+            function formatHint(hint) {
+                hint.date = new Date(hint.date);
+
+                if (hint.until) {
+                    hint.until = new Date(hint.until);
+                }
+
+                return hint;
+            }
+
+            function hint(params) {
+                return hintRequest.post(params).then(formatHint);
+            }
+
+            function stats(cId, params) {
+                params = params || {};
+                params.cId = cId;
+                params.method = 'stats';
+
+                return request.get(params);
+            }
+
+            function list(cId, params) {
+                params = params || {};
+                params.cId = cId;
+
+                if (angular.isArray(params.cId)) {
+                    return request.post(params, 'container/state').then(function (statesById) {
+                        if (angular.isArray(statesById)) {
+                            var n = {};
+                            n[params.cId[0]] = statesById;
+                            statesById = n;
+                        }
+
+                        angular.forEach(Object.keys(statesById), function (key) {
+                            angular.forEach(statesById[key], formatState);
+                        });
+                    });
+                }
+                return request.get(params).then(function (states) {
+                    angular.forEach(states, formatState);
+
+                    return states;
+                });
+            }
+
+            function get(cId, sId, params) {
+                params = params || {};
+                params.sId = sId;
+                params.cId = cId;
+
+                return stateRequest.get(params).then(function (state) {
+                    return formatState(state);
+                });
+            }
+
+            return {
+                /**
+                 * create container state hint
+                 * @param {Object} params
+                 * @config {String} [cId]
+                 * @config {String} [sId]
+                 * @config {String} [author]
+                 * @config {Number} [hintType]
+                 * @config {String} [message]
+                 * @config {String} [assignedUser]
+                 * @config {Array} [mentionedUsers]
+                 * @config {Boolean} [private]
+                 * @config {Number} [until]
+                 */
+                hint: function (params) {
+                    return hint(params);
+                },
+
+                /**
+                 * list container states
+                 * @param   {String}   cId
+                 * @param {Object}
+                 * @config {Number} [limit]
+                 * @config {Number} [start]
+                 * @config {Number} [end]
+                 * @config {Boolean} [includeHints]
+                 * @config {Boolean} [includeRawData]
+                 * @config {String} [format]
+                 */
+                list: function (cId, params) {
+                    return list(cId, params);
+                },
+
+                /**
+              * get state by Id
+              * @param   {String}   cId
+              * @param   {String}   sId
+              * @param {Object}
+              * @config {Boolean} [includeHints]
+              * @config {Boolean} [includeMessage]
+              * @config {Boolean} [includeRawData]
+              * @config {String} [format]
+              */
+                get: function (cId, sId, params) {
+                    return get(cId, sId, params);
+                },
+
+                /**
+                 * list container state stats
+                 * @param   {String}   cId
+                 * @param {Object}
+                 * @config {Number} [start] : now
+                 * @config {Number} [end]   : now - 12 months
+                 */
+                stats: function (cId, params) {
+                    return stats(cId, params);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerTag', ['SeaRequest',
+    function seaAgentNote(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/tag/{tId}');
+
+            function create(params) {
+                return request.put(params);
+            }
+
+            function list(cId) {
+                return request.get({
+                    cId: cId
+                });
+            }
+
+            function destroy(cId, tId) {
+                return request.del({
+                    cId: cId,
+                    tId: tId
+                });
+            }
+
+            return {
+                /**
+                 * add tag to container
+                 * @param {Object} params
+                 * @config {String} [cId]
+                 * @config {String} [tId]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                list: function (cId) {
+                    return list(cId);
+                },
+
+                destroy: function (cId, tId) {
+                    return destroy(cId, tId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaContainerTemplate', ['SeaRequest',
+    function seaContainerTemplate(SeaRequest) {
+            var request = new SeaRequest('container/{cId}/template/{tId}');
+
+            function create(cId) {
+                return request.post({
+                    cId: cId
+                });
+            }
+
+            function assign(cId, tId) {
+                return request.post({
+                    cId: cId,
+                    tId: tId
+                });
+            }
+
+            return {
+                /**
+                 * create template form system
+                 * @param {String} cId
+                 */
+                create: function (cId) {
+                    return create(cId);
+                },
+
+                /**
+                 * assign a template to a system
+                 * @param {String} cId
+                 * @param {String} tId
+                 */
+                assign: function (cId, tId) {
+                    return assign(cId, tId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
     function seaAuth(SeaRequest) {
             var request = new SeaRequest('auth/{action}');
@@ -1204,154 +1850,6 @@
 
                 logout: function () {
                     return logout();
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaGroup', ['SeaRequest', 'seaGroupSetting', 'seaGroupUser',
-    function seaGroup(SeaRequest, seaGroupSetting, seaGroupUser) {
-            var request = new SeaRequest('group/{gId}');
-
-            function create(params) {
-                return request.post(params);
-            }
-
-            function get(gId) {
-                return request.get({
-                    gId: gId
-                });
-            }
-
-            function update(group) {
-                return request.put(group);
-            }
-
-            function destroy(gId) {
-                return request.del({
-                    gId: gId
-                });
-            }
-
-            return {
-                /**
-                 * create group
-                 * @param {Object} params
-                 * @config {String} [customerId]
-                 * @config {String} [name]
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-
-                get: function (gId) {
-                    return get(gId);
-                },
-
-                /**
-                 * update group
-                 * @param {Object} group
-                 * @config {String} [gId]
-                 * @config {String} [name]
-                 */
-                update: function (group) {
-                    return update(group);
-                },
-
-                destroy: function (gId) {
-                    return destroy(gId);
-                },
-
-                setting: seaGroupSetting,
-                user: seaGroupUser
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaGroupSetting', ['SeaRequest',
-    function seaGroupSetting(SeaRequest) {
-            var request = new SeaRequest('group/{gId}/setting');
-
-            function list(gId) {
-                return request.get({
-                    gId: gId
-                });
-            }
-
-            function update(gId, settings) {
-                settings = settings || {};
-                settings.gId = gId;
-                return request.put(settings);
-            }
-
-            return {
-                list: function (gId) {
-                    return list(gId);
-                },
-
-                /**
-                 * update group
-                 * @param {String} gId
-                 * @param {Object} settings
-                 */
-                update: function (gId, settings) {
-                    return update(gId, settings);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaGroupUser', ['SeaRequest',
-    function seaGroupUser(SeaRequest) {
-            var request = new SeaRequest('group/{gId}/user/{uId}');
-
-            function list(gId) {
-                return request.get({
-                    gId: gId
-                });
-            }
-
-            function addUser(gId, uId) {
-                return request.put({
-                    uId: uId,
-                    gId: gId
-                });
-            }
-
-            function removeUser(gId, uId) {
-                return request.del({
-                    uId: uId,
-                    gId: gId
-                });
-            }
-
-            return {
-                list: function (gId) {
-                    return list(gId);
-                },
-
-                /**
-                 * add user to group
-                 * @param {String} gId
-                 * @param {String} uId
-                 */
-                add: function (gId, uId) {
-                    return addUser(gId, uId);
-                },
-
-                /**
-                 * remove user to group
-                 * @param {String} gId
-                 * @param {String} uId
-                 */
-                remove: function (gId, uId) {
-                    return removeUser(gId, uId);
                 }
             };
     }]);
@@ -2071,365 +2569,95 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaContainer', ['SeaRequest',
-                                                   'seaContainerMisc', 'seaContainerNote', 'seaContainerNotification',
-                                                   'seaContainerProposal', 'seaContainerState', 'seaContainerTag', 'seaContainerTemplate',
-    function seaContainer(SeaRequest, seaContainerMisc, seaContainerNote, seaContainerNotification, seaContainerProposal, seaContainerState, seaContainerTag, seaContainerTemplate) {
-            var request = new SeaRequest('container/{cId}/{action}');
-            var multiRequest = new SeaRequest('container/{action}');
+    angular.module('ngSeApi').factory('seaGroup', ['SeaRequest', 'seaGroupSetting', 'seaGroupUser',
+    function seaGroup(SeaRequest, seaGroupSetting, seaGroupUser) {
+            var request = new SeaRequest('group/{gId}');
 
-            function formatContainer(container) {
-                if (container.lastBootUpTime) {
-                    container.lastBootUpTime = new Date(container.lastBootUpTime);
-                }
-                return container;
+            function create(params) {
+                return request.post(params);
             }
 
-            function get(cId) {
+            function get(gId) {
                 return request.get({
-                    cId: cId
-                }).then(formatContainer);
-            }
-        
-            function listAgents(cId) {
-                return request.get({
-                    cId: cId,
-                    action: 'agents'
+                    gId: gId
                 });
             }
 
-            function listProposals(cId) {
-                return multiRequest.post({
-                    cId: cId,
-                    action: 'proposal'
-                });
+            function update(group) {
+                return request.put(group);
             }
 
-            function update(container) {
-                return request.put(container);
-            }
-
-            function destroy(cId) {
+            function destroy(gId) {
                 return request.del({
-                    cId: cId
+                    gId: gId
                 });
             }
 
-            var api = {
-                get: function (cId) {
-                    return get(cId);
-                },
-
+            return {
                 /**
-                 * update container
-                 * @param {Object} container
-                 * @config {String} [cId]
+                 * create group
+                 * @param {Object} params
+                 * @config {String} [customerId]
                  * @config {String} [name]
-                 * @config {Boolean} [alertOffline]
-                 * @config {Boolean} [alertShutdown]
-                 * @config {Number} [maxHeartbeatTimeout]
-                 */
-                update: function (container) {
-                    return update(container);
-                },
-
-                destroy: function (cId) {
-                    return destroy(cId);
-                },
-                
-                agent: {
-                    list: function (cId) {
-                        return listAgents(cId);
-                    }
-                },
-
-                note: seaContainerNote,
-                notification: seaContainerNotification,
-                proposal: seaContainerProposal,
-                state: seaContainerState,
-                tag: seaContainerTag,
-                template: seaContainerTemplate,
-                listProposals: listProposals,
-            };
-                
-            angular.extend(api, seaContainerMisc);
-        
-            return api;
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaContainerMisc', ['SeaRequest',
-        function seaContainerMisc(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/{action}');
-
-            function formatActionlog(entry) {
-                entry.changeDate = new Date(entry.changeDate);
-                entry.changed = JSON.parse(entry.changed);
-                try {
-                    entry.userName = JSON.parse(entry.userName);
-                } catch (e) {
-                    entry.userName = {
-                        email: entry.userName,
-                        sur: entry.userName
-                    };
-                }
-
-                if (entry.information) {
-                    try {
-                        entry.information = JSON.parse(entry.information);
-                    } catch (e) {
-                        entry.information = null;
-                    }
-                }
-
-                return entry;
-            }
-
-            function listActionlog(cId, params) {
-                params = params || {};
-                params.cId = cId;
-                params.action = 'actionlog';
-                return request.get(params);
-            }
-
-            function listEvents(cId, params) {
-                params = params || {};
-                params.cId = cId;
-                params.action = 'events';
-                return request.get(params);
-            }
-
-            function getInventory(cId, params) {
-                params = params || {};
-                params.cId = cId;
-                params.action = 'inventory';
-                return request.get(params);
-            }
-
-            function action(cId, action, params) {
-                params = params || {};
-                params.cId = cId;
-                params.action = action;
-                return request.post(params);
-            }
-
-            return {
-                actionlog: {
-                    /**
-                     * list action log entries
-                     * @param   {String} cId
-                     * @param   {Object} params
-                     * @config  {Number} [start]
-                     * @config  {Number} [limit]
-                     * @returns {Object} promise
-                     */
-                    list: function (cId, params) {
-                        return listActionlog(cId, params).then(function (entries) {
-                            angular.forEach(entries, formatActionlog);
-
-                            return entries;
-                        });
-                    }
-                },
-
-                events: {
-                    /**
-                     * list action log entries
-                     * @param   {String} cId
-                     * @param   {Object} params
-                     * @config  {Number} start
-                     * @config  {Number} end
-                     * @returns {Object} promise
-                     */
-                    list: function (cId, params) {
-                        return listEvents(cId, params);
-                    }
-                },
-
-                inventory: {
-                    /**
-                     * get inventory of the container
-                     * @param   {String}   cId
-                     * @param   {String}   params
-                     * @config {String} [format]
-                     * @returns {Object} promise
-                     */
-                    get: function (cId, params) {
-                        return getInventory(cId, params);
-                    },
-
-                    getFileLink: function (cId, params) {
-                        params = params || {};
-                        params.cId = cId;
-                        params.action = 'inventory';
-
-                        return request.formatUrl(params);
-                    }
-                },
-
-                /**
-                 * restart a container
-                 * @param   {String} cId
-                 * @returns {Object} promise
-                 */
-                restart: function (cId) {
-                    return action(cId, 'restart');
-                },
-
-                /**
-                 * stop a container
-                 * @param   {String} cId
-                 * @param   {Int}    until timestamp
-                 * @returns {Object} promise
-                 */
-                stop: function (cId, until) {
-                    return action(cId, 'stop', {
-                        until: until
-                    });
-                },
-
-                /**
-                 * start a container
-                 * @param   {String} cId
-                 * @returns {Object} promise
-                 */
-                start: function (cId) {
-                    return action(cId, 'start');
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaContainerNote', ['SeaRequest',
-    function seaContainerNote(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/note/{nId}');
-
-            function formatNote(note) {
-                note.postedOn = new Date(note.postedOn);
-                return note;
-            }
-
-            function create(params) {
-                return request.post(params).then(formatNote);
-            }
-
-            function list(cId) {
-                return request.get({
-                    cId: cId
-                }).then(function (notes) {
-                    angular.forEach(notes, formatNote);
-
-                    return notes;
-                });
-            }
-
-            function count(cId) {
-                return request.get({
-                    cId: cId,
-                    nId: 'count'
-                });
-            }
-        
-            function destroy(cId, nId) {
-                return request.del({
-                    cId: cId,
-                    nId: nId
-                });
-            }
-
-            return {
-                /**
-                 * create note
-                 * @param {Object} params
-                 * @config {String} [cId]
-                 * @config {String} [message]
                  */
                 create: function (params) {
                     return create(params);
                 },
 
-                list: function (cId) {
-                    return list(cId);
-                },
-                
-                count: function (cId) {
-                    return count(cId);
+                get: function (gId) {
+                    return get(gId);
                 },
 
-                destroy: function (cId, nId) {
-                    return destroy(cId, nId);
-                }
+                /**
+                 * update group
+                 * @param {Object} group
+                 * @config {String} [gId]
+                 * @config {String} [name]
+                 */
+                update: function (group) {
+                    return update(group);
+                },
+
+                destroy: function (gId) {
+                    return destroy(gId);
+                },
+
+                setting: seaGroupSetting,
+                user: seaGroupUser
             };
     }]);
 })();
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaContainerNotification', ['SeaRequest',
-    function seaContainerNotification(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/notification/{nId}');
+    angular.module('ngSeApi').factory('seaGroupSetting', ['SeaRequest',
+    function seaGroupSetting(SeaRequest) {
+            var request = new SeaRequest('group/{gId}/setting');
 
-            function create(params) {
-                return request.post(params);
-            }
-
-            function update(notification) {
-                return request.put(notification);
-            }
-
-            function list(cId) {
+            function list(gId) {
                 return request.get({
-                    cId: cId
+                    gId: gId
                 });
             }
 
-            function destroy(cId, nId) {
-                return request.del({
-                    cId: cId,
-                    nId: nId
-                });
+            function update(gId, settings) {
+                settings = settings || {};
+                settings.gId = gId;
+                return request.put(settings);
             }
 
             return {
-                /**
-                 * create notification
-                 * @param {Object} params
-                 * @config {String} [cId]
-                 * @config {String} [userId]
-                 * @config {Boolean} [mail]
-                 * @config {Boolean} [phone]
-                 * @config {Boolean} [ticket]
-                 * @config {String} [deferId]
-                 */
-                create: function (params) {
-                    return create(params);
+                list: function (gId) {
+                    return list(gId);
                 },
 
                 /**
-                 * update notification
-                 * @param {Object} params
-                 * @config {String} [nId]
-                 * @config {String} [cId]
-                 * @config {String} [userId]
-                 * @config {Boolean} [mail]
-                 * @config {Boolean} [phone]
-                 * @config {Boolean} [ticket]
-                 * @config {String} [deferId]
+                 * update group
+                 * @param {String} gId
+                 * @param {Object} settings
                  */
-                update: function (notification) {
-                    return update(notification);
-                },
-
-                list: function (cId) {
-                    return list(cId);
-                },
-
-                destroy: function (cId, nId) {
-                    return destroy(cId, nId);
+                update: function (gId, settings) {
+                    return update(gId, settings);
                 }
             };
     }]);
@@ -2437,279 +2665,51 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaContainerProposal', ['SeaRequest',
-    function seaContainerProposal(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/proposal/{pId}');
+    angular.module('ngSeApi').factory('seaGroupUser', ['SeaRequest',
+    function seaGroupUser(SeaRequest) {
+            var request = new SeaRequest('group/{gId}/user/{uId}');
 
-            function accept(cId, pId) {
+            function list(gId) {
+                return request.get({
+                    gId: gId
+                });
+            }
+
+            function addUser(gId, uId) {
                 return request.put({
-                    cId: cId,
-                    pId: pId
+                    uId: uId,
+                    gId: gId
                 });
             }
 
-            function list(cId) {
-                return request.get({
-                    cId: cId
-                });
-            }
-
-            function deny(cId, pId) {
+            function removeUser(gId, uId) {
                 return request.del({
-                    cId: cId,
-                    pId: pId
-                });
-            }
-
-            function listSettings(cId, pId) {
-                return request.get({
-                    cId: cId,
-                    pId: pId
-                }, 'container/{cId}/proposal/{pId}/setting');
-            }
-
-            return {
-                accept: function (cId, pId) {
-                    return accept(cId, pId);
-                },
-
-                list: function (cId) {
-                    return list(cId);
-                },
-
-                deny: function (cId, pId) {
-                    return deny(cId, pId);
-                },
-
-                settings: {
-                    list: function (cId, pId) {
-                        return listSettings(cId, pId);
-                    }
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest',
-        function seaContainerState(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/state/{method}'),
-                stateRequest = new SeaRequest('container/{cId}/state/{sId}'),
-                hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
-
-            function formatState(state) {
-                state.date = new Date(state.date);
-                state.lastDate = new Date(state.lastDate);
-
-                if (state.silencedUntil) {
-                    state.silencedUntil = new Date(state.silencedUntil);
-                }
-
-                if (state.hints) {
-                    angular.forEach(state.hints, formatHint);
-                }
-
-                return state;
-            }
-
-            function formatHint(hint) {
-                hint.date = new Date(hint.date);
-
-                if (hint.until) {
-                    hint.until = new Date(hint.until);
-                }
-
-                return hint;
-            }
-
-            function hint(params) {
-                return hintRequest.post(params).then(formatHint);
-            }
-
-            function stats(cId, params) {
-                params = params || {};
-                params.cId = cId;
-                params.method = 'stats';
-
-                return request.get(params);
-            }
-
-            function list(cId, params) {
-                params = params || {};
-                params.cId = cId;
-
-                if (angular.isArray(params.cId)) {
-                    return request.post(params, 'container/state').then(function (statesById) {
-                        if (angular.isArray(statesById)) {
-                            var n = {};
-                            n[params.cId[0]] = statesById;
-                            statesById = n;
-                        }
-
-                        angular.forEach(Object.keys(statesById), function (key) {
-                            angular.forEach(statesById[key], formatState);
-                        });
-                    });
-                }
-                return request.get(params).then(function (states) {
-                    angular.forEach(states, formatState);
-
-                    return states;
-                });
-            }
-
-            function get(cId, sId, params) {
-                params = params || {};
-                params.sId = sId;
-                params.cId = cId;
-
-                return stateRequest.get(params).then(function (state) {
-                    return formatState(state);
+                    uId: uId,
+                    gId: gId
                 });
             }
 
             return {
-                /**
-                 * create container state hint
-                 * @param {Object} params
-                 * @config {String} [cId]
-                 * @config {String} [sId]
-                 * @config {String} [author]
-                 * @config {Number} [hintType]
-                 * @config {String} [message]
-                 * @config {String} [assignedUser]
-                 * @config {Array} [mentionedUsers]
-                 * @config {Boolean} [private]
-                 * @config {Number} [until]
-                 */
-                hint: function (params) {
-                    return hint(params);
+                list: function (gId) {
+                    return list(gId);
                 },
 
                 /**
-                 * list container states
-                 * @param   {String}   cId
-                 * @param {Object}
-                 * @config {Number} [limit]
-                 * @config {Number} [start]
-                 * @config {Number} [end]
-                 * @config {Boolean} [includeHints]
-                 * @config {Boolean} [includeRawData]
-                 * @config {String} [format]
+                 * add user to group
+                 * @param {String} gId
+                 * @param {String} uId
                  */
-                list: function (cId, params) {
-                    return list(cId, params);
+                add: function (gId, uId) {
+                    return addUser(gId, uId);
                 },
 
                 /**
-              * get state by Id
-              * @param   {String}   cId
-              * @param   {String}   sId
-              * @param {Object}
-              * @config {Boolean} [includeHints]
-              * @config {Boolean} [includeMessage]
-              * @config {Boolean} [includeRawData]
-              * @config {String} [format]
-              */
-                get: function (cId, sId, params) {
-                    return get(cId, sId, params);
-                },
-
-                /**
-                 * list container state stats
-                 * @param   {String}   cId
-                 * @param {Object}
-                 * @config {Number} [start] : now
-                 * @config {Number} [end]   : now - 12 months
+                 * remove user to group
+                 * @param {String} gId
+                 * @param {String} uId
                  */
-                stats: function (cId, params) {
-                    return stats(cId, params);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaContainerTag', ['SeaRequest',
-    function seaAgentNote(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/tag/{tId}');
-
-            function create(params) {
-                return request.put(params);
-            }
-
-            function list(cId) {
-                return request.get({
-                    cId: cId
-                });
-            }
-
-            function destroy(cId, tId) {
-                return request.del({
-                    cId: cId,
-                    tId: tId
-                });
-            }
-
-            return {
-                /**
-                 * add tag to container
-                 * @param {Object} params
-                 * @config {String} [cId]
-                 * @config {String} [tId]
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-
-                list: function (cId) {
-                    return list(cId);
-                },
-
-                destroy: function (cId, tId) {
-                    return destroy(cId, tId);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaContainerTemplate', ['SeaRequest',
-    function seaContainerTemplate(SeaRequest) {
-            var request = new SeaRequest('container/{cId}/template/{tId}');
-
-            function create(cId) {
-                return request.post({
-                    cId: cId
-                });
-            }
-
-            function assign(cId, tId) {
-                return request.post({
-                    cId: cId,
-                    tId: tId
-                });
-            }
-
-            return {
-                /**
-                 * create template form system
-                 * @param {String} cId
-                 */
-                create: function (cId) {
-                    return create(cId);
-                },
-
-                /**
-                 * assign a template to a system
-                 * @param {String} cId
-                 * @param {String} tId
-                 */
-                assign: function (cId, tId) {
-                    return assign(cId, tId);
+                remove: function (gId, uId) {
+                    return removeUser(gId, uId);
                 }
             };
     }]);
@@ -3783,6 +3783,34 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
+        function seaSearch(SeaRequest) {
+            var request = new SeaRequest('search/{sub}');
+
+            function actionlog(params) {
+                params = params || {};
+                params.sub = 'actionlog';
+
+                return request.post(params);
+            }
+
+            return {
+                /**
+                 * search through actionlog
+                 * @param {Object} params
+                 * @config {Object} [query]
+                 * @config {Number} [limit]
+                 * @config {Number} [start]
+                 */
+                actionlog: function (params) {
+                    return actionlog(params);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaReporting', ['SeaRequest', 'seaReportingTemplate',
     function seaCustomer(SeaRequest, seaReportingTemplate) {
             var request = new SeaRequest('reporting/{cId}/report'),
@@ -3925,34 +3953,6 @@
 
                 destroy: function (rtId) {
                     return destroy(rtId);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
-        function seaSearch(SeaRequest) {
-            var request = new SeaRequest('search/{sub}');
-
-            function actionlog(params) {
-                params = params || {};
-                params.sub = 'actionlog';
-
-                return request.post(params);
-            }
-
-            return {
-                /**
-                 * search through actionlog
-                 * @param {Object} params
-                 * @config {Object} [query]
-                 * @config {Number} [limit]
-                 * @config {Number} [start]
-                 */
-                actionlog: function (params) {
-                    return actionlog(params);
                 }
             };
         }]);
