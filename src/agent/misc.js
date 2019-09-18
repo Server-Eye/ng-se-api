@@ -40,6 +40,13 @@
                 return request.get(params);
             }
 
+            function listEvents(aId, params) {
+                params = params || {};
+                params.aId = aId;
+                params.action = 'events';
+                return request.get(params);
+            }
+
             function getChart(aId, params) {
                 params = params || {};
                 params.aId = aId;
@@ -84,6 +91,21 @@
                         });
                     }
                 },
+
+                events: {
+                    /**
+                     * list action log entries
+                     * @param   {String} aId    agent id
+                     * @param   {Object} params
+                     * @config  {Number} start
+                     * @config  {Number} end
+                     * @returns {Object} promise
+                     */
+                    list: function (aId, params) {
+                        return listEvents(aId, params);
+                    }
+                },
+
                 chart: {
                     /**
                      * get chart config and values
@@ -114,6 +136,8 @@
                 copy: function (aId, parentId) {
                     return copy(aId, parentId);
                 },
+
+
 
                 /**
                  * restart an agent

@@ -35,6 +35,13 @@
                 return request.get(params);
             }
 
+            function listEvents(cId, params) {
+                params = params || {};
+                params.cId = cId;
+                params.action = 'events';
+                return request.get(params);
+            }
+
             function getInventory(cId, params) {
                 params = params || {};
                 params.cId = cId;
@@ -65,6 +72,20 @@
 
                             return entries;
                         });
+                    }
+                },
+
+                events: {
+                    /**
+                     * list action log entries
+                     * @param   {String} cId
+                     * @param   {Object} params
+                     * @config  {Number} start
+                     * @config  {Number} end
+                     * @returns {Object} promise
+                     */
+                    list: function (cId, params) {
+                        return listEvents(cId, params);
                     }
                 },
 

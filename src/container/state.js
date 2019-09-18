@@ -2,44 +2,45 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest',
-    function seaContainerState(SeaRequest) {
+        function seaContainerState(SeaRequest) {
             var request = new SeaRequest('container/{cId}/state/{method}'),
+                stateRequest = new SeaRequest('container/{cId}/state/{sId}'),
                 hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
 
             function formatState(state) {
                 state.date = new Date(state.date);
                 state.lastDate = new Date(state.lastDate);
-                
-                if(state.silencedUntil) {
+
+                if (state.silencedUntil) {
                     state.silencedUntil = new Date(state.silencedUntil);
                 }
-                
-                if(state.hints) {
+
+                if (state.hints) {
                     angular.forEach(state.hints, formatHint);
                 }
-                
+
                 return state;
             }
-        
+
             function formatHint(hint) {
                 hint.date = new Date(hint.date);
-                
-                if(hint.until) {
+
+                if (hint.until) {
                     hint.until = new Date(hint.until);
                 }
-                
+
                 return hint;
             }
 
             function hint(params) {
                 return hintRequest.post(params).then(formatHint);
             }
-        
+
             function stats(cId, params) {
                 params = params || {};
                 params.cId = cId;
                 params.method = 'stats';
-                
+
                 return request.get(params);
             }
 
@@ -49,7 +50,7 @@
 
                 if (angular.isArray(params.cId)) {
                     return request.post(params, 'container/state').then(function (statesById) {
-                        if(angular.isArray(statesById)) {
+                        if (angular.isArray(statesById)) {
                             var n = {};
                             n[params.cId[0]] = statesById;
                             statesById = n;
@@ -64,6 +65,16 @@
                     angular.forEach(states, formatState);
 
                     return states;
+                });
+            }
+
+            function get(cId, sId, params) {
+                params = params || {};
+                params.sId = sId;
+                params.cId = cId;
+
+                return stateRequest.get(params).then(function (state) {
+                    return formatState(state);
                 });
             }
 
@@ -99,7 +110,21 @@
                 list: function (cId, params) {
                     return list(cId, params);
                 },
-                
+
+                /**
+              * get state by Id
+              * @param   {String}   cId
+              * @param   {String}   sId
+              * @param {Object}
+              * @config {Boolean} [includeHints]
+              * @config {Boolean} [includeMessage]
+              * @config {Boolean} [includeRawData]
+              * @config {String} [format]
+              */
+                get: function (cId, sId, params) {
+                    return get(cId, sId, params);
+                },
+
                 /**
                  * list container state stats
                  * @param   {String}   cId
@@ -111,5 +136,5 @@
                     return stats(cId, params);
                 }
             };
-    }]);
+        }]);
 })();

@@ -67,7 +67,8 @@
                 category: seaAgentMisc.category,
                 restart: seaAgentMisc.restart,
                 tag: seaAgentTag,
-                type: seaAgentType
+                type: seaAgentType,
+                events: seaAgentMisc.events,
             };
     }]);
 })();

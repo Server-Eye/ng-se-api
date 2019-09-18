@@ -2,32 +2,33 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaAgentState', ['SeaRequest',
-    function seaAgentState(SeaRequest) {
+        function seaAgentState(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/state/{method}'),
+                stateRequest = new SeaRequest('agent/{aId}/state/{sId}'),
                 hintRequest = new SeaRequest('agent/{aId}/state/{sId}/hint');
 
             function formatState(state) {
                 state.date = new Date(state.date);
                 state.lastDate = new Date(state.lastDate);
-                
-                if(state.silencedUntil) {
+
+                if (state.silencedUntil) {
                     state.silencedUntil = new Date(state.silencedUntil);
                 }
-                
-                if(state.hints) {
+
+                if (state.hints) {
                     angular.forEach(state.hints, formatHint);
                 }
-                
+
                 return state;
             }
-        
+
             function formatHint(hint) {
                 hint.date = new Date(hint.date);
-                
-                if(hint.until) {
+
+                if (hint.until) {
                     hint.until = new Date(hint.until);
                 }
-                
+
                 return hint;
             }
 
@@ -39,22 +40,22 @@
                 params = params || {};
                 params.aId = aId;
                 params.method = 'stats';
-                
+
                 return request.get(params);
             }
-        
+
             function list(aId, params) {
                 params = params || {};
                 params.aId = aId;
 
                 if (angular.isArray(params.aId)) {
                     return request.post(params, 'agent/state').then(function (statesById) {
-                        if(angular.isArray(statesById)) {
+                        if (angular.isArray(statesById)) {
                             var n = {};
                             n[params.aId[0]] = statesById;
                             statesById = n;
                         }
-                        
+
                         angular.forEach(Object.keys(statesById), function (key) {
                             angular.forEach(statesById[key], formatState);
                         });
@@ -66,6 +67,16 @@
                     angular.forEach(states, formatState);
 
                     return states;
+                });
+            }
+
+            function get(aId, sId, params) {
+                params = params || {};
+                params.sId = sId;
+                params.aId = aId;
+
+                return stateRequest.get(params).then(function (state) {
+                    return formatState(state);
                 });
             }
 
@@ -101,7 +112,21 @@
                 list: function (aId, params) {
                     return list(aId, params);
                 },
-                
+
+                /**
+               * get state by Id
+               * @param   {String}   aId
+               * @param   {String}   sId
+               * @param {Object}
+               * @config {Boolean} [includeHints]
+               * @config {Boolean} [includeMessage]
+               * @config {Boolean} [includeRawData]
+               * @config {String} [format]
+               */
+                get: function (aId, sId, params) {
+                    return get(aId, sId, params);
+                },
+
                 /**
                  * list agent state stats
                  * @param   {String}   aId
@@ -113,5 +138,5 @@
                     return stats(aId, params);
                 }
             };
-    }]);
+        }]);
 })();
