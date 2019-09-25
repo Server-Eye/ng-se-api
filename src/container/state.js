@@ -59,6 +59,8 @@
                         angular.forEach(Object.keys(statesById), function (key) {
                             angular.forEach(statesById[key], formatState);
                         });
+
+                        return statesById;
                     });
                 }
                 return request.get(params).then(function (states) {

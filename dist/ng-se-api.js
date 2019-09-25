@@ -985,6 +985,67 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
+    function seaAuth(SeaRequest) {
+            var request = new SeaRequest('auth/{action}');
+
+            function createApiKey(params) {
+                params = params || {};
+                params.action = 'key';
+
+                return request.post(params);
+            }
+
+            function login(params) {
+                params = params || {};
+                params.action = 'login';
+
+                return request.post(params);
+            }
+
+            function logout(params) {
+                params = params || {};
+                params.action = 'logout';
+
+                return request.get(params);
+            }
+
+            return {
+                /**
+                 * create apiKey
+                 * @param {Object} params
+                 * @config {String} [email]
+                 * @config {String} [password]
+                 * @config {Number} [type]
+                 * @config {Number} [validUntil]
+                 * @config {Number} [maxUses]
+                 */
+                createApiKey: function (params) {
+                    return createApiKey(params);
+                },
+
+                /**
+                 * login
+                 * @param {Object} params
+                 * @config {String} [apiKey]
+                 * @config {String} [email]
+                 * @config {String} [password]
+                 * @config {Boolean} [createApiKey]
+                 * @config {String} [apiKeyName]
+                 */
+                login: function (params) {
+                    return login(params);
+                },
+
+                logout: function () {
+                    return logout();
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaComplianceCheck', ['SeaRequest',
         function seaComplianceCheck(SeaRequest) {
             var request = new SeaRequest('compliance/check');
@@ -1629,6 +1690,8 @@
                         angular.forEach(Object.keys(statesById), function (key) {
                             angular.forEach(statesById[key], formatState);
                         });
+
+                        return statesById;
                     });
                 }
                 return request.get(params).then(function (states) {
@@ -1789,67 +1852,6 @@
                  */
                 assign: function (cId, tId) {
                     return assign(cId, tId);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
-    function seaAuth(SeaRequest) {
-            var request = new SeaRequest('auth/{action}');
-
-            function createApiKey(params) {
-                params = params || {};
-                params.action = 'key';
-
-                return request.post(params);
-            }
-
-            function login(params) {
-                params = params || {};
-                params.action = 'login';
-
-                return request.post(params);
-            }
-
-            function logout(params) {
-                params = params || {};
-                params.action = 'logout';
-
-                return request.get(params);
-            }
-
-            return {
-                /**
-                 * create apiKey
-                 * @param {Object} params
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Number} [type]
-                 * @config {Number} [validUntil]
-                 * @config {Number} [maxUses]
-                 */
-                createApiKey: function (params) {
-                    return createApiKey(params);
-                },
-
-                /**
-                 * login
-                 * @param {Object} params
-                 * @config {String} [apiKey]
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Boolean} [createApiKey]
-                 * @config {String} [apiKeyName]
-                 */
-                login: function (params) {
-                    return login(params);
-                },
-
-                logout: function () {
-                    return logout();
                 }
             };
     }]);
@@ -3783,34 +3785,6 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
-        function seaSearch(SeaRequest) {
-            var request = new SeaRequest('search/{sub}');
-
-            function actionlog(params) {
-                params = params || {};
-                params.sub = 'actionlog';
-
-                return request.post(params);
-            }
-
-            return {
-                /**
-                 * search through actionlog
-                 * @param {Object} params
-                 * @config {Object} [query]
-                 * @config {Number} [limit]
-                 * @config {Number} [start]
-                 */
-                actionlog: function (params) {
-                    return actionlog(params);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
     angular.module('ngSeApi').factory('seaReporting', ['SeaRequest', 'seaReportingTemplate',
     function seaCustomer(SeaRequest, seaReportingTemplate) {
             var request = new SeaRequest('reporting/{cId}/report'),
@@ -3953,6 +3927,34 @@
 
                 destroy: function (rtId) {
                     return destroy(rtId);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
+        function seaSearch(SeaRequest) {
+            var request = new SeaRequest('search/{sub}');
+
+            function actionlog(params) {
+                params = params || {};
+                params.sub = 'actionlog';
+
+                return request.post(params);
+            }
+
+            return {
+                /**
+                 * search through actionlog
+                 * @param {Object} params
+                 * @config {Object} [query]
+                 * @config {Number} [limit]
+                 * @config {Number} [start]
+                 */
+                actionlog: function (params) {
+                    return actionlog(params);
                 }
             };
         }]);
