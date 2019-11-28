@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaAgentType', ['SeaRequest',
     function seaAgentType(SeaRequest) {
             var request = new SeaRequest('agent/type');
+            var requestFaq = new SeaRequest('agent/type/{agentType}/faq');
 
             function format(agentKnown) {
                 if(agentKnown.updateDate) {
@@ -23,6 +24,10 @@
                 return request.get(params).then(function (aks) { return aks.map(format); });
             }
 
+            function listFaq(agentType) {
+                return requestFaq.get({agentType: agentType});
+            }
+
             return {
                 setting: {
                     /**
@@ -35,7 +40,12 @@
                     }
                 },
 
-                list: list
+                list: list,
+                faq: {
+                    list: function(agentType) {
+                        return listFaq(agentType);
+                    },
+                },
             };
     }]);
 })();
