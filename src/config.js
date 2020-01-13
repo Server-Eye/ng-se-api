@@ -7,6 +7,7 @@
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
+                vaultUrl: '',
                 apiVersion: 2,
                 apiKey: null,
                 getUrl: function (path) {
@@ -42,6 +43,10 @@
                 config.pmUrl = pmUrl;
             }
 
+            this.setVaultUrl = function (vaultUrl) {
+                config.vaultUrl = vaultUrl;
+            }
+
             this.setApiVersion = function (apiVersion) {
                 config.apiVersion = apiVersion;
             }
@@ -60,6 +65,9 @@
                     },
                     getPmUrl: function () {
                         return config.pmUrl;
+                    },
+                    getVaultUrl: function () {
+                        return config.vaultUrl;
                     },
                     getApiVersion: function () {
                         return config.apiVersion;
