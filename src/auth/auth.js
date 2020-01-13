@@ -26,6 +26,20 @@
                 return request.get(params);
             }
 
+            function requestResetLink(params) {
+                params = params || {};
+                params.action = 'reset';
+
+                return request.get(params);
+            }
+            
+            function resetPassword(params) {
+                params = params || {};
+                params.action = 'reset';
+
+                return request.post(params);
+            }
+
             return {
                 /**
                  * create apiKey
@@ -55,7 +69,15 @@
 
                 logout: function () {
                     return logout();
-                }
+                },
+                
+                requestResetLink: function (params) {
+                    return requestResetLink(params);
+                },
+
+                resetPassword: function (params) {
+                    return resetPassword(params);
+                },
             };
     }]);
 })();
