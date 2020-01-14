@@ -1,12 +1,12 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaVaultHelper', ['SeaRequest', 'seaVaultHelper',
+    angular.module('ngSeApi').factory('seaVaultEntry', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}/entry'));
-            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}/entry/{eId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}/entry/{eId}/{action}'));
-            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}/entries'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry'));
+            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry/{eId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry/{eId}/{action}'));
+            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entries'));
 
             function listEntries(vId) {
                 return requestEntries.get({

@@ -1,12 +1,12 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry',
-        function (SeaRequest, seaVaultHelper, seaVaultEntry) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault'));
-            var requestVault = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}/{action}'));
-            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('1/vault/vaults'));
+    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
+        function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
+            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault'));
+            var requestVault = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/{action}'));
+            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('1/vaults'));
 
             function listVaults() {
                 return requestVaults.get();
@@ -109,7 +109,7 @@
                     return unlock(params);
                 },
                 entry: seaVaultEntry,
-                user: seaUser,
+                user: seaVaultUser,
             };
         }]);
 })();

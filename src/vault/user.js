@@ -3,7 +3,7 @@
 
     angular.module('ngSeApi').factory('seaVaultUser', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/vault/{vId}/user/{uId}'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/user/{uId}'));
 
             function create(params) {
                 return request.post(params);
