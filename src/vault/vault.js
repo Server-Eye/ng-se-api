@@ -3,13 +3,13 @@
 
     angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
         function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault'));
-            var requestVault = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/{action}'));
-            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('1/vaults'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('/vault'));
+            var requestVault = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/{action}'));
+            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('/vaults'));
 
-            function listVaults() {
-                return requestVaults.get();
+            function listVaults(queryParams) {
+                return requestVaults.get(queryParams);
             }
 
             function create(params) {
@@ -43,8 +43,8 @@
             }
 
             return {
-                list: function () {
-                    return listVaults();
+                list: function (queryParams) {
+                    return listVaults(queryParams);
                 },
 
                 /**

@@ -3,14 +3,14 @@
 
     angular.module('ngSeApi').factory('seaVaultUser', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/user/{uId}'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/user/{uId}'));
 
             function create(params) {
                 return request.post(params);
             }
 
             function destroy(vId, uId) {
-                return request.delete({
+                return request.del({
                     vId: vId,
                     uId: uId,
                 });

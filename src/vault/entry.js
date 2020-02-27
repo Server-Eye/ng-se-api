@@ -3,10 +3,11 @@
 
     angular.module('ngSeApi').factory('seaVaultEntry', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry'));
-            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry/{eId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry/{eId}/{action}'));
-            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entries'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry'));
+            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}/{action}'));
+            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entries'));
+            var requestAgentSetting = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}/agent/{aId}/setting/{key}'));
 
             function listEntries(vId) {
                 return requestEntries.get({
@@ -27,12 +28,16 @@
             }
 
             function destroy(vId, eId) {
-                return requestEntry.del({vId, eId});
+                return requestEntry.del({ vId, eId });
             }
 
             function unlock(params) {
-                params = angular.extend({}, params, {action: 'unlock'});
+                params = angular.extend({}, params, { action: 'unlock' });
                 return requestAction.put(params);
+            }
+
+            function updateAgentSetting(params) {
+                return requestAgentSetting.put(params);
             }
 
 
@@ -75,15 +80,33 @@
                 destroy: function (vId, eId) {
                     return destroy(vId, eId);
                 },
-                 /**
-                 * unlock vault
-                 * @param {Object} params
-                 * @config {String} vId
-                 * @config {String} [password]
-                 * @config {String} [privateKey]
-                 */
+                /**
+                * unlock vault
+                * @param {Object} params
+                * @config {String} vId
+                * @config {String} [password]
+                * @config {String} [privateKey]
+                */
                 unlock: function (params) {
                     return unlock(params);
+                },
+                agent: {
+                    setting: {
+                        /**
+                        * update agent settings with vault entries
+                        * @param {Object} params
+                        * @config {String} vId   vaultId
+                        * @config {String} eId   entryId
+                        * @config {String} aId   agentId
+                        * @config {String} key   agent setting key
+                        * @config {String} [password]
+                        * @config {String} [privateKey]
+                        */
+
+                        update: function (params) {
+                            return updateAgentSetting(params);
+                        }
+                    }
                 },
             };
         }]);

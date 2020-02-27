@@ -59,8 +59,18 @@
                 return request.get(params).then(_formatData);
             }
 
+            function updatePassword(params) {
+                params = angular.extend({}, { action: 'password' }, params);
+                return request.put(params);
+            }
+
             return {
                 me: me,
+                password: {
+                    update: function (params) {
+                        return updatePassword(params);
+                    },
+                },
                 customer: customer,
                 feed: function (params) {
                     return feed(params);

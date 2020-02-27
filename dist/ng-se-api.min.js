@@ -13,8 +13,9 @@
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
-                vaultUrl: '',
+                vaultUrl: 'https://vault-api.server-eye.de',
                 apiVersion: 2,
+                vaultApiVersion: 1,
                 apiKey: null,
                 getUrl: function (path) {
                     return [this.baseUrl, this.apiVersion, path].join('/');
@@ -40,7 +41,7 @@
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
             }
-            
+
             this.setPatchUrl = function (patchUrl) {
                 config.patchUrl = patchUrl;
             }
@@ -78,6 +79,9 @@
                     getApiVersion: function () {
                         return config.apiVersion;
                     },
+                    getVaultApiVersion: function () {
+                        return config.vaultApiVersion;
+                    },
                     getApiKey: function () {
                         return config.apiKey;
                     },
@@ -89,12 +93,12 @@
                     }
                 }
             };
-    }]);
+        }]);
 
     angular.module('ngSeApi').config(['seaConfigProvider',
         function (seaApiConfigProvider) {
 
-    }]);
+        }]);
 })();
 (function () {
     "use strict";
@@ -2882,8 +2886,18 @@
                 return request.get(params).then(_formatData);
             }
 
+            function updatePassword(params) {
+                params = angular.extend({}, { action: 'password' }, params);
+                return request.put(params);
+            }
+
             return {
                 me: me,
+                password: {
+                    update: function (params) {
+                        return updatePassword(params);
+                    },
+                },
                 customer: customer,
                 feed: function (params) {
                     return feed(params);
@@ -4342,10 +4356,11 @@
 
     angular.module('ngSeApi').factory('seaVaultEntry', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry'));
-            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry/{eId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entry/{eId}/{action}'));
-            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/entries'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry'));
+            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}/{action}'));
+            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entries'));
+            var requestAgentSetting = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}/agent/{aId}/setting/{key}'));
 
             function listEntries(vId) {
                 return requestEntries.get({
@@ -4366,12 +4381,16 @@
             }
 
             function destroy(vId, eId) {
-                return requestEntry.del({vId, eId});
+                return requestEntry.del({ vId, eId });
             }
 
             function unlock(params) {
-                params = angular.extend({}, params, {action: 'unlock'});
+                params = angular.extend({}, params, { action: 'unlock' });
                 return requestAction.put(params);
+            }
+
+            function updateAgentSetting(params) {
+                return requestAgentSetting.put(params);
             }
 
 
@@ -4414,15 +4433,33 @@
                 destroy: function (vId, eId) {
                     return destroy(vId, eId);
                 },
-                 /**
-                 * unlock vault
-                 * @param {Object} params
-                 * @config {String} vId
-                 * @config {String} [password]
-                 * @config {String} [privateKey]
-                 */
+                /**
+                * unlock vault
+                * @param {Object} params
+                * @config {String} vId
+                * @config {String} [password]
+                * @config {String} [privateKey]
+                */
                 unlock: function (params) {
                     return unlock(params);
+                },
+                agent: {
+                    setting: {
+                        /**
+                        * update agent settings with vault entries
+                        * @param {Object} params
+                        * @config {String} vId   vaultId
+                        * @config {String} eId   entryId
+                        * @config {String} aId   agentId
+                        * @config {String} key   agent setting key
+                        * @config {String} [password]
+                        * @config {String} [privateKey]
+                        */
+
+                        update: function (params) {
+                            return updateAgentSetting(params);
+                        }
+                    }
                 },
             };
         }]);
@@ -4433,7 +4470,7 @@
     angular.module('ngSeApi').factory('seaVaultHelper', ['seaConfig',
     function (seaConfig) {        
             function getUrl(path) {
-                return [seaConfig.getVaultUrl(), path].join('/');
+                return [seaConfig.getVaultUrl(), seaConfig.getVaultApiVersion(), path].join('/');
             }
 
             return {
@@ -4446,14 +4483,14 @@
 
     angular.module('ngSeApi').factory('seaVaultUser', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/user/{uId}'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/user/{uId}'));
 
             function create(params) {
                 return request.post(params);
             }
 
             function destroy(vId, uId) {
-                return request.delete({
+                return request.del({
                     vId: vId,
                     uId: uId,
                 });
@@ -4482,13 +4519,13 @@
 
     angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
         function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('1/vault'));
-            var requestVault = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('1/vault/{vId}/{action}'));
-            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('1/vaults'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('/vault'));
+            var requestVault = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/{action}'));
+            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('/vaults'));
 
-            function listVaults() {
-                return requestVaults.get();
+            function listVaults(queryParams) {
+                return requestVaults.get(queryParams);
             }
 
             function create(params) {
@@ -4522,8 +4559,8 @@
             }
 
             return {
-                list: function () {
-                    return listVaults();
+                list: function (queryParams) {
+                    return listVaults(queryParams);
                 },
 
                 /**

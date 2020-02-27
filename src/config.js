@@ -7,8 +7,9 @@
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
-                vaultUrl: '',
+                vaultUrl: 'https://vault-api.server-eye.de',
                 apiVersion: 2,
+                vaultApiVersion: 1,
                 apiKey: null,
                 getUrl: function (path) {
                     return [this.baseUrl, this.apiVersion, path].join('/');
@@ -34,7 +35,7 @@
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
             }
-            
+
             this.setPatchUrl = function (patchUrl) {
                 config.patchUrl = patchUrl;
             }
@@ -72,6 +73,9 @@
                     getApiVersion: function () {
                         return config.apiVersion;
                     },
+                    getVaultApiVersion: function () {
+                        return config.vaultApiVersion;
+                    },
                     getApiKey: function () {
                         return config.apiKey;
                     },
@@ -83,10 +87,10 @@
                     }
                 }
             };
-    }]);
+        }]);
 
     angular.module('ngSeApi').config(['seaConfigProvider',
         function (seaApiConfigProvider) {
 
-    }]);
+        }]);
 })();
