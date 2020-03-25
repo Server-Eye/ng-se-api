@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http',
-    function SeaRequest(seaConfig, $q, $http) {
+    angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http', 'SeaRequestHelperService',
+        function SeaRequest(seaConfig, $q, $http, SeaRequestHelperService) {
             function SeaRequest(urlPath) {
                 this.urlPath = urlPath;
             }
@@ -24,11 +24,11 @@
              */
             SeaRequest.prototype.formatUrl = function formatUrl(params, url) {
                 url = url || this.urlPath;
-                
-                if(url.indexOf('http') < 0) {
+
+                if (url.indexOf('http') < 0) {
                     url = seaConfig.getUrl(url || this.urlPath)
                 }
-                
+
                 params = params || {};
 
                 var keys = Object.keys(params),
@@ -55,7 +55,7 @@
 
                 params = params || {};
                 params = angular.copy(params);
-                
+
                 conf.url = this.formatUrl(params, urlPath);
 
                 if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
@@ -67,21 +67,24 @@
                     conf.params = params || {};
                 }
 
+                SeaRequestHelperService.dumpRequest(conf);
+
                 $http(conf).then(function (resp) {
                     var total = resp.headers('x-total-count');
-                    
-                    if(total != null) {
+
+                    if (total != null) {
                         resp.data.totalCount = total;
                     }
-                    
+
                     deferred.resolve(resp.data);
                 }, function (err) {
+                    SeaRequestHelperService.dumpResponse(err);
                     deferred.reject(err);
                 });
 
                 return deferred.promise;
             }
-            
+
             /**
              * perform GET request
              * @param {Object}  params  The request parameters
@@ -123,5 +126,35 @@
             }
 
             return SeaRequest;
-    }]);
+        }]);
+
+    angular.module('ngSeApi').factory('SeaRequestHelperService', [
+        function () {
+            var dump = {
+                request: undefined,
+                response: undefined,
+            };
+
+            function dumpRequest(data) {
+                dump.request = data;
+            }
+
+            function dumpResponse(data) {
+                dump.response = data;
+            }
+
+            function getDump() {
+                var dumpData = JSON.stringify(dump);
+                dump.request = undefined;
+                dump.response = undefined;
+
+                return dumpData;
+            }
+
+            return {
+                dumpRequest: dumpRequest,
+                dumpResponse: dumpResponse,
+                getDump: getDump,
+            };
+        }]);
 })();
