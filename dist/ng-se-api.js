@@ -392,89 +392,6 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
-    function seaAuth(SeaRequest) {
-            var request = new SeaRequest('auth/{action}');
-
-            function createApiKey(params) {
-                params = params || {};
-                params.action = 'key';
-
-                return request.post(params);
-            }
-
-            function login(params) {
-                params = params || {};
-                params.action = 'login';
-
-                return request.post(params);
-            }
-
-            function logout(params) {
-                params = params || {};
-                params.action = 'logout';
-
-                return request.get(params);
-            }
-
-            function requestResetLink(params) {
-                params = params || {};
-                params.action = 'reset';
-
-                return request.get(params);
-            }
-            
-            function resetPassword(params) {
-                params = params || {};
-                params.action = 'reset';
-
-                return request.post(params);
-            }
-
-            return {
-                /**
-                 * create apiKey
-                 * @param {Object} params
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Number} [type]
-                 * @config {Number} [validUntil]
-                 * @config {Number} [maxUses]
-                 */
-                createApiKey: function (params) {
-                    return createApiKey(params);
-                },
-
-                /**
-                 * login
-                 * @param {Object} params
-                 * @config {String} [apiKey]
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Boolean} [createApiKey]
-                 * @config {String} [apiKeyName]
-                 */
-                login: function (params) {
-                    return login(params);
-                },
-
-                logout: function () {
-                    return logout();
-                },
-                
-                requestResetLink: function (params) {
-                    return requestResetLink(params);
-                },
-
-                resetPassword: function (params) {
-                    return resetPassword(params);
-                },
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
     angular.module('ngSeApi').factory('seaAgent', ['SeaRequest',
                                              'seaAgentNote', 'seaAgentNotification', 'seaAgentMisc',
                                              'seaAgentSetting', 'seaAgentState', 'seaAgentTag', 'seaAgentType',
@@ -3493,155 +3410,6 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaReporting', ['SeaRequest', 'seaReportingTemplate',
-    function seaCustomer(SeaRequest, seaReportingTemplate) {
-            var request = new SeaRequest('reporting/{cId}/report'),
-                reportRequest = new SeaRequest('reporting/{cId}/report/{rId}');
-
-            function formatReport(report) {
-                ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
-                    if(report[prop]) {
-                        report[prop] = new Date(report[prop]);
-                    }
-                });
-                
-                if(report.history) {
-                    report.history.forEach(function (generated) {
-                        generated.generatedDate = new Date(generated.generatedDate);
-                    });
-                }
-                
-                return report;
-            }
-        
-            function create(params) {
-                return request.post(params);
-            }
-        
-            function list(cId) {
-                return request.get({
-                    cId: cId
-                }).then(function (reports) {
-                    reports.forEach(formatReport);
-                    return reports;
-                });
-            }
-        
-            function listTypes(cId) {
-                return reportRequest.get({
-                    cId: cId,
-                    rId: 'type'
-                });
-            }
-
-            function get(cId, rId) {
-                return reportRequest.get({
-                    cId: cId,
-                    rId: rId
-                }).then(function (report) {
-                    return formatReport(report);
-                });
-            }
-        
-            function destroy(cId, rId) {
-                return reportRequest.del({
-                    cId: cId,
-                    rId: rId
-                });
-            }
-
-            return {
-                list: function (cId) {
-                    return list(cId);
-                },
-
-                type: {
-                    list: function (cId) {
-                        return listTypes(cId);
-                    }
-                },
-                
-                report: {
-                    get: function (cId, rId) {
-                        return get(cId, rId);
-                    },
-                    
-                    /**
-                     * create report
-                     * @param {Object} params
-                     * @config {String} [cId]
-                     * @config {String} [rtId]
-                     * @config {String} [repeatCron]
-                     * @config {String} [recipients]
-                     */
-                    create: function(params) {
-                        return create(params);
-                    },
-                    
-                    destroy: function (cId, rId) {
-                        return destroy(cId, rId);
-                    }
-                },
-
-                template: seaReportingTemplate
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaReportingTemplate', ['SeaRequest',
-        function seaReportingTemplate(SeaRequest) {
-            var request = new SeaRequest('reporting/template/{rtId}');
-
-            function create(params) {
-                return request.post(params);
-            }
-
-            function list() {
-                return request.get();
-            }
-
-            function get(rId) {
-                return reportRequest.get({
-                    rtId: rtId
-                });
-            }
-
-            function destroy(rId) {
-                return reportRequest.del({
-                    rtId: rtId
-                });
-            }
-
-            return {
-                list: function (cId) {
-                    return list(cId);
-                },
-
-                get: function (rtId) {
-                    return get(rtId);
-                },
-
-                /**
-                 * create report template
-                 * @param {Object} params
-                 * @config {String} [name]
-                 * @config {Array} [widgets]
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-
-                destroy: function (rtId) {
-                    return destroy(rtId);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
     angular.module('ngSeApi').factory('seaRemotingAntivirus', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest(helper.getUrl('seias/rest/seocc/virus/1.0/{section}/{action}'));
@@ -4137,6 +3905,155 @@
         }]);
 })();
 
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaReporting', ['SeaRequest', 'seaReportingTemplate',
+    function seaCustomer(SeaRequest, seaReportingTemplate) {
+            var request = new SeaRequest('reporting/{cId}/report'),
+                reportRequest = new SeaRequest('reporting/{cId}/report/{rId}');
+
+            function formatReport(report) {
+                ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
+                    if(report[prop]) {
+                        report[prop] = new Date(report[prop]);
+                    }
+                });
+                
+                if(report.history) {
+                    report.history.forEach(function (generated) {
+                        generated.generatedDate = new Date(generated.generatedDate);
+                    });
+                }
+                
+                return report;
+            }
+        
+            function create(params) {
+                return request.post(params);
+            }
+        
+            function list(cId) {
+                return request.get({
+                    cId: cId
+                }).then(function (reports) {
+                    reports.forEach(formatReport);
+                    return reports;
+                });
+            }
+        
+            function listTypes(cId) {
+                return reportRequest.get({
+                    cId: cId,
+                    rId: 'type'
+                });
+            }
+
+            function get(cId, rId) {
+                return reportRequest.get({
+                    cId: cId,
+                    rId: rId
+                }).then(function (report) {
+                    return formatReport(report);
+                });
+            }
+        
+            function destroy(cId, rId) {
+                return reportRequest.del({
+                    cId: cId,
+                    rId: rId
+                });
+            }
+
+            return {
+                list: function (cId) {
+                    return list(cId);
+                },
+
+                type: {
+                    list: function (cId) {
+                        return listTypes(cId);
+                    }
+                },
+                
+                report: {
+                    get: function (cId, rId) {
+                        return get(cId, rId);
+                    },
+                    
+                    /**
+                     * create report
+                     * @param {Object} params
+                     * @config {String} [cId]
+                     * @config {String} [rtId]
+                     * @config {String} [repeatCron]
+                     * @config {String} [recipients]
+                     */
+                    create: function(params) {
+                        return create(params);
+                    },
+                    
+                    destroy: function (cId, rId) {
+                        return destroy(cId, rId);
+                    }
+                },
+
+                template: seaReportingTemplate
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaReportingTemplate', ['SeaRequest',
+        function seaReportingTemplate(SeaRequest) {
+            var request = new SeaRequest('reporting/template/{rtId}');
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function list() {
+                return request.get();
+            }
+
+            function get(rId) {
+                return reportRequest.get({
+                    rtId: rtId
+                });
+            }
+
+            function destroy(rId) {
+                return reportRequest.del({
+                    rtId: rtId
+                });
+            }
+
+            return {
+                list: function (cId) {
+                    return list(cId);
+                },
+
+                get: function (rtId) {
+                    return get(rtId);
+                },
+
+                /**
+                 * create report template
+                 * @param {Object} params
+                 * @config {String} [name]
+                 * @config {Array} [widgets]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                destroy: function (rtId) {
+                    return destroy(rtId);
+                }
+            };
+        }]);
+})();
 (function () {
     "use strict";
 
