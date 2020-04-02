@@ -3,11 +3,11 @@
 
     angular.module('ngSeApi').factory('seaVaultEntry', ['SeaRequest', 'seaVaultHelper',
         function (SeaRequest, seaVaultHelper) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry'));
-            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}'));
-            var requestAction = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}/{action}'));
-            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entries'));
-            var requestAgentSetting = new SeaRequest(seaVaultHelper.getUrl('/vault/{vId}/entry/{eId}/agent/{aId}/setting/{key}'));
+            var request = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry'));
+            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry/{eId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry/{eId}/{action}'));
+            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entries'));
+            var requestAgentSetting = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry/{eId}/agent/{aId}/setting/{key}'));
 
             function listEntries(vId) {
                 return requestEntries.get({
