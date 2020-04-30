@@ -13,7 +13,9 @@
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
+                vaultUrl: 'https://vault-api.server-eye.de',
                 apiVersion: 2,
+                vaultApiVersion: 1,
                 apiKey: null,
                 getUrl: function (path) {
                     return [this.baseUrl, this.apiVersion, path].join('/');
@@ -39,13 +41,17 @@
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
             }
-            
+
             this.setPatchUrl = function (patchUrl) {
                 config.patchUrl = patchUrl;
             }
 
             this.setPmUrl = function (pmUrl) {
                 config.pmUrl = pmUrl;
+            }
+
+            this.setVaultUrl = function (vaultUrl) {
+                config.vaultUrl = vaultUrl;
             }
 
             this.setApiVersion = function (apiVersion) {
@@ -67,8 +73,14 @@
                     getPmUrl: function () {
                         return config.pmUrl;
                     },
+                    getVaultUrl: function () {
+                        return config.vaultUrl;
+                    },
                     getApiVersion: function () {
                         return config.apiVersion;
+                    },
+                    getVaultApiVersion: function () {
+                        return config.vaultApiVersion;
                     },
                     getApiKey: function () {
                         return config.apiKey;
@@ -81,12 +93,12 @@
                     }
                 }
             };
-    }]);
+        }]);
 
     angular.module('ngSeApi').config(['seaConfigProvider',
         function (seaApiConfigProvider) {
 
-    }]);
+        }]);
 })();
 (function () {
     "use strict";
@@ -375,89 +387,6 @@
                     return connect(credentials, rooms);
                 }
             }
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
-    function seaAuth(SeaRequest) {
-            var request = new SeaRequest('auth/{action}');
-
-            function createApiKey(params) {
-                params = params || {};
-                params.action = 'key';
-
-                return request.post(params);
-            }
-
-            function login(params) {
-                params = params || {};
-                params.action = 'login';
-
-                return request.post(params);
-            }
-
-            function logout(params) {
-                params = params || {};
-                params.action = 'logout';
-
-                return request.get(params);
-            }
-
-            function requestResetLink(params) {
-                params = params || {};
-                params.action = 'reset';
-
-                return request.get(params);
-            }
-            
-            function resetPassword(params) {
-                params = params || {};
-                params.action = 'reset';
-
-                return request.post(params);
-            }
-
-            return {
-                /**
-                 * create apiKey
-                 * @param {Object} params
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Number} [type]
-                 * @config {Number} [validUntil]
-                 * @config {Number} [maxUses]
-                 */
-                createApiKey: function (params) {
-                    return createApiKey(params);
-                },
-
-                /**
-                 * login
-                 * @param {Object} params
-                 * @config {String} [apiKey]
-                 * @config {String} [email]
-                 * @config {String} [password]
-                 * @config {Boolean} [createApiKey]
-                 * @config {String} [apiKeyName]
-                 */
-                login: function (params) {
-                    return login(params);
-                },
-
-                logout: function () {
-                    return logout();
-                },
-                
-                requestResetLink: function (params) {
-                    return requestResetLink(params);
-                },
-
-                resetPassword: function (params) {
-                    return resetPassword(params);
-                },
-            };
     }]);
 })();
 (function () {
@@ -1104,6 +1033,89 @@
                     list: function(agentType) {
                         return listFaq(agentType);
                     },
+                },
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
+    function seaAuth(SeaRequest) {
+            var request = new SeaRequest('auth/{action}');
+
+            function createApiKey(params) {
+                params = params || {};
+                params.action = 'key';
+
+                return request.post(params);
+            }
+
+            function login(params) {
+                params = params || {};
+                params.action = 'login';
+
+                return request.post(params);
+            }
+
+            function logout(params) {
+                params = params || {};
+                params.action = 'logout';
+
+                return request.get(params);
+            }
+
+            function requestResetLink(params) {
+                params = params || {};
+                params.action = 'reset';
+
+                return request.get(params);
+            }
+            
+            function resetPassword(params) {
+                params = params || {};
+                params.action = 'reset';
+
+                return request.post(params);
+            }
+
+            return {
+                /**
+                 * create apiKey
+                 * @param {Object} params
+                 * @config {String} [email]
+                 * @config {String} [password]
+                 * @config {Number} [type]
+                 * @config {Number} [validUntil]
+                 * @config {Number} [maxUses]
+                 */
+                createApiKey: function (params) {
+                    return createApiKey(params);
+                },
+
+                /**
+                 * login
+                 * @param {Object} params
+                 * @config {String} [apiKey]
+                 * @config {String} [email]
+                 * @config {String} [password]
+                 * @config {Boolean} [createApiKey]
+                 * @config {String} [apiKeyName]
+                 */
+                login: function (params) {
+                    return login(params);
+                },
+
+                logout: function () {
+                    return logout();
+                },
+                
+                requestResetLink: function (params) {
+                    return requestResetLink(params);
+                },
+
+                resetPassword: function (params) {
+                    return resetPassword(params);
                 },
             };
     }]);
@@ -1924,6 +1936,154 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaGroup', ['SeaRequest', 'seaGroupSetting', 'seaGroupUser',
+    function seaGroup(SeaRequest, seaGroupSetting, seaGroupUser) {
+            var request = new SeaRequest('group/{gId}');
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function get(gId) {
+                return request.get({
+                    gId: gId
+                });
+            }
+
+            function update(group) {
+                return request.put(group);
+            }
+
+            function destroy(gId) {
+                return request.del({
+                    gId: gId
+                });
+            }
+
+            return {
+                /**
+                 * create group
+                 * @param {Object} params
+                 * @config {String} [customerId]
+                 * @config {String} [name]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                get: function (gId) {
+                    return get(gId);
+                },
+
+                /**
+                 * update group
+                 * @param {Object} group
+                 * @config {String} [gId]
+                 * @config {String} [name]
+                 */
+                update: function (group) {
+                    return update(group);
+                },
+
+                destroy: function (gId) {
+                    return destroy(gId);
+                },
+
+                setting: seaGroupSetting,
+                user: seaGroupUser
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaGroupSetting', ['SeaRequest',
+    function seaGroupSetting(SeaRequest) {
+            var request = new SeaRequest('group/{gId}/setting');
+
+            function list(gId) {
+                return request.get({
+                    gId: gId
+                });
+            }
+
+            function update(gId, settings) {
+                settings = settings || {};
+                settings.gId = gId;
+                return request.put(settings);
+            }
+
+            return {
+                list: function (gId) {
+                    return list(gId);
+                },
+
+                /**
+                 * update group
+                 * @param {String} gId
+                 * @param {Object} settings
+                 */
+                update: function (gId, settings) {
+                    return update(gId, settings);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaGroupUser', ['SeaRequest',
+    function seaGroupUser(SeaRequest) {
+            var request = new SeaRequest('group/{gId}/user/{uId}');
+
+            function list(gId) {
+                return request.get({
+                    gId: gId
+                });
+            }
+
+            function addUser(gId, uId) {
+                return request.put({
+                    uId: uId,
+                    gId: gId
+                });
+            }
+
+            function removeUser(gId, uId) {
+                return request.del({
+                    uId: uId,
+                    gId: gId
+                });
+            }
+
+            return {
+                list: function (gId) {
+                    return list(gId);
+                },
+
+                /**
+                 * add user to group
+                 * @param {String} gId
+                 * @param {String} uId
+                 */
+                add: function (gId, uId) {
+                    return addUser(gId, uId);
+                },
+
+                /**
+                 * remove user to group
+                 * @param {String} gId
+                 * @param {String} uId
+                 */
+                remove: function (gId, uId) {
+                    return removeUser(gId, uId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaCustomerApiKey', ['SeaRequest',
     function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/apiKey/{apiKey}'),
@@ -2658,722 +2818,6 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaGroup', ['SeaRequest', 'seaGroupSetting', 'seaGroupUser',
-    function seaGroup(SeaRequest, seaGroupSetting, seaGroupUser) {
-            var request = new SeaRequest('group/{gId}');
-
-            function create(params) {
-                return request.post(params);
-            }
-
-            function get(gId) {
-                return request.get({
-                    gId: gId
-                });
-            }
-
-            function update(group) {
-                return request.put(group);
-            }
-
-            function destroy(gId) {
-                return request.del({
-                    gId: gId
-                });
-            }
-
-            return {
-                /**
-                 * create group
-                 * @param {Object} params
-                 * @config {String} [customerId]
-                 * @config {String} [name]
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-
-                get: function (gId) {
-                    return get(gId);
-                },
-
-                /**
-                 * update group
-                 * @param {Object} group
-                 * @config {String} [gId]
-                 * @config {String} [name]
-                 */
-                update: function (group) {
-                    return update(group);
-                },
-
-                destroy: function (gId) {
-                    return destroy(gId);
-                },
-
-                setting: seaGroupSetting,
-                user: seaGroupUser
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaGroupSetting', ['SeaRequest',
-    function seaGroupSetting(SeaRequest) {
-            var request = new SeaRequest('group/{gId}/setting');
-
-            function list(gId) {
-                return request.get({
-                    gId: gId
-                });
-            }
-
-            function update(gId, settings) {
-                settings = settings || {};
-                settings.gId = gId;
-                return request.put(settings);
-            }
-
-            return {
-                list: function (gId) {
-                    return list(gId);
-                },
-
-                /**
-                 * update group
-                 * @param {String} gId
-                 * @param {Object} settings
-                 */
-                update: function (gId, settings) {
-                    return update(gId, settings);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaGroupUser', ['SeaRequest',
-    function seaGroupUser(SeaRequest) {
-            var request = new SeaRequest('group/{gId}/user/{uId}');
-
-            function list(gId) {
-                return request.get({
-                    gId: gId
-                });
-            }
-
-            function addUser(gId, uId) {
-                return request.put({
-                    uId: uId,
-                    gId: gId
-                });
-            }
-
-            function removeUser(gId, uId) {
-                return request.del({
-                    uId: uId,
-                    gId: gId
-                });
-            }
-
-            return {
-                list: function (gId) {
-                    return list(gId);
-                },
-
-                /**
-                 * add user to group
-                 * @param {String} gId
-                 * @param {String} uId
-                 */
-                add: function (gId, uId) {
-                    return addUser(gId, uId);
-                },
-
-                /**
-                 * remove user to group
-                 * @param {String} gId
-                 * @param {String} uId
-                 */
-                remove: function (gId, uId) {
-                    return removeUser(gId, uId);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaMeLocation', ['SeaRequest',
-        function seaMeLocation(SeaRequest) {
-            var request = new SeaRequest('me/location');
-
-            function get() {
-                return request.get();
-            }
-
-            function update(params) {
-                return request.post(params);
-            }
-
-            return {
-                /**
-                 * get location
-                 */
-                get: function (cId) {
-                    return get(cId);
-                },
-
-                /**
-                 * update location
-                 * @param {Object} params
-                 * @config {Object} [geo]
-                 * @config {Number} [geo.lat]
-                 * @config {Number} [geo.lon]
-                 * @config {Object} [geo.address]
-                 * @config {String} [geo.address.country]
-                 * @config {String} [geo.address.state]
-                 * @config {String} [geo.address.postcode]
-                 * @config {String} [geo.address.city]
-                 * @config {String} [geo.address.road]
-                 * @config {String} [geo.address.house_number]
-                 */
-                update: function (params) {
-                    return update(params);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting',
-        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting) {
-            var request = new SeaRequest('me/{action}');
-
-            function _formatNode(node) {
-                ['date', 'lastDate', 'silencedUntil'].forEach(function (key) {
-                    if (node[key] && typeof (node[key]) === 'string') {
-                        node[key] = new Date(node[key]);
-                    }
-                });
-
-                return node;
-            }
-
-            function _formatData(data) {
-                var idx = data.indexOf('loadfinish');
-                if (idx >= 0) {
-                    data.splice(idx, 1);
-                }
-
-                for (var i = 0, len = data.length; i < len; i++) {
-                    _formatNode(data[i]);
-                }
-
-                return data;
-            }
-
-            function me() {
-                return request.get();
-            }
-
-            function customer() {
-                return request.get({
-                    action: 'customer'
-                });
-            }
-
-            function feed(params) {
-                params = params || {};
-                params.action = 'feed';
-
-                return request.get(params);
-            }
-
-            function key(name) {
-                return request.get({
-                    action: 'key',
-                    name: name
-                });
-            }
-
-            function nodes(params) {
-                params = params || {};
-                params.action = 'nodes';
-
-                return request.get(params).then(_formatData);
-            }
-
-            return {
-                me: me,
-                customer: customer,
-                feed: function (params) {
-                    return feed(params);
-                },
-                key: function (name) {
-                    return key(name);
-                },
-                nodes: function (params) {
-                    return nodes(params);
-                },
-
-                location: seaMeLocation,
-                mobilepush: seaMeMobilepush,
-                notification: seaMeNotification,
-                twofactor: seaMeTwoFactor,
-                setting: seaMeSetting
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaMeMobilepush', ['SeaRequest',
-    function seaMeMobilepush(SeaRequest) {
-            var request = new SeaRequest('me/mobilepush/{handle}');
-
-            function list() {
-                return request.get();
-            }
-
-            function create(params) {
-                return request.post(params);
-            }
-
-            function get(handle) {
-                return request.get({
-                    handle: handle
-                });
-            }
-
-            function destroy(handle) {
-                return request.del({
-                    handle: handle
-                });
-            }
-
-            return {
-                list: list,
-
-                /**
-                 * add mobilepush
-                 * @param   {Object} params
-                 * @config  {String} handle
-                 * @config  {String} type
-                 * @returns {Object} promise
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-
-                get: function (handle) {
-                    return get(handle);
-                },
-
-                destroy: function (handle) {
-                    return destroy(handle);
-                }
-            };
-  }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaMeNotification', ['SeaRequest',
-    function seaMeNotification(SeaRequest) {
-            var request = new SeaRequest('me/notification/{nId}');
-
-            function list(params) {
-                return request.get(params);
-            }
-
-            function update(notification) {
-                return request.put(notification);
-            }
-
-            function destroy(nId) {
-                return request.del({
-                    nId: nId
-                });
-            }
-
-            return {
-                /**
-                 * list all notifications
-                 * @param   {Object} params
-                 * @config  {Boolean}  type
-                 * @returns {Object} promise
-                 */
-                list: function (params) {
-                    return list(params);
-                },
-
-                /**
-                 * update notification
-                 * @param {Object} params
-                 * @config {String} [nId]
-                 * @config {String} [cId || aId]
-                 * @config {Boolean} [mail]
-                 * @config {Boolean} [phone]
-                 * @config {Boolean} [ticket]
-                 * @config {String} [deferId]
-                 */
-                update: function (notification) {
-                    return get(notification);
-                },
-
-                destroy: function (nId) {
-                    return destroy(nId);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaMeSetting', ['SeaRequest',
-    function seaMeSetting(SeaRequest) {
-            var request = new SeaRequest('me/setting');
-
-            function list() {
-                return request.get();
-            }
-
-            function update(settings) {
-                settings = settings || {};
-                return request.put(settings);
-            }
-
-            return {
-                list: function (uId) {
-                    return list(uId);
-                },
-
-                /**
-                 * update user
-                 * @param {Object} settings
-                 */
-                update: function (settings) {
-                    return update(settings);
-                }
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaMeTwoFactor', ['SeaRequest',
-        function seaMeLocation(SeaRequest) {
-            var request = new SeaRequest('me/twofactor/{sub}');
-
-            function get() {
-                return request.get();
-            }
-
-            function getSecret(params) {
-                params = params || {};
-                params.sub = 'secret';
-                return request.get(params);
-            }
-
-            function enable(params) {
-                return request.post(params);
-            }
-
-            function disable(params) {
-                return request.del(params);
-            }
-
-            return {
-                /**
-                 * is two-factor enabled
-                 */
-                isEnabled: function () {
-                    return get();
-                },
-
-                /**
-                 * enable two-factor authentication
-                 * @param   {Object} params
-                 * @config  {string}  format
-                 * @returns {Object} promise
-                 */
-                getSecret: function (params) {
-                    return getSecret(params);
-                },
-
-                /**
-                 * enable two-factor authentication
-                 * @param   {Object} params
-                 * @config  {string}  password
-                 * @config  {string}  code
-                 * @returns {Object} promise
-                 */
-                enable: function (params) {
-                    return enable(params);
-                },
-
-                /**
-                 * disable two-factor authentication
-                 * @param   {Object} params
-                 * @config  {string}  password
-                 * @config  {string}  code
-                 * @returns {Object} promise
-                 */
-                disable: function (params) {
-                    return disable(params);
-                }
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPatchContainer', ['SeaRequest', 'seaPatchHelper',
-        function seaUser(SeaRequest, seaPatchHelper) {
-            var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}')),
-                requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}')),
-                requestPatchJobs = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}/jobs')),
-                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}'));
-
-            function get(customerId, cId, action, queryParameters) {
-                if (action) {
-                    var params = {
-                        customerId: customerId,
-                        cId: cId,
-                        action: action,
-                    };
-
-                    if (queryParameters) {
-                        params = angular.extend({}, params, queryParameters);
-                    }
-
-                    return requestAction.get(params);
-                }
-
-                return request.get({
-                    customerId: customerId,
-                    cId: cId,
-                });
-            }
-
-            function enable(customerId, cId) {
-                return requestAction.post({
-                    customerId: customerId,
-                    cId: cId,
-                    action: 'enable',
-                });
-            }
-
-            function disable(customerId, cId) {
-                return requestAction.post({
-                    customerId: customerId,
-                    cId: cId,
-                    action: 'disable',
-                });
-            }
-
-            function getJobsByPatchId(customerId, cId, queryParameters, patchId) {
-                var params = {
-                    customerId: customerId,
-                    cId: cId,
-                    patchId: patchId,
-                };
-                if (queryParameters) {
-                    params = angular.extend({}, params, queryParameters);
-                }
-                return requestPatchJobs.get(params);
-            }
-
-            function getPatchById(customerId, cId, patchId) {
-                return requestPatch.get({
-                    customerId: customerId,
-                    cId: cId,
-                    patchId: patchId,
-                });
-            }
-
-            return {
-                get: function (customerId, cId) {
-                    return get(customerId, cId);
-                },
-                enable: function (customerId, cId) {
-                    return enable(customerId, cId);
-                },
-                disable: function (customerId, cId) {
-                    return disable(customerId, cId);
-                },
-                category: {
-                    list: function (customerId, cId) {
-                        return get(customerId, cId, 'categories');
-                    }
-                },
-                job: {
-                    list: function (customerId, cId, queryParameters) {
-                        return get(customerId, cId, 'jobs', queryParameters);
-                    },
-                    get: function(customerId, cId, patchId) {
-                        return getPatchById(customerId, cId, patchId);
-                    },
-                    history: function (customerId, cId, queryParameters) {
-                        return get(customerId, cId, 'jobs/history', queryParameters);
-                    },
-                },
-                patch: {
-                    list: function (customerId, cId, queryParameters) {
-                        return get(customerId, cId, 'patches', queryParameters);
-                    },
-                    get: function (customerId, cId, patchId) {
-                        return getPatchById(customerId, cId, patchId);
-                    },
-                    history: function (customerId, cId, queryParameters) {
-                        return get(customerId, cId, 'patches/history', queryParameters);
-                    },
-                    job: {
-                        list: function (customerId, cId, queryParameters, patchId) {
-                            return getJobsByPatchId(customerId, cId, queryParameters, patchId);
-                        },
-                    },
-                },
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPatchHelper', ['seaConfig',
-    function (seaConfig) {        
-            function getUrl(path) {
-                return [seaConfig.getPmUrl(), path].join('/');
-            }
-
-            return {
-                getUrl: getUrl
-            };
-    }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPatch', ['SeaRequest', 'seaPatchContainer', 'seaPatchViewFilter', 'seaPatchHelper',
-        function seaUser(SeaRequest, seaPatchContainer, seaPatchViewFilter, seaPatchHelper) {
-            var request = new SeaRequest(seaPatchHelper.getUrl('patch/customers')),
-            requestCategories = new SeaRequest(seaPatchHelper.getUrl('patch/categories'));
-
-            function listCustomers() {
-                return request.get();
-            }     
-
-            function listCategories() {
-                return requestCategories.get();
-            }            
-            
-            return {
-                customer: {
-                    list: listCustomers
-                },
-                category: {
-                    list: listCategories,
-                },
-                container: seaPatchContainer,
-                viewFilter: seaPatchViewFilter,
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPatchViewFilter', ['SeaRequest', 'seaPatchHelper',
-        function seaUser(SeaRequest, seaPatchHelper) {
-            var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilters')),
-                requestVf = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}/{action}')),
-                requestPost = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter')),
-                requestDel = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}'));
-
-            function get(customerId, vfId, action, queryParameters) {
-                if (vfId) {
-                    var params = {
-                        customerId: customerId,
-                        vfId: vfId,
-                        action: action,
-                    };
-
-                    if (queryParameters) {
-                        params = angular.extend({}, params, queryParameters);
-                    }
-
-                    return requestVf.get(params);
-                }
-
-                return request.get({
-                    customerId: customerId,
-                });
-            }
-
-            function post(customerId, vfId, body, action) {
-                if (vfId) {
-                    var params = angular.extend({}, { customerId: customerId, vfId: vfId, action: action }, body);
-                    return requestVf.post(params);
-                }
-
-                var params = angular.extend({}, { customerId: customerId }, body);
-                return requestPost.post(params);
-            }
-
-            function del(customerId, vfId) {
-                return requestDel.del({ customerId: customerId, vfId: vfId });
-            }
-
-            return {
-                list: function (customerId) {
-                    return get(customerId);
-                },
-                create: function (customerId, body) {
-                    return post(customerId, false, body);
-                },
-                destroy: function (customerId, vfId) {
-                    return del(customerId, vfId);
-                },
-                container: {
-                    list: function (customerId, vfId) {
-                        return get(customerId, vfId, 'containers');
-                    }
-                },
-                job: {
-                    list: function (customerId, vfId, queryParameters) {
-                        return get(customerId, vfId, 'jobs', queryParameters);
-                    },
-                    history: function (customerId, vfId, queryParameters) {
-                        return get(customerId, vfId, 'jobs/history', queryParameters);
-                    },
-                },
-                patch: {
-                    list: function (customerId, vfId, queryParameters) {
-                        return get(customerId, vfId, 'patches', queryParameters);
-                    },
-                    history: function (customerId, vfId, queryParameters) {
-                        return get(customerId, vfId, 'patches/history', queryParameters);
-                    },
-                },
-                setting: {
-                    list: function (customerId, vfId) {
-                        return get(customerId, vfId, 'settings');
-                    },
-
-                    update: function (customerId, vfId, body) {
-                        return post(customerId, vfId, body, 'settings');
-                    }
-                },
-
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
     angular.module('ngSeApi').factory('seaReporting', ['SeaRequest', 'seaReportingTemplate',
     function seaCustomer(SeaRequest, seaReportingTemplate) {
             var request = new SeaRequest('reporting/{cId}/report'),
@@ -3516,6 +2960,356 @@
 
                 destroy: function (rtId) {
                     return destroy(rtId);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMeLocation', ['SeaRequest',
+        function seaMeLocation(SeaRequest) {
+            var request = new SeaRequest('me/location');
+
+            function get() {
+                return request.get();
+            }
+
+            function update(params) {
+                return request.post(params);
+            }
+
+            return {
+                /**
+                 * get location
+                 */
+                get: function (cId) {
+                    return get(cId);
+                },
+
+                /**
+                 * update location
+                 * @param {Object} params
+                 * @config {Object} [geo]
+                 * @config {Number} [geo.lat]
+                 * @config {Number} [geo.lon]
+                 * @config {Object} [geo.address]
+                 * @config {String} [geo.address.country]
+                 * @config {String} [geo.address.state]
+                 * @config {String} [geo.address.postcode]
+                 * @config {String} [geo.address.city]
+                 * @config {String} [geo.address.road]
+                 * @config {String} [geo.address.house_number]
+                 */
+                update: function (params) {
+                    return update(params);
+                }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting',
+        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting) {
+            var request = new SeaRequest('me/{action}');
+
+            function _formatNode(node) {
+                ['date', 'lastDate', 'silencedUntil'].forEach(function (key) {
+                    if (node[key] && typeof (node[key]) === 'string') {
+                        node[key] = new Date(node[key]);
+                    }
+                });
+
+                return node;
+            }
+
+            function _formatData(data) {
+                var idx = data.indexOf('loadfinish');
+                if (idx >= 0) {
+                    data.splice(idx, 1);
+                }
+
+                for (var i = 0, len = data.length; i < len; i++) {
+                    _formatNode(data[i]);
+                }
+
+                return data;
+            }
+
+            function me() {
+                return request.get();
+            }
+
+            function customer() {
+                return request.get({
+                    action: 'customer'
+                });
+            }
+
+            function feed(params) {
+                params = params || {};
+                params.action = 'feed';
+
+                return request.get(params);
+            }
+
+            function key(name) {
+                return request.get({
+                    action: 'key',
+                    name: name
+                });
+            }
+
+            function nodes(params) {
+                params = params || {};
+                params.action = 'nodes';
+
+                return request.get(params).then(_formatData);
+            }
+
+            function updatePassword(params) {
+                params = angular.extend({}, { action: 'password' }, params);
+                return request.put(params);
+            }
+
+            return {
+                me: me,
+                password: {
+                    update: function (params) {
+                        return updatePassword(params);
+                    },
+                },
+                customer: customer,
+                feed: function (params) {
+                    return feed(params);
+                },
+                key: function (name) {
+                    return key(name);
+                },
+                nodes: function (params) {
+                    return nodes(params);
+                },
+
+                location: seaMeLocation,
+                mobilepush: seaMeMobilepush,
+                notification: seaMeNotification,
+                twofactor: seaMeTwoFactor,
+                setting: seaMeSetting
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMeMobilepush', ['SeaRequest',
+    function seaMeMobilepush(SeaRequest) {
+            var request = new SeaRequest('me/mobilepush/{handle}');
+
+            function list() {
+                return request.get();
+            }
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function get(handle) {
+                return request.get({
+                    handle: handle
+                });
+            }
+
+            function destroy(handle) {
+                return request.del({
+                    handle: handle
+                });
+            }
+
+            return {
+                list: list,
+
+                /**
+                 * add mobilepush
+                 * @param   {Object} params
+                 * @config  {String} handle
+                 * @config  {String} type
+                 * @returns {Object} promise
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                get: function (handle) {
+                    return get(handle);
+                },
+
+                destroy: function (handle) {
+                    return destroy(handle);
+                }
+            };
+  }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMeNotification', ['SeaRequest',
+    function seaMeNotification(SeaRequest) {
+            var request = new SeaRequest('me/notification/{nId}');
+
+            function list(params) {
+                return request.get(params);
+            }
+
+            function update(notification) {
+                return request.put(notification);
+            }
+
+            function destroy(nId) {
+                return request.del({
+                    nId: nId
+                });
+            }
+
+            return {
+                /**
+                 * list all notifications
+                 * @param   {Object} params
+                 * @config  {Boolean}  type
+                 * @returns {Object} promise
+                 */
+                list: function (params) {
+                    return list(params);
+                },
+
+                /**
+                 * update notification
+                 * @param {Object} params
+                 * @config {String} [nId]
+                 * @config {String} [cId || aId]
+                 * @config {Boolean} [mail]
+                 * @config {Boolean} [phone]
+                 * @config {Boolean} [ticket]
+                 * @config {String} [deferId]
+                 */
+                update: function (notification) {
+                    return get(notification);
+                },
+
+                destroy: function (nId) {
+                    return destroy(nId);
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMeSetting', ['SeaRequest',
+    function seaMeSetting(SeaRequest) {
+            var request = new SeaRequest('me/setting');
+            var requestAction = new SeaRequest('me/setting/{action}');
+
+            function list() {
+                return request.get();
+            }
+
+            function update(settings) {
+                settings = settings || {};
+                return request.put(settings);
+            }
+
+            function resetSecret(password) {
+                return requestAction.post({
+                    action: 'secret/reset',
+                    password: password,
+                });
+            }
+
+            return {
+                list: function (uId) {
+                    return list(uId);
+                },
+
+                /**
+                 * update user
+                 * @param {Object} settings
+                 */
+                update: function (settings) {
+                    return update(settings);
+                },
+
+                secret: {
+                    reset: function(password) {
+                        return resetSecret(password);
+                    }
+                }
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaMeTwoFactor', ['SeaRequest',
+        function seaMeLocation(SeaRequest) {
+            var request = new SeaRequest('me/twofactor/{sub}');
+
+            function get() {
+                return request.get();
+            }
+
+            function getSecret(params) {
+                params = params || {};
+                params.sub = 'secret';
+                return request.get(params);
+            }
+
+            function enable(params) {
+                return request.post(params);
+            }
+
+            function disable(params) {
+                return request.del(params);
+            }
+
+            return {
+                /**
+                 * is two-factor enabled
+                 */
+                isEnabled: function () {
+                    return get();
+                },
+
+                /**
+                 * enable two-factor authentication
+                 * @param   {Object} params
+                 * @config  {string}  format
+                 * @returns {Object} promise
+                 */
+                getSecret: function (params) {
+                    return getSecret(params);
+                },
+
+                /**
+                 * enable two-factor authentication
+                 * @param   {Object} params
+                 * @config  {string}  password
+                 * @config  {string}  code
+                 * @returns {Object} promise
+                 */
+                enable: function (params) {
+                    return enable(params);
+                },
+
+                /**
+                 * disable two-factor authentication
+                 * @param   {Object} params
+                 * @config  {string}  password
+                 * @config  {string}  code
+                 * @returns {Object} promise
+                 */
+                disable: function (params) {
+                    return disable(params);
                 }
             };
         }]);
@@ -4021,6 +3815,248 @@
 (function () {
     "use strict";
 
+    angular.module('ngSeApi').factory('seaPatchContainer', ['SeaRequest', 'seaPatchHelper',
+        function seaUser(SeaRequest, seaPatchHelper) {
+            var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}')),
+                requestAction = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/{action}')),
+                requestPatchJobs = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}/jobs')),
+                requestPatch = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/container/{cId}/patch/{patchId}'));
+
+            function get(customerId, cId, action, queryParameters) {
+                if (action) {
+                    var params = {
+                        customerId: customerId,
+                        cId: cId,
+                        action: action,
+                    };
+
+                    if (queryParameters) {
+                        params = angular.extend({}, params, queryParameters);
+                    }
+
+                    return requestAction.get(params);
+                }
+
+                return request.get({
+                    customerId: customerId,
+                    cId: cId,
+                });
+            }
+
+            function enable(customerId, cId) {
+                return requestAction.post({
+                    customerId: customerId,
+                    cId: cId,
+                    action: 'enable',
+                });
+            }
+
+            function disable(customerId, cId) {
+                return requestAction.post({
+                    customerId: customerId,
+                    cId: cId,
+                    action: 'disable',
+                });
+            }
+
+            function getJobsByPatchId(customerId, cId, queryParameters, patchId) {
+                var params = {
+                    customerId: customerId,
+                    cId: cId,
+                    patchId: patchId,
+                };
+                if (queryParameters) {
+                    params = angular.extend({}, params, queryParameters);
+                }
+                return requestPatchJobs.get(params);
+            }
+
+            function getPatchById(customerId, cId, patchId) {
+                return requestPatch.get({
+                    customerId: customerId,
+                    cId: cId,
+                    patchId: patchId,
+                });
+            }
+
+            return {
+                get: function (customerId, cId) {
+                    return get(customerId, cId);
+                },
+                enable: function (customerId, cId) {
+                    return enable(customerId, cId);
+                },
+                disable: function (customerId, cId) {
+                    return disable(customerId, cId);
+                },
+                category: {
+                    list: function (customerId, cId) {
+                        return get(customerId, cId, 'categories');
+                    }
+                },
+                job: {
+                    list: function (customerId, cId, queryParameters) {
+                        return get(customerId, cId, 'jobs', queryParameters);
+                    },
+                    get: function(customerId, cId, patchId) {
+                        return getPatchById(customerId, cId, patchId);
+                    },
+                    history: function (customerId, cId, queryParameters) {
+                        return get(customerId, cId, 'jobs/history', queryParameters);
+                    },
+                },
+                patch: {
+                    list: function (customerId, cId, queryParameters) {
+                        return get(customerId, cId, 'patches', queryParameters);
+                    },
+                    get: function (customerId, cId, patchId) {
+                        return getPatchById(customerId, cId, patchId);
+                    },
+                    history: function (customerId, cId, queryParameters) {
+                        return get(customerId, cId, 'patches/history', queryParameters);
+                    },
+                    job: {
+                        list: function (customerId, cId, queryParameters, patchId) {
+                            return getJobsByPatchId(customerId, cId, queryParameters, patchId);
+                        },
+                    },
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPatchHelper', ['seaConfig',
+    function (seaConfig) {        
+            function getUrl(path) {
+                return [seaConfig.getPmUrl(), path].join('/');
+            }
+
+            return {
+                getUrl: getUrl
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPatch', ['SeaRequest', 'seaPatchContainer', 'seaPatchViewFilter', 'seaPatchHelper',
+        function seaUser(SeaRequest, seaPatchContainer, seaPatchViewFilter, seaPatchHelper) {
+            var request = new SeaRequest(seaPatchHelper.getUrl('patch/customers')),
+            requestCategories = new SeaRequest(seaPatchHelper.getUrl('patch/categories'));
+
+            function listCustomers() {
+                return request.get();
+            }     
+
+            function listCategories() {
+                return requestCategories.get();
+            }            
+            
+            return {
+                customer: {
+                    list: listCustomers
+                },
+                category: {
+                    list: listCategories,
+                },
+                container: seaPatchContainer,
+                viewFilter: seaPatchViewFilter,
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPatchViewFilter', ['SeaRequest', 'seaPatchHelper',
+        function seaUser(SeaRequest, seaPatchHelper) {
+            var request = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilters')),
+                requestVf = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}/{action}')),
+                requestPost = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter')),
+                requestDel = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/viewFilter/{vfId}'));
+
+            function get(customerId, vfId, action, queryParameters) {
+                if (vfId) {
+                    var params = {
+                        customerId: customerId,
+                        vfId: vfId,
+                        action: action,
+                    };
+
+                    if (queryParameters) {
+                        params = angular.extend({}, params, queryParameters);
+                    }
+
+                    return requestVf.get(params);
+                }
+
+                return request.get({
+                    customerId: customerId,
+                });
+            }
+
+            function post(customerId, vfId, body, action) {
+                if (vfId) {
+                    var params = angular.extend({}, { customerId: customerId, vfId: vfId, action: action }, body);
+                    return requestVf.post(params);
+                }
+
+                var params = angular.extend({}, { customerId: customerId }, body);
+                return requestPost.post(params);
+            }
+
+            function del(customerId, vfId) {
+                return requestDel.del({ customerId: customerId, vfId: vfId });
+            }
+
+            return {
+                list: function (customerId) {
+                    return get(customerId);
+                },
+                create: function (customerId, body) {
+                    return post(customerId, false, body);
+                },
+                destroy: function (customerId, vfId) {
+                    return del(customerId, vfId);
+                },
+                container: {
+                    list: function (customerId, vfId) {
+                        return get(customerId, vfId, 'containers');
+                    }
+                },
+                job: {
+                    list: function (customerId, vfId, queryParameters) {
+                        return get(customerId, vfId, 'jobs', queryParameters);
+                    },
+                    history: function (customerId, vfId, queryParameters) {
+                        return get(customerId, vfId, 'jobs/history', queryParameters);
+                    },
+                },
+                patch: {
+                    list: function (customerId, vfId, queryParameters) {
+                        return get(customerId, vfId, 'patches', queryParameters);
+                    },
+                    history: function (customerId, vfId, queryParameters) {
+                        return get(customerId, vfId, 'patches/history', queryParameters);
+                    },
+                },
+                setting: {
+                    list: function (customerId, vfId) {
+                        return get(customerId, vfId, 'settings');
+                    },
+
+                    update: function (customerId, vfId, body) {
+                        return post(customerId, vfId, body, 'settings');
+                    }
+                },
+
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
     angular.module('ngSeApi').factory('seaSearch', ['SeaRequest',
         function seaSearch(SeaRequest) {
             var request = new SeaRequest('search/{sub}');
@@ -4345,6 +4381,284 @@
                         return deactivateTwoFactor(uId, password);
                     }
                 }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaVaultEntry', ['SeaRequest', 'seaVaultHelper',
+        function (SeaRequest, seaVaultHelper) {
+            var request = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry'));
+            var requestEntry = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry/{eId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry/{eId}/{action}'));
+            var requestEntries = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entries'));
+            var requestAgentSetting = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/entry/{eId}/agent/{aId}/setting/{key}'));
+
+            function listEntries(vId) {
+                return requestEntries.get({
+                    vId: vId,
+                });
+            }
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function get(vId, eId) {
+                return requestEntry.get(vId, eId);
+            }
+
+            function update(params) {
+                return requestEntry.put(params);
+            }
+
+            function destroy(vId, eId) {
+                return requestEntry.del({ vId, eId });
+            }
+
+            function unlock(params) {
+                params = angular.extend({}, params, { action: 'unlock' });
+                return requestAction.put(params);
+            }
+
+            function updateAgentSetting(params) {
+                return requestAgentSetting.put(params);
+            }
+
+
+            return {
+                list: function (vId) {
+                    return listEntries(vId);
+                },
+
+                /**
+                 * create entry
+                 * @param {Object} params
+                 * @config {String} vId
+                 * @config {String} name
+                 * @config {String} description
+                 * @config {String} [password]
+                 * @config {String} [privateKey]
+                 * @config {Object} credentials 
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+                get: function (vId, eId) {
+                    return get(vId, eId);
+                },
+
+                /**
+                 * update entry
+                 * @param {Object} params
+                 * @config {String} vId
+                 * @config {String} eId
+                 * @config {String} name
+                 * @config {String} description
+                 * @config {String} [password]
+                 * @config {String} [privateKey]
+                 * @config {Object} credentials 
+                 */
+                update: function (params) {
+                    return update(params);
+                },
+                destroy: function (vId, eId) {
+                    return destroy(vId, eId);
+                },
+                /**
+                * unlock vault
+                * @param {Object} params
+                * @config {String} vId
+                * @config {String} [password]
+                * @config {String} [privateKey]
+                */
+                unlock: function (params) {
+                    return unlock(params);
+                },
+                agent: {
+                    setting: {
+                        /**
+                        * update agent settings with vault entries
+                        * @param {Object} params
+                        * @config {String} vId   vaultId
+                        * @config {String} eId   entryId
+                        * @config {String} aId   agentId
+                        * @config {String} key   agent setting key
+                        * @config {String} [password]
+                        * @config {String} [privateKey]
+                        */
+
+                        update: function (params) {
+                            return updateAgentSetting(params);
+                        }
+                    }
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaVaultHelper', ['seaConfig',
+    function (seaConfig) {        
+            function getUrl(path) {
+                return [seaConfig.getVaultUrl(), seaConfig.getVaultApiVersion(), path].join('/');
+            }
+
+            return {
+                getUrl: getUrl
+            };
+    }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaVaultUser', ['SeaRequest', 'seaVaultHelper',
+        function (SeaRequest, seaVaultHelper) {
+            var request = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/user/{uId}'));
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function destroy(vId, uId) {
+                return request.del({
+                    vId: vId,
+                    uId: uId,
+                });
+            }
+
+            return {
+                /**
+                 * grant user access to a vault
+                 * @param {Object} params
+                 * @config {String} vaultId
+                 * @config {String} userId
+                 * @config {String} password
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+                
+                destroy: function (vId, uId) {
+                    return destroy(vId, uId);
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
+        function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
+            var request = new SeaRequest(seaVaultHelper.getUrl('vault'));
+            var requestVault = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}'));
+            var requestAction = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/{action}'));
+            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('vaults'));
+
+            function listVaults(queryParams) {
+                return requestVaults.get(queryParams);
+            }
+
+            function create(params) {
+                return request.post(params);
+            }
+            
+            function update(params) {
+                return requestVault.put(params);
+            }
+
+            function get(vId) {
+                return requestVault.get({
+                    vId: vId,
+                });
+            }
+
+            function destroy(vId) {
+                return requestVault.del({
+                    vId: vId
+                });
+            }
+            
+            function restore(params) {
+                params = angular.extend({}, params, {action: 'restore'});
+                return requestAction.post(params);
+            }
+           
+            function unlock(params) {
+                params = angular.extend({}, params, {action: 'unlock'});
+                return requestAction.put(params);
+            }
+
+            return {
+                list: function (queryParams) {
+                    return listVaults(queryParams);
+                },
+
+                /**
+                 * create vault
+                 * @param {Object} params
+                 * @config {String} [customerId]
+                 * @config {String} [distributorId]
+                 * @config {String} [userId]
+                 * @config {Boolean} showPassword
+                 * @config {String} authenticationMethod
+                 * @config {String} name
+                 * @config {String} description
+                 * @config {String} password
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+
+                get: function (vId) {
+                    return get(vId);
+                },
+                
+                /**
+                 * update vault
+                 * @param {Object} params
+                 * @config {String} vId
+                 * @config {String} [customerId]
+                 * @config {String} [distributorId]
+                 * @config {String} [userId]
+                 * @config {Boolean} [showPassword]
+                 * @config {String} [authenticationMethod]
+                 * @config {String} [name]
+                 * @config {String} [description]
+                 * @config {String} password
+                 */
+                update: function (params) {
+                    return update(params);
+                },
+
+                destroy: function (vId) {
+                    return destroy(vId);
+                },
+                
+                /**
+                 * restore vault
+                 * @param {Object} params
+                 * @config {String} vId
+                 * @config {String} restoreKey
+                 */
+                restore: function (params) {
+                    return restore(params);
+                },
+                
+                /**
+                 * unlock vault
+                 * @param {Object} params
+                 * @config {String} vId
+                 * @config {String} [password]
+                 * @config {String} [privateKey]
+                 */
+                unlock: function (params) {
+                    return unlock(params);
+                },
+                entry: seaVaultEntry,
+                user: seaVaultUser,
             };
         }]);
 })();
