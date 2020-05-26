@@ -8,8 +8,10 @@
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
                 vaultUrl: 'https://vault-api.server-eye.de',
+                microServiceUrl: 'https://api-ms.server-eye.de',
                 apiVersion: 2,
                 vaultApiVersion: 1,
+                microServiceApiVersion: 3,
                 apiKey: null,
                 getUrl: function (path) {
                     return [this.baseUrl, this.apiVersion, path].join('/');
@@ -70,11 +72,17 @@
                     getVaultUrl: function () {
                         return config.vaultUrl;
                     },
+                    getMicroServiceUrl: function () {
+                        return config.microServiceUrl;
+                    },
                     getApiVersion: function () {
                         return config.apiVersion;
                     },
                     getVaultApiVersion: function () {
                         return config.vaultApiVersion;
+                    },
+                    getMicroServiceApiVersion: function () {
+                        return config.microServiceApiVersion;
                     },
                     getApiKey: function () {
                         return config.apiKey;
