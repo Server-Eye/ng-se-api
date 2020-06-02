@@ -14,7 +14,7 @@
             }
 
             function remove(repositoryId, userId) {
-                return requestScript.del({
+                return request.del({
                     repositoryId: repositoryId,
                     userId: userId,
                 });
