@@ -7,10 +7,8 @@
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
-                vaultUrl: 'https://vault-api.server-eye.de',
                 microServiceUrl: 'https://api-ms.server-eye.de',
                 apiVersion: 2,
-                vaultApiVersion: 1,
                 microServiceApiVersion: 3,
                 apiKey: null,
                 getUrl: function (path) {
@@ -46,12 +44,16 @@
                 config.pmUrl = pmUrl;
             }
 
-            this.setVaultUrl = function (vaultUrl) {
-                config.vaultUrl = vaultUrl;
+            this.setMicroServiceUrl = function (microServiceUrl) {
+                config.microServiceUrl = microServiceUrl;
             }
 
             this.setApiVersion = function (apiVersion) {
                 config.apiVersion = apiVersion;
+            }
+
+            this.setMicroServiceApiVersion = function (microServiceApiVersion) {
+                config.microServiceApiVersion = microServiceApiVersion;
             }
 
             this.setApiKey = function (apiKey) {
@@ -69,8 +71,8 @@
                     getPmUrl: function () {
                         return config.pmUrl;
                     },
-                    getVaultUrl: function () {
-                        return config.vaultUrl;
+                    getMicroServiceUrl: function () {
+                        return config.microServiceUrl;
                     },
                     getMicroServiceUrl: function () {
                         return config.microServiceUrl;
@@ -78,8 +80,8 @@
                     getApiVersion: function () {
                         return config.apiVersion;
                     },
-                    getVaultApiVersion: function () {
-                        return config.vaultApiVersion;
+                    getMicroServiceApiVersion: function () {
+                        return config.microServiceApiVersion;
                     },
                     getMicroServiceApiVersion: function () {
                         return config.microServiceApiVersion;
