@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaPowerShellRepositoryUtil', ['SeaRequest', 'seaPowerShellHelper',
         function (SeaRequest, seaPowerShellHelper) {
             var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
-            var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repoId}/script/{scriptId}/agent'));
+            var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
             var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
 
             function parseScript(script) {
@@ -19,7 +19,11 @@
             }
 
             function updateSettings(params) {
-                return settingRequest.put(params);
+                return settingRequest.put({
+                    powerShellRepositoryId: params.repositoryId,
+                    powerShellRepositoryScriptId: params.scriptId,
+                    agentId: params.agentId,
+                });
             }
 
             return {

@@ -23,7 +23,7 @@
             }
 
             function update(params) {
-                return request.put(params);
+                return requestScript.put(params);
             }
 
             function destroy(repositoryId, scriptId) {
