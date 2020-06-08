@@ -3,10 +3,9 @@
 
     angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
         function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
-            var request = new SeaRequest(seaVaultHelper.getUrl('vault'));
             var requestVault = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}'));
             var requestAction = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/{action}'));
-            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('vaults'));
+            var requestVaults = new SeaRequest(seaVaultHelper.getUrl('vault'));
 
             function listVaults(queryParams) {
                 return requestVaults.get(queryParams);
