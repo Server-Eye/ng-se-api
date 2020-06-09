@@ -6,6 +6,7 @@
             var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
             var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
             var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
+            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('/repository/script/agent/:agentId'));
 
             function parseScript(script) {
                 return parseRequest.post(script);
@@ -15,6 +16,12 @@
                 return agentsRequest.get({
                     repositoryId: repositoryId,
                     scriptId: scriptId,
+                });
+            }
+            
+            function getScriptByAgent(agentId) {
+                return agentScriptRequest.get({
+                    agentId: agentId,
                 });
             }
 
@@ -32,6 +39,9 @@
                 },
                 listAgents: function (repositoryId, scriptId) {
                     return listAgents(repositoryId, scriptId);
+                },
+                getScriptByAgent: function (agentId) {
+                    return getScriptByAgent(agentId);
                 },
                 /**
                 * update agent settings
