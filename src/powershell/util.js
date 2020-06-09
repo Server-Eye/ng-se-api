@@ -6,7 +6,7 @@
             var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
             var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
             var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
-            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('/repository/script/agent/:agentId'));
+            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));
 
             function parseScript(script) {
                 return parseRequest.post(script);
