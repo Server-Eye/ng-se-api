@@ -12,7 +12,7 @@
             }
 
             function create(params) {
-                return request.post(params);
+                return requestVaults.post(params);
             }
             
             function update(params) {
