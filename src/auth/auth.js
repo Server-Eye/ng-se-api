@@ -1,9 +1,10 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
-    function seaAuth(SeaRequest) {
+    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest', 'seaConfig',
+    function seaAuth(SeaRequest, seaConfig) {
             var request = new SeaRequest('auth/{action}');
+            var requestMs = new SeaRequest(seaConfig.getMicroServiceUrl() + '/' + seaConfig.getMicroServiceApiVersion() + '/auth/{action}');
 
             function createApiKey(params) {
                 params = params || {};
@@ -38,6 +39,13 @@
                 params.action = 'reset';
 
                 return request.post(params);
+            }
+
+            function token(params) {
+                params = params || {};
+                params.action = 'token';
+
+                return requestMs.post(params);
             }
 
             return {
@@ -77,6 +85,10 @@
 
                 resetPassword: function (params) {
                     return resetPassword(params);
+                },
+
+                token: function(params) {
+                    return token(params);
                 },
             };
     }]);

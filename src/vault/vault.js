@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
-        function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
+    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser', 'seaVaultUtil',
+        function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser, seaVaultUtil) {
             var requestVault = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}'));
             var requestAction = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/{action}'));
             var requestVaults = new SeaRequest(seaVaultHelper.getUrl('vault'));
@@ -109,6 +109,7 @@
                 },
                 entry: seaVaultEntry,
                 user: seaVaultUser,
+                util: seaVaultUtil,
             };
         }]);
 })();

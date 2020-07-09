@@ -1050,9 +1050,10 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest',
-    function seaAuth(SeaRequest) {
+    angular.module('ngSeApi').factory('seaAuth', ['SeaRequest', 'seaConfig',
+    function seaAuth(SeaRequest, seaConfig) {
             var request = new SeaRequest('auth/{action}');
+            var requestMs = new SeaRequest(seaConfig.getMicroServiceUrl() + '/' + seaConfig.getMicroServiceApiVersion() + '/auth/{action}');
 
             function createApiKey(params) {
                 params = params || {};
@@ -1087,6 +1088,13 @@
                 params.action = 'reset';
 
                 return request.post(params);
+            }
+
+            function token(params) {
+                params = params || {};
+                params.action = 'token';
+
+                return requestMs.post(params);
             }
 
             return {
@@ -1126,6 +1134,10 @@
 
                 resetPassword: function (params) {
                     return resetPassword(params);
+                },
+
+                token: function(params) {
+                    return token(params);
                 },
             };
     }]);
@@ -3420,271 +3432,6 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaPowerShellHelper', ['seaConfig',
-        function (seaConfig) {
-            function getUrl(path) {
-                return [seaConfig.getMicroServiceUrl(), seaConfig.getMicroServiceApiVersion(), 'powershell', path].join('/');
-            }
-
-            return {
-                getUrl: getUrl
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPowerShellRepository', ['SeaRequest', 'seaPowerShellHelper', 'seaPowerShellRepositoryScript', 'seaPowerShellRepositoryUser', 'seaPowerShellRepositoryUtil',
-        function (SeaRequest, seaPowerShellHelper, seaPowerShellRepositoryScript, seaPowerShellRepositoryUser, seaPowerShellRepositoryUtil) {
-            var request = new SeaRequest(seaPowerShellHelper.getUrl('repository'));
-            var requestRepository = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}'));
-
-            function listRepositories() {
-                return request.get();
-            }
-
-            function get(repositoryId) {
-                return requestRepository.get({
-                    repositoryId: repositoryId,
-                });
-            }
-
-            function create(params) {
-                return request.post(params);
-            }
-
-            function update(params) {
-                return requestRepository.put(params);
-            }
-
-            function destroy(repositoryId) {
-                return requestRepository.del({
-                    repositoryId: repositoryId,
-                });
-            }
-
-            return {
-                list: function () {
-                    return listRepositories();
-                },
-                get: function (repositoryId) {
-                    return get(repositoryId);
-                },
-                /**
-                 * create repository
-                 * @param {Object} params
-                 * @config {String} [customerId]
-                 * @config {String} [distributorId]
-                 * @config {String} name
-                 * @config {String} [description]
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-                /**
-                 * update repository
-                 * @param {Object} params
-                 * @config {String} repositoryId
-                 * @config {String} [customerId]
-                 * @config {String} [distributorId]
-                 * @config {String} name
-                 * @config {String} [description]
-                 */
-                update: function (params) {
-                    return update(params);
-                },
-                destroy: function (repositoryId) {
-                    return destroy(repositoryId);
-                },
-
-                script: seaPowerShellRepositoryScript,
-                user: seaPowerShellRepositoryUser,
-                util: seaPowerShellRepositoryUtil,
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPowerShellRepositoryScript', ['SeaRequest', 'seaPowerShellHelper',
-        function (SeaRequest, seaPowerShellHelper) {
-            var request = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script'));
-            var requestScripts = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/scripts'));
-            var requestScript = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}'));
-
-            function listScripts() {
-                return requestScripts.get();
-            }
-
-            function get(repositoryId, scriptId) {
-                return requestScript.get({
-                    repositoryId: repositoryId,
-                    scriptId: scriptId,
-                });
-            }
-
-            function create(params) {
-                return request.post(params);
-            }
-
-            function update(params) {
-                return requestScript.put(params);
-            }
-
-            function destroy(repositoryId, scriptId) {
-                return requestScript.del({
-                    repositoryId: repositoryId,
-                    scriptId: scriptId,
-                });
-            }
-
-            return {
-                list: function () {
-                    return listScripts();
-                },
-                get: function (repositoryId, scriptId) {
-                    return get(repositoryId, scriptId);
-                },
-                /**
-                 * create script
-                 * @param {Object} params
-                 * @config {String} repositoryId
-                 * @config {String} name
-                 * @config {String} [description]
-                 * @config {String} script
-                 */
-                create: function (params) {
-                    return create(params);
-                },
-                /**
-                 * update script
-                 * @param {Object} params
-                 * @config {String} repositoryId
-                 * @config {String} scriptId
-                 * @config {String} name
-                 * @config {String} [description]
-                 * @config {String} script
-                 */
-                update: function (params) {
-                    return update(params);
-                },
-                destroy: function (repositoryId, scriptId) {
-                    return destroy(repositoryId, scriptId);
-                },
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPowerShellRepositoryUser', ['SeaRequest', 'seaPowerShellHelper',
-        function (SeaRequest, seaPowerShellHelper) {
-            var request = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/user/{userId}'));
-
-            function add(params) {
-                return request.post(params);
-            }
-
-            function update(params) {
-                return request.put(params);
-            }
-
-            function remove(repositoryId, userId) {
-                return request.del({
-                    repositoryId: repositoryId,
-                    userId: userId,
-                });
-            }
-
-            return {
-                /**
-                 * add user
-                 * @param {Object} params
-                 * @config {String} repositoryId
-                 * @config {String} userId
-                 * @config {'ADMIN' | 'EDITOR' | 'READER'} role
-                 */
-                add: function (params) {
-                    return add(params);
-                },
-                /**
-                 * update user
-                 * @param {Object} params
-                 * @config {String} repositoryId
-                 * @config {String} userId
-                 * @config {'ADMIN' | 'EDITOR' | 'READER'} role
-                 */
-                update: function (params) {
-                    return update(params);
-                },
-                remove: function (repositoryId, userId) {
-                    return remove(repositoryId, userId);
-                },
-            };
-        }]);
-})();
-(function () {
-    "use strict";
-
-    angular.module('ngSeApi').factory('seaPowerShellRepositoryUtil', ['SeaRequest', 'seaPowerShellHelper',
-        function (SeaRequest, seaPowerShellHelper) {
-            var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
-            var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
-            var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
-            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));
-
-            function parseScript(script) {
-                return parseRequest.post(script);
-            }
-
-            function listAgents(repositoryId, scriptId) {
-                return agentsRequest.get({
-                    repositoryId: repositoryId,
-                    scriptId: scriptId,
-                });
-            }
-            
-            function getScriptByAgent(agentId) {
-                return agentScriptRequest.get({
-                    agentId: agentId,
-                });
-            }
-
-            function updateSettings(params) {
-                return settingRequest.put({
-                    powerShellRepositoryId: params.repositoryId,
-                    powerShellRepositoryScriptId: params.scriptId,
-                    agentId: params.agentId,
-                });
-            }
-
-            return {
-                parseScript: function (script) {
-                    return parseScript(script);
-                },
-                listAgents: function (repositoryId, scriptId) {
-                    return listAgents(repositoryId, scriptId);
-                },
-                getScriptByAgent: function (agentId) {
-                    return getScriptByAgent(agentId);
-                },
-                /**
-                * update agent settings
-                * @param {Object} params
-                * @config {String} repositoryId
-                * @config {String} scriptId
-                * @config {String} agentId
-                */
-                updateSettings: function (params) {
-                    return updateSettings(params);
-                }
-
-            }
-        }]);
-})();
-(function () {
-    "use strict";
-
     angular.module('ngSeApi').factory('seaRemotingAntivirus', ['$http', 'SeaRequest', 'seaRemotingIasHelper',
     function seaRemotingPcvisit($http, SeaRequest, helper) {
             var request = new SeaRequest(helper.getUrl('seias/rest/seocc/virus/1.0/{section}/{action}'));
@@ -4180,6 +3927,271 @@
         }]);
 })();
 
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPowerShellHelper', ['seaConfig',
+        function (seaConfig) {
+            function getUrl(path) {
+                return [seaConfig.getMicroServiceUrl(), seaConfig.getMicroServiceApiVersion(), 'powershell', path].join('/');
+            }
+
+            return {
+                getUrl: getUrl
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPowerShellRepository', ['SeaRequest', 'seaPowerShellHelper', 'seaPowerShellRepositoryScript', 'seaPowerShellRepositoryUser', 'seaPowerShellRepositoryUtil',
+        function (SeaRequest, seaPowerShellHelper, seaPowerShellRepositoryScript, seaPowerShellRepositoryUser, seaPowerShellRepositoryUtil) {
+            var request = new SeaRequest(seaPowerShellHelper.getUrl('repository'));
+            var requestRepository = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}'));
+
+            function listRepositories() {
+                return request.get();
+            }
+
+            function get(repositoryId) {
+                return requestRepository.get({
+                    repositoryId: repositoryId,
+                });
+            }
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function update(params) {
+                return requestRepository.put(params);
+            }
+
+            function destroy(repositoryId) {
+                return requestRepository.del({
+                    repositoryId: repositoryId,
+                });
+            }
+
+            return {
+                list: function () {
+                    return listRepositories();
+                },
+                get: function (repositoryId) {
+                    return get(repositoryId);
+                },
+                /**
+                 * create repository
+                 * @param {Object} params
+                 * @config {String} [customerId]
+                 * @config {String} [distributorId]
+                 * @config {String} name
+                 * @config {String} [description]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+                /**
+                 * update repository
+                 * @param {Object} params
+                 * @config {String} repositoryId
+                 * @config {String} [customerId]
+                 * @config {String} [distributorId]
+                 * @config {String} name
+                 * @config {String} [description]
+                 */
+                update: function (params) {
+                    return update(params);
+                },
+                destroy: function (repositoryId) {
+                    return destroy(repositoryId);
+                },
+
+                script: seaPowerShellRepositoryScript,
+                user: seaPowerShellRepositoryUser,
+                util: seaPowerShellRepositoryUtil,
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPowerShellRepositoryScript', ['SeaRequest', 'seaPowerShellHelper',
+        function (SeaRequest, seaPowerShellHelper) {
+            var request = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script'));
+            var requestScripts = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/scripts'));
+            var requestScript = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}'));
+
+            function listScripts() {
+                return requestScripts.get();
+            }
+
+            function get(repositoryId, scriptId) {
+                return requestScript.get({
+                    repositoryId: repositoryId,
+                    scriptId: scriptId,
+                });
+            }
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function update(params) {
+                return requestScript.put(params);
+            }
+
+            function destroy(repositoryId, scriptId) {
+                return requestScript.del({
+                    repositoryId: repositoryId,
+                    scriptId: scriptId,
+                });
+            }
+
+            return {
+                list: function () {
+                    return listScripts();
+                },
+                get: function (repositoryId, scriptId) {
+                    return get(repositoryId, scriptId);
+                },
+                /**
+                 * create script
+                 * @param {Object} params
+                 * @config {String} repositoryId
+                 * @config {String} name
+                 * @config {String} [description]
+                 * @config {String} script
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+                /**
+                 * update script
+                 * @param {Object} params
+                 * @config {String} repositoryId
+                 * @config {String} scriptId
+                 * @config {String} name
+                 * @config {String} [description]
+                 * @config {String} script
+                 */
+                update: function (params) {
+                    return update(params);
+                },
+                destroy: function (repositoryId, scriptId) {
+                    return destroy(repositoryId, scriptId);
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPowerShellRepositoryUser', ['SeaRequest', 'seaPowerShellHelper',
+        function (SeaRequest, seaPowerShellHelper) {
+            var request = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/user/{userId}'));
+
+            function add(params) {
+                return request.post(params);
+            }
+
+            function update(params) {
+                return request.put(params);
+            }
+
+            function remove(repositoryId, userId) {
+                return request.del({
+                    repositoryId: repositoryId,
+                    userId: userId,
+                });
+            }
+
+            return {
+                /**
+                 * add user
+                 * @param {Object} params
+                 * @config {String} repositoryId
+                 * @config {String} userId
+                 * @config {'ADMIN' | 'EDITOR' | 'READER'} role
+                 */
+                add: function (params) {
+                    return add(params);
+                },
+                /**
+                 * update user
+                 * @param {Object} params
+                 * @config {String} repositoryId
+                 * @config {String} userId
+                 * @config {'ADMIN' | 'EDITOR' | 'READER'} role
+                 */
+                update: function (params) {
+                    return update(params);
+                },
+                remove: function (repositoryId, userId) {
+                    return remove(repositoryId, userId);
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaPowerShellRepositoryUtil', ['SeaRequest', 'seaPowerShellHelper',
+        function (SeaRequest, seaPowerShellHelper) {
+            var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
+            var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
+            var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
+            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));
+
+            function parseScript(script) {
+                return parseRequest.post(script);
+            }
+
+            function listAgents(repositoryId, scriptId) {
+                return agentsRequest.get({
+                    repositoryId: repositoryId,
+                    scriptId: scriptId,
+                });
+            }
+            
+            function getScriptByAgent(agentId) {
+                return agentScriptRequest.get({
+                    agentId: agentId,
+                });
+            }
+
+            function updateSettings(params) {
+                return settingRequest.put({
+                    powerShellRepositoryId: params.repositoryId,
+                    powerShellRepositoryScriptId: params.scriptId,
+                    agentId: params.agentId,
+                });
+            }
+
+            return {
+                parseScript: function (script) {
+                    return parseScript(script);
+                },
+                listAgents: function (repositoryId, scriptId) {
+                    return listAgents(repositoryId, scriptId);
+                },
+                getScriptByAgent: function (agentId) {
+                    return getScriptByAgent(agentId);
+                },
+                /**
+                * update agent settings
+                * @param {Object} params
+                * @config {String} repositoryId
+                * @config {String} scriptId
+                * @config {String} agentId
+                */
+                updateSettings: function (params) {
+                    return updateSettings(params);
+                }
+
+            }
+        }]);
+})();
 (function () {
     "use strict";
 
@@ -4842,8 +4854,56 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser',
-        function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser) {
+    angular.module('ngSeApi').factory('seaVaultUtil', ['SeaRequest', 'seaVaultHelper',
+        function (SeaRequest, seaVaultHelper) {
+
+            var agentsRequest = new SeaRequest(seaVaultHelper.getUrl('vault/{vaultId}/entry/{entryId}/key/{credentialKey}/agent/'));
+            var settingRequest = new SeaRequest(seaVaultHelper.getUrl('vault/{vaultId}/entry/{entryId}/agent/{agentId}/setting/{credentialKey}'));
+
+            function listAgents(vId, eId, key) {
+                return agentsRequest.get({
+                    vaultId: vId,
+                    entryId: eId,
+                    credentialKey: key,
+                });
+            }
+
+            function updateSettings(params) {
+                return settingRequest.put({
+                    vaultId: params.vId,
+                    entryId: params.eId,
+                    agentId: params.aId,
+                    credentialKey: params.key,
+                });
+            }
+
+            return {
+                listAgents: function (vId, eId, key) {
+                    return listAgents(vId, eId, key);
+                },
+                /**
+                * update agent settings with vault entries
+                * @param {Object} params
+                * @config {String} vId   vaultId
+                * @config {String} eId   entryId
+                * @config {String} aId   agentId
+                * @config {String} key   agent setting key
+                * @config {String} [password]
+                * @config {String} [privateKey]
+                * @config {String} [token]
+                */
+                updateSettings: function (params) {
+                    return updateSettings(params);
+                },
+
+            }
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaVault', ['SeaRequest', 'seaVaultHelper', 'seaVaultEntry', 'seaVaultUser', 'seaVaultUtil',
+        function (SeaRequest, seaVaultHelper, seaVaultEntry, seaVaultUser, seaVaultUtil) {
             var requestVault = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}'));
             var requestAction = new SeaRequest(seaVaultHelper.getUrl('vault/{vId}/{action}'));
             var requestVaults = new SeaRequest(seaVaultHelper.getUrl('vault'));
@@ -4950,6 +5010,7 @@
                 },
                 entry: seaVaultEntry,
                 user: seaVaultUser,
+                util: seaVaultUtil,
             };
         }]);
 })();
