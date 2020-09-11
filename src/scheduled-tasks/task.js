@@ -3,8 +3,8 @@
 
     angular.module('ngSeApi').factory('seaScheduledTasksTask', ['SeaRequest', 'seaScheduledTasksHelper',
         function (SeaRequest, seaScheduledTasksHelper) {
-            var request = new SeaRequest(seaScheduledTasksHelper.getUrl('/'));
-            var requestTask = new SeaRequest(seaScheduledTasksHelper.getUrl('/{taskId}'));
+            var request = new SeaRequest(seaScheduledTasksHelper.getUrl('task'));
+            var requestTask = new SeaRequest(seaScheduledTasksHelper.getUrl('task/{taskId}'));
 
             function get(taskId) {
                 return requestTask.get({
