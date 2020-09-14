@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaScheduledTasks', ['SeaRequest', 'seaScheduledTasksHelper', 'seaScheduledTasksTask',
-        function (SeaRequest, seaScheduledTasksHelper, seaScheduledTasksTask) {
+    angular.module('ngSeApi').factory('seaScheduledTasks', ['SeaRequest', 'seaScheduledTasksHelper', 'seaScheduledTasksTask', 'seaScheduledTasksUtil',
+        function (SeaRequest, seaScheduledTasksHelper, seaScheduledTasksTask, seaScheduledTasksUtil) {
             var customerRequest =  new SeaRequest(seaScheduledTasksHelper.getUrl('task/customer/{customerId}'));
             var containerRequest = new SeaRequest(seaScheduledTasksHelper.getUrl('task/container/{containerId}'));
 
@@ -30,6 +30,7 @@
                     },
                 },
                 task: seaScheduledTasksTask,
+                util: seaScheduledTasksUtil,
             };
         }]);
 })();

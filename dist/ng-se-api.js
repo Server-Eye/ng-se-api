@@ -4358,8 +4358,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaScheduledTasks', ['SeaRequest', 'seaScheduledTasksHelper', 'seaScheduledTasksTask',
-        function (SeaRequest, seaScheduledTasksHelper, seaScheduledTasksTask) {
+    angular.module('ngSeApi').factory('seaScheduledTasks', ['SeaRequest', 'seaScheduledTasksHelper', 'seaScheduledTasksTask', 'seaScheduledTasksUtil',
+        function (SeaRequest, seaScheduledTasksHelper, seaScheduledTasksTask, seaScheduledTasksUtil) {
             var customerRequest =  new SeaRequest(seaScheduledTasksHelper.getUrl('task/customer/{customerId}'));
             var containerRequest = new SeaRequest(seaScheduledTasksHelper.getUrl('task/container/{containerId}'));
 
@@ -4387,6 +4387,7 @@
                     },
                 },
                 task: seaScheduledTasksTask,
+                util: seaScheduledTasksUtil,
             };
         }]);
 })();
@@ -4455,6 +4456,26 @@
                 },
                 destroy: function (taskId) {
                     return destroy(taskId);
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaScheduledTasksUtil', ['seaScheduledTasksHelper', 'SeaRequest',
+        function (seaScheduledTasksHelper, SeaRequest) {
+            var requestTaskScript = new SeaRequest(seaScheduledTasksHelper.getUrl('task/{taskId}/script'));
+
+            function getScriptByTaskId(taskId) {
+                return requestTaskScript.get({
+                    taskId: taskId,
+                });
+            }
+
+            return {
+                getScriptByTaskId: function (taskId) {
+                    return getScriptByTaskId(taskId);
                 },
             };
         }]);
