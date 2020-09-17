@@ -6,7 +6,8 @@
             var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
             var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
             var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
-            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));
+            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));    
+            var taskScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/scheduled/task/{taskId}'));    
 
             function parseScript(script) {
                 return parseRequest.post(script);
@@ -33,6 +34,12 @@
                 });
             }
 
+            function getScriptByTaskId(taskId) {
+                return taskScriptRequest.get({
+                    taskId: taskId,
+                });
+            }
+
             return {
                 parseScript: function (script) {
                     return parseScript(script);
@@ -52,8 +59,10 @@
                 */
                 updateSettings: function (params) {
                     return updateSettings(params);
-                }
-
+                },
+                getScriptByTaskId: function(taskId) {
+                    return getScriptByTaskId(taskId);
+                },
             }
         }]);
 })();
