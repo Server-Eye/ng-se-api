@@ -5,6 +5,7 @@
         function (SeaRequest, seaScheduledTasksHelper) {
             var request = new SeaRequest(seaScheduledTasksHelper.getUrl('task'));
             var requestTask = new SeaRequest(seaScheduledTasksHelper.getUrl('task/{taskId}'));
+            var requestTaskAction = new SeaRequest(seaScheduledTasksHelper.getUrl('task/{taskId}/{action}'));
 
             function get(taskId) {
                 return requestTask.get({
@@ -24,6 +25,11 @@
                 return requestTask.del({
                     taskId: taskId,
                 });
+            }
+
+            function copy(params) {
+                params = angular.extend({}, params, { action: 'copy' });
+                return requestTaskAction.post(params);
             }
 
             return {
@@ -57,12 +63,22 @@
                  * @config {String} [powerShellRepositoryScriptId]
                  * @config {String} [scriptData]
                  * @config {String} [arguments]
+                 * @config {Boolean} [detach]
                  */
                 update: function (params) {
                     return update(params);
                 },
                 destroy: function (taskId) {
                     return destroy(taskId);
+                },
+                /**
+                 * copy task
+                 * @param {Object} params
+                 * @config {String} taskId
+                 * @config {Array<String>} containerIds
+                 */
+                copy: function (params) {
+                    return copy(params);
                 },
             };
         }]);
