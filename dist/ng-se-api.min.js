@@ -4423,9 +4423,10 @@
                 return requestTask.put(params);
             }
 
-            function destroy(taskId) {
+            function destroy(taskId, detach) {
                 return requestTask.del({
                     taskId: taskId,
+                    detach: detach,
                 });
             }
 
@@ -4470,8 +4471,13 @@
                 update: function (params) {
                     return update(params);
                 },
-                destroy: function (taskId) {
-                    return destroy(taskId);
+                /**
+                 * destroy task
+                 * @param {String} taskId
+                 * @param {Boolean} [detach]
+                 */
+                destroy: function (taskId, detach) {
+                    return destroy(taskId, detach);
                 },
                 /**
                  * copy task
