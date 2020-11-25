@@ -6,6 +6,9 @@
             var request = new SeaRequest('container/{cId}/state/{method}'),
                 stateRequest = new SeaRequest('container/{cId}/state/{sId}'),
                 hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
+            var requestMicroService = new SeaRequest('container/{cId}/state/{method}', 'v3'),
+                stateRequestMicroService = new SeaRequest('container/{cId}/state/{sId}', 'v3'),
+                hintRequestMicroService = new SeaRequest('container/{cId}/state/{sId}/hint', 'v3');
 
             function formatState(state) {
                 state.date = new Date(state.date);
@@ -33,7 +36,7 @@
             }
 
             function hint(params) {
-                return hintRequest.post(params).then(formatHint);
+                return hintRequestMicroService.post(params).then(formatHint);
             }
 
             function stats(cId, params) {

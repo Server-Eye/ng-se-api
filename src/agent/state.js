@@ -52,7 +52,7 @@
                 params.aId = aId;
 
                 if (angular.isArray(params.aId)) {
-                    return requestMicroService.post(params, 'agent/state').then(function (statesById) {
+                    return request.post(params, 'agent/state').then(function (statesById) {
                         if (angular.isArray(statesById)) {
                             var n = {};
                             n[params.aId[0]] = statesById;

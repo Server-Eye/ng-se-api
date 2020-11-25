@@ -4,9 +4,10 @@
     angular.module('ngSeApi').factory('seaContainerTemplate', ['SeaRequest',
     function seaContainerTemplate(SeaRequest) {
             var request = new SeaRequest('container/{cId}/template/{tId}');
+            var requestMicroService = new SeaRequest('container/{cId}/template/{tId}', 'v3');
 
             function create(cId) {
-                return request.post({
+                return requestMicroService.post({
                     cId: cId
                 });
             }

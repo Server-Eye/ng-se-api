@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaContainerMisc', ['SeaRequest',
         function seaContainerMisc(SeaRequest) {
             var request = new SeaRequest('container/{cId}/{action}');
+            var requestMicroService = new SeaRequest('container/{cId}/{action}', 'v3');
 
             function formatActionlog(entry) {
                 entry.changeDate = new Date(entry.changeDate);
@@ -53,7 +54,7 @@
                 params = params || {};
                 params.cId = cId;
                 params.action = action;
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             return {

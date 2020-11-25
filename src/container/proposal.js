@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaContainerProposal', ['SeaRequest',
     function seaContainerProposal(SeaRequest) {
             var request = new SeaRequest('container/{cId}/proposal/{pId}');
+            var requestMicroService = new SeaRequest('container/{cId}/proposal/{pId}', 'v3');
 
             function accept(cId, pId) {
                 return request.put({
@@ -19,7 +20,7 @@
             }
 
             function deny(cId, pId) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     pId: pId
                 });

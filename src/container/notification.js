@@ -4,13 +4,14 @@
     angular.module('ngSeApi').factory('seaContainerNotification', ['SeaRequest',
     function seaContainerNotification(SeaRequest) {
             var request = new SeaRequest('container/{cId}/notification/{nId}');
+            var requestMicroService = new SeaRequest('container/{cId}/notification/{nId}', 'v3');
 
             function create(params) {
                 return request.post(params);
             }
 
             function update(notification) {
-                return request.put(notification);
+                return requestMicroService.put(notification);
             }
 
             function list(cId) {
