@@ -4,13 +4,14 @@
     angular.module('ngSeApi').factory('seaMeMobilepush', ['SeaRequest',
     function seaMeMobilepush(SeaRequest) {
             var request = new SeaRequest('me/mobilepush/{handle}');
+            var requestMicroService = new SeaRequest('me/mobilepush/{handle}', 'v3');
 
             function list() {
                 return request.get();
             }
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function get(handle) {
@@ -20,7 +21,7 @@
             }
 
             function destroy(handle) {
-                return request.del({
+                return requestMicroService.del({
                     handle: handle
                 });
             }

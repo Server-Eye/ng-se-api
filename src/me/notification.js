@@ -4,17 +4,18 @@
     angular.module('ngSeApi').factory('seaMeNotification', ['SeaRequest',
     function seaMeNotification(SeaRequest) {
             var request = new SeaRequest('me/notification/{nId}');
+            var requestMicroService = new SeaRequest('me/notification/{nId}', 'v3');
 
             function list(params) {
                 return request.get(params);
             }
 
             function update(notification) {
-                return request.put(notification);
+                return requestMicroService.put(notification);
             }
 
             function destroy(nId) {
-                return request.del({
+                return requestMicroService.del({
                     nId: nId
                 });
             }
@@ -41,7 +42,7 @@
                  * @config {String} [deferId]
                  */
                 update: function (notification) {
-                    return get(notification);
+                    return update(notification);
                 },
 
                 destroy: function (nId) {

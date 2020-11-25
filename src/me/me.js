@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting',
         function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting) {
             var request = new SeaRequest('me/{action}');
+            var requestMicroService = new SeaRequest('me/{action}', 'v3');
 
             function _formatNode(node) {
                 ['date', 'lastDate', 'silencedUntil'].forEach(function (key) {
@@ -61,7 +62,7 @@
 
             function updatePassword(params) {
                 params = angular.extend({}, { action: 'password' }, params);
-                return request.put(params);
+                return requestMicroService.put(params);
             }
 
             return {

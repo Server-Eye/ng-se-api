@@ -5,6 +5,8 @@
     function seaMeSetting(SeaRequest) {
             var request = new SeaRequest('me/setting');
             var requestAction = new SeaRequest('me/setting/{action}');
+            var requestMicroService = new SeaRequest('me/setting', 'v3');
+            var requestActionMicroService = new SeaRequest('me/setting/{action}', 'v3');
 
             function list() {
                 return request.get();
@@ -12,11 +14,11 @@
 
             function update(settings) {
                 settings = settings || {};
-                return request.put(settings);
+                return requestMicroService.put(settings);
             }
 
             function resetSecret(password) {
-                return requestAction.post({
+                return requestActionMicroService.post({
                     action: 'secret/reset',
                     password: password,
                 });

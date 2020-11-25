@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaMeTwoFactor', ['SeaRequest',
         function seaMeLocation(SeaRequest) {
             var request = new SeaRequest('me/twofactor/{sub}');
+            var requestMicroService = new SeaRequest('me/twofactor/{sub}', 'v3');
 
             function get() {
                 return request.get();
@@ -16,11 +17,11 @@
             }
 
             function enable(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function disable(params) {
-                return request.del(params);
+                return requestMicroService.del(params);
             }
 
             return {
