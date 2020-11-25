@@ -3,8 +3,9 @@
 
     angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http', 'SeaRequestHelperService',
         function SeaRequest(seaConfig, $q, $http, SeaRequestHelperService) {
-            function SeaRequest(urlPath) {
+            function SeaRequest(urlPath, useMicroServiceAPI) {
                 this.urlPath = urlPath;
+                this.useMicroServiceAPI = !!useMicroServiceAPI;
             }
 
             /**
@@ -26,7 +27,8 @@
                 url = url || this.urlPath;
 
                 if (url.indexOf('http') < 0) {
-                    url = seaConfig.getUrl(url || this.urlPath)
+                    var urlGetter = (this.useMicroServiceAPI) ? seaConfig.getMsUrl : seaConfig.getUrl;
+                    url = urlGetter(url || this.urlPath)
                 }
 
                 params = params || {};

@@ -19,9 +19,10 @@
         "url": "https://github.com/Server-Eye/ng-se-api.git"
     },
     "dependencies": {
-        "gulp": "3.9.x",
         "del": "2.2.x",
-        "gulp-bundle-assets": "^2.27.1"
+        "gulp": "3.9.x",
+        "gulp-bundle-assets": "^2.27.1",
+        "stjs": "0.0.5"
     },
     "analyze": false,
     "license": "MIT",

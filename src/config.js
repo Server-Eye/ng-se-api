@@ -94,7 +94,10 @@
                     },
                     getUrl: function (path) {
                         return [config.baseUrl, config.apiVersion, path].join('/');
-                    }
+                    },
+                    getMsUrl: function(path) {
+                        return [config.microServiceUrl, config.microServiceApiVersion, path].join('/');
+                    },
                 }
             };
         }]);

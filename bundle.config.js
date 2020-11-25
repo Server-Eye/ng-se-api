@@ -2,6 +2,7 @@ module.exports = {
     bundle: {
         'ng-se-api.min': {
             scripts: [
+                './node_modules/stjs/st.js',
                 './src/module.js',
                 './src/**/*.js'
             ],
@@ -13,6 +14,7 @@ module.exports = {
         },
         'ng-se-api': {
             scripts: [
+                './node_modules/stjs/st.js',
                 './src/module.js',
                 './src/**/*.js'
             ],

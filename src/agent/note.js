@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaAgentNote', ['SeaRequest',
     function seaAgentNote(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/note/{nId}');
+            var requestMicroService = new SeaRequest('agent/{aId}/note/{nId}', 'v3');
 
             function formatNote(note) {
                 note.postedOn = new Date(note.postedOn);
@@ -11,7 +12,7 @@
             }
 
             function create(params) {
-                return request.post(params).then(formatNote);
+                return requestMicroService.post(params).then(formatNote);
             }
 
             function list(aId) {
@@ -32,7 +33,7 @@
             }
 
             function destroy(aId, nId) {
-                return request.del({
+                return requestMicroService.del({
                     aId: aId,
                     nId: nId
                 });
