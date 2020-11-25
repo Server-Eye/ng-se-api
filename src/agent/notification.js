@@ -4,13 +4,14 @@
     angular.module('ngSeApi').factory('seaAgentNotification', ['SeaRequest',
     function seaAgentNitification(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/notification/{nId}');
+            var requestMicroService = new SeaRequest('agent/{aId}/notification/{nId}', 'v3');
 
             function create(params) {
                 return request.post(params);
             }
 
             function update(notification) {
-                return request.put(notification);
+                return requestMicroService.put(notification);
             }
 
             function list(aId) {

@@ -6,6 +6,9 @@
             var request = new SeaRequest('agent/{aId}/state/{method}'),
                 stateRequest = new SeaRequest('agent/{aId}/state/{sId}'),
                 hintRequest = new SeaRequest('agent/{aId}/state/{sId}/hint');
+            var requestMicroService = new SeaRequest('agent/{aId}/state/{method}', 'v3'),
+                stateRequestMicroService = new SeaRequest('agent/{aId}/state/{sId}', 'v3'),
+                hintRequestMicroService = new SeaRequest('agent/{aId}/state/{sId}/hint', 'v3');
 
             function formatState(state) {
                 state.date = new Date(state.date);
@@ -33,7 +36,7 @@
             }
 
             function hint(params) {
-                return hintRequest.post(params).then(formatHint);
+                return hintRequestMicroService.post(params).then(formatHint);
             }
 
             function stats(aId, params) {
@@ -49,7 +52,7 @@
                 params.aId = aId;
 
                 if (angular.isArray(params.aId)) {
-                    return request.post(params, 'agent/state').then(function (statesById) {
+                    return requestMicroService.post(params, 'agent/state').then(function (statesById) {
                         if (angular.isArray(statesById)) {
                             var n = {};
                             n[params.aId[0]] = statesById;

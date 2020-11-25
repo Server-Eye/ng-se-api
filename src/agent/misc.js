@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaAgentMisc', ['SeaRequest',
         function seaAgentMisc(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/{action}');
+            var requestMicroService = new SeaRequest('agent/{aId}/{action}', 'v3');
 
             function formatActionlog(entry) {
                 entry.changeDate = new Date(entry.changeDate);
@@ -66,7 +67,7 @@
                 var params = {};
                 params.aId = aId;
                 params.action = 'restart';
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function listCategories() {

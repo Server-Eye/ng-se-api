@@ -2,12 +2,14 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaAgentSetting', ['SeaRequest',
-    function seaAgentSetting(SeaRequest) {
+        function seaAgentSetting(SeaRequest) {
             var request = new SeaRequest('agent/{aId}/setting/{key}'),
                 remoteRequest = new SeaRequest('agent/{aId}/setting/{key}/remote');
-        
+            var requestMicroService = new SeaRequest('agent/{aId}/setting/{key}', 'v3');
+            var remoteRequestMicroService = new SeaRequest('agent/{aId}/setting/{key}/remote', 'v3');
+
             function update(setting) {
-                return request.put(setting);
+                return requestMicroService.put(setting);
             }
 
             function list(aId) {
@@ -15,7 +17,7 @@
                     aId: aId
                 });
             }
-        
+
             function remote(param) {
                 return remoteRequest.get(param);
             }
@@ -35,7 +37,7 @@
                 list: function (aId) {
                     return list(aId);
                 },
-                
+
                 /**
                  * load settings from remote
                  * @param {Object} params
@@ -47,5 +49,5 @@
                     return remote(param);
                 }
             };
-    }]);
+        }]);
 })();
