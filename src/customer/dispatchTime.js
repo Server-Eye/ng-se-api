@@ -4,9 +4,10 @@
     angular.module('ngSeApi').factory('seaCustomerDispatchTime', ['SeaRequest',
     function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/dispatchTime/{dtId}');
+            var requestMicroService = new SeaRequest('customer/dispatchTime/{dtId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -14,11 +15,11 @@
             }
 
             function update(dispatchTime) {
-                return request.put(dispatchTime);
+                return requestMicroService.put(dispatchTime);
             }
 
             function destroy(dtId) {
-                return request.del({
+                return requestMicroService.del({
                     dtId: dtId
                 });
             }

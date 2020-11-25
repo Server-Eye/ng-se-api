@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerLocation', 'seaCustomerManager', 'seaCustomerProperty', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
         function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerLocation, seaCustomerManager, seaCustomerProperty, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
             var request = new SeaRequest('customer/{cId}');
-            var requestCreate = new SeaRequest('customer');
+            var requestMicroService = new SeaRequest('customer/{cId}', 'v3');
 
             function list() {
                 return request.get();
@@ -21,7 +21,7 @@
             }
             
             function create(customer) {
-                return requestCreate.post(customer);
+                return requestMicroService.post(customer);
             }
 
             return {

@@ -4,9 +4,10 @@
     angular.module('ngSeApi').factory('seaCustomerTag', ['SeaRequest',
     function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/tag/{tId}');
+            var requestMicroService = new SeaRequest('customer/tag/{tId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -14,11 +15,11 @@
             }
 
             function update(tag) {
-                return request.put(tag);
+                return requestMicroService.put(tag);
             }
 
             function destroy(tId) {
-                return request.del({
+                return requestMicroService.del({
                     tId: tId
                 });
             }

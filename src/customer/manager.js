@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaCustomerManager', ['SeaRequest',
     function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/manager/{uId}');
+            var requestMicroService = new SeaRequest('customer/{cId}/manager/{uId}', 'v3');
 
             function list(cId) {
                 return request.get({
@@ -12,14 +13,14 @@
             }
 
             function addUser(cId, email) {
-                return request.put({
+                return requestMicroService.post({
                     cId: cId,
                     uId: email
                 });
             }
 
             function removeUser(cId, uId) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     uId: uId
                 });

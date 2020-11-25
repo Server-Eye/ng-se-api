@@ -4,9 +4,10 @@
     angular.module('ngSeApi').factory('seaCustomerViewFilter', ['SeaRequest',
     function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/viewFilter/{vfId}');
+            var requestMicroService = new SeaRequest('customer/viewFilter/{vfId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -14,11 +15,11 @@
             }
 
             function update(viewFilter) {
-                return request.put(viewFilter);
+                return requestMicroService.put(viewFilter);
             }
 
             function destroy(vfId) {
-                return request.del({
+                return requestMicroService.del({
                     vfId: vfId
                 });
             }

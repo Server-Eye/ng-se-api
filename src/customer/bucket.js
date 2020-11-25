@@ -2,12 +2,14 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaCustomerBucket', ['SeaRequest',
-    function seaCustomerDispatchTime(SeaRequest) {
+        function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/bucket/{bId}'),
                 userRequest = new SeaRequest('customer/bucket/{bId}/user/{uId}');
+            var requestMicroService = new SeaRequest('customer/bucket/{bId}', 'v3'),
+                userRequestMicroService = new SeaRequest('customer/bucket/{bId}/user/{uId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -19,7 +21,7 @@
             }
 
             function destroy(bId) {
-                return request.del({
+                return requestMicroService.del({
                     bId: bId
                 });
             }
@@ -31,11 +33,11 @@
             }
 
             function addUser(params) {
-                return userRequest.put(params);
+                return userRequestMicroService.put(params);
             }
 
             function removeUser(bId, uId) {
-                return userRequest.del({
+                return userRequestMicroService.del({
                     bId: bId,
                     uId: uId
                 });
@@ -94,5 +96,5 @@
                     }
                 }
             };
-    }]);
+        }]);
 })();
