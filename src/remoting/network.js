@@ -2,12 +2,13 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaRemotingNetwork', ['SeaRequest',
-    function seaRemotingPcvisit(SeaRequest) {
+    function seaRemotingNetwork(SeaRequest) {
             var request = new SeaRequest('network/{customerId}/{cId}/system/{action}');
+            var requestMicroService = new SeaRequest('network/{customerId}/{cId}/system/{action}', 'v3');
 
             function format(job) {
                 if (job && job.createdAt) {
-                    job.createdAta = new Date(job.createdAt);
+                    job.createdAt = new Date(job.createdAt);
                 }
 
                 return job;
@@ -18,7 +19,7 @@
             }
 
             function install(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
         
             function getInstallStatus(params) {

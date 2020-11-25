@@ -3,7 +3,7 @@
 
     angular.module('ngSeApi').factory('seaRemotingPowershell', ['SeaRequest',
     function seaRemotingPowershell(SeaRequest) {
-            var request = new SeaRequest('powershell/{customerId}/{cId}/{action}');
+            var request = new SeaRequest('powershell/{customerId}/{cId}/{action}', 'v3');
         
             function start(params) {
                 params = params || {};
