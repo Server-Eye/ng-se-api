@@ -7,9 +7,13 @@
                 requestUser = new SeaRequest('user/{uId}/{sub}'),
                 requestCustomer = new SeaRequest('user/{uId}/customer'),
                 requestUsers = new SeaRequest('user');
+            var requestMicroService = new SeaRequest('user/{uId}', 'v3'),
+                requestUserMicroService = new SeaRequest('user/{uId}/{sub}', 'v3'),
+                requestCustomerMicroService = new SeaRequest('user/{uId}/customer', 'v3'),
+                requestUsersMicroService = new SeaRequest('user', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function get(uId) {
@@ -19,11 +23,11 @@
             }
 
             function update(user) {
-                return request.put(user);
+                return requestMicroService.put(user);
             }
 
             function destroy(uId) {
-                return request.del({
+                return requestMicroService.del({
                     uId: uId
                 });
             }

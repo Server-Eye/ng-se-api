@@ -3,7 +3,7 @@
 
     angular.module('ngSeApi').factory('seaUserSubstitude', ['SeaRequest',
     function seaUserSubstitude(SeaRequest) {
-            var request = new SeaRequest('user/{uId}/substitude/{substitudeId}');
+            var request = new SeaRequest('user/{uId}/substitude/{substitudeId}', 'v3');
 
             function set(uId, substId) {
                 return request.put({

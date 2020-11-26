@@ -4,6 +4,7 @@
     angular.module('ngSeApi').factory('seaUserSetting', ['SeaRequest',
     function seaUserSetting(SeaRequest) {
             var request = new SeaRequest('user/{uId}/setting');
+            var requestMicroService = new SeaRequest('user/{uId}/setting', 'v3');
 
             function list(uId) {
                 return request.get({
@@ -14,7 +15,7 @@
             function update(uId, settings) {
                 settings = settings || {};
                 settings.uId = uId;
-                return request.put(settings);
+                return requestMicroService.put(settings);
             }
 
             return {
