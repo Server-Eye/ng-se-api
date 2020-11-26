@@ -4,9 +4,10 @@
     angular.module('ngSeApi').factory('seaReportingTemplate', ['SeaRequest',
         function seaReportingTemplate(SeaRequest) {
             var request = new SeaRequest('reporting/template/{rtId}');
+            var requestMicroService = new SeaRequest('reporting/template/{rtId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -14,13 +15,13 @@
             }
 
             function get(rId) {
-                return reportRequest.get({
+                return request.get({
                     rtId: rtId
                 });
             }
 
             function destroy(rId) {
-                return reportRequest.del({
+                return requestMicroService.del({
                     rtId: rtId
                 });
             }

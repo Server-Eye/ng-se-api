@@ -5,6 +5,8 @@
     function seaCustomer(SeaRequest, seaReportingTemplate) {
             var request = new SeaRequest('reporting/{cId}/report'),
                 reportRequest = new SeaRequest('reporting/{cId}/report/{rId}');
+            var requestMicroService = new SeaRequest('reporting/{cId}/report', 'v3'),
+                reportRequestMicroService = new SeaRequest('reporting/{cId}/report/{rId}', 'v3');
 
             function formatReport(report) {
                 ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
@@ -23,7 +25,7 @@
             }
         
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
         
             function list(cId) {
@@ -52,7 +54,7 @@
             }
         
             function destroy(cId, rId) {
-                return reportRequest.del({
+                return requestMicroService.del({
                     cId: cId,
                     rId: rId
                 });
