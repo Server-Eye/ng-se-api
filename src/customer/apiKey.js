@@ -5,7 +5,7 @@
         function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/apiKey/{apiKey}'),
                 requestDistri = new SeaRequest('customer/apiKey/{apiKey}');
-            var requestMicroService = new SeaRequest('customer/{cId}/apiKey/{apiKey}', 'v3'),
+            var requestMicroService = new SeaRequest('customer/{cId}/apiKey/{apiKey}', 'v3');
 
             function format(apiKey) {
                 if (apiKey.validUntil) {

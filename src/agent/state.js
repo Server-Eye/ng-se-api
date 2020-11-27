@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaAgentState', ['SeaRequest',
-        function seaAgentState(SeaRequest) {
+    angular.module('ngSeApi').factory('seaAgentState', ['SeaRequest', 'SeaTransform', 'SeaTransformTemplate',
+        function seaAgentState(SeaRequest, SeaTransform, SeaTransformTemplate) {
             var request = new SeaRequest('agent/{aId}/state/{method}'),
                 stateRequest = new SeaRequest('agent/{aId}/state/{sId}'),
                 hintRequest = new SeaRequest('agent/{aId}/state/{sId}/hint');
@@ -36,7 +36,10 @@
             }
 
             function hint(params) {
-                return hintRequestMicroService.post(params).then(formatHint);
+                var parser = new SeaTransform(SeaTransformTemplate.AGENT.STATE.HINT.CREATE);
+                var paramsParsed = parser.parse(params);
+
+                return hintRequestMicroService.post(paramsParsed).then(formatHint);
             }
 
             function stats(aId, params) {

@@ -1,15 +1,15 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('SeaTransform', [
-        function SeaTransform() {
+    angular.module('ngSeApi').factory('SeaTransform', ['SeaTypes',
+        function SeaTransform(SeaTypes) {
             function SeaTransform(template) {
                 this.parser = ST;
                 this.template = template;
             }
 
             SeaTransform.prototype.parse = function (source) {
-                return this.parser.select(source).transformWith(this.template).root();
+                return this.parser.select(angular.extend({}, { SE_TYPES: SeaTypes }, source)).transformWith(this.template).root();
             };
 
             return SeaTransform;
@@ -72,11 +72,29 @@
         "hasKeyPair": "{{hasKeyPair}}"
     }
 
+    var TPL_AGENT_STATE_HINT_CREATE = {
+        "hintType": "{{ $root.SE_TYPES.LOGNOTE_TYPE.N2S[$root.hintType] }}",
+        "message": "{{message}}",
+        "assignedUser": "{{assignedUser}}",
+        "mentionedUsers": "{{mentionedUsers}}",
+        "private": "{{private}}",
+        "until": "{{until}}",
+        "aId": "{{aId}}",
+        "sId": "{{sId}}",
+    }
+
     angular.module('ngSeApi').factory('SeaTransformTemplate', [
         function SeaTransformTemplate() {
             return {
                 ME: {
                     ME: TPL_ME_ME,
+                },
+                AGENT: {
+                    STATE: {
+                        HINT: {
+                            CREATE: TPL_AGENT_STATE_HINT_CREATE,
+                        },
+                    },
                 },
             };
         }]);

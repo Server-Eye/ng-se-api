@@ -9,7 +9,7 @@
             var remoteRequestMicroService = new SeaRequest('agent/{aId}/setting/{key}/remote', 'v3');
 
             function update(setting) {
-                return requestMicroService.put(setting);
+                return request.put(setting);
             }
 
             function list(aId) {

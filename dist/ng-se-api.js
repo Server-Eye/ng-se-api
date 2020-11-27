@@ -1292,15 +1292,15 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('SeaTransform', [
-        function SeaTransform() {
+    angular.module('ngSeApi').factory('SeaTransform', ['SeaTypes',
+        function SeaTransform(SeaTypes) {
             function SeaTransform(template) {
                 this.parser = ST;
                 this.template = template;
             }
 
             SeaTransform.prototype.parse = function (source) {
-                return this.parser.select(source).transformWith(this.template).root();
+                return this.parser.select(angular.extend({}, { SE_TYPES: SeaTypes }, source)).transformWith(this.template).root();
             };
 
             return SeaTransform;
@@ -1363,13 +1363,418 @@
         "hasKeyPair": "{{hasKeyPair}}"
     }
 
+    var TPL_AGENT_STATE_HINT_CREATE = {
+        "hintType": "{{ $root.SE_TYPES.LOGNOTE_TYPE.N2S[$root.hintType] }}",
+        "message": "{{message}}",
+        "assignedUser": "{{assignedUser}}",
+        "mentionedUsers": "{{mentionedUsers}}",
+        "private": "{{private}}",
+        "until": "{{until}}",
+        "aId": "{{aId}}",
+        "sId": "{{sId}}",
+    }
+
     angular.module('ngSeApi').factory('SeaTransformTemplate', [
         function SeaTransformTemplate() {
             return {
                 ME: {
                     ME: TPL_ME_ME,
                 },
+                AGENT: {
+                    STATE: {
+                        HINT: {
+                            CREATE: TPL_AGENT_STATE_HINT_CREATE,
+                        },
+                    },
+                },
             };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    var SE_TYPES = {
+        ACTION_LOG_TYPE: {
+            N2S: {
+                0: "AGENT_SETTING",
+                1: "AGENT_PROPERTY",
+                2: "AGENT_CREATE",
+                3: "AGENT_DELETE",
+                4: "AGENT_GENERIC",
+                22: "AGENT_TAG_ADD",
+                23: "AGENT_TAG_REMOVE",
+                100: "CONTAINER_SETTING",
+                101: "CONTAINER_PROPERTY",
+                102: "CONTAINER_CREATE",
+                103: "CONTAINER_DELETE",
+                104: "CONTAINER_GENERIC",
+                105: "CONTAINER_INVENTORY",
+                106: "CONTAINER_REMOTEACCESS",
+                107: "CONTAINER_REMOTEACCESSPERFORMED",
+                108: "CONTAINER_POWERSHELLACCESS",
+                109: "CONTAINER_POWERSHELLACCESSPERFORMED",
+                110: "CONTAINER_SYSTEMSHUTDOWN",
+                122: "CONTAINER_TAG_ADD",
+                123: "CONTAINER_TAG_REMOVE",
+                202: "NOTE_CREATE",
+                203: "NOTE_DELETE",
+                300: "NOTIFY_SETTING",
+                302: "NOTIFY_CREATE",
+                303: "NOTIFY_DELETE",
+                310: "NOTIFY_SENT_OK",
+                311: "NOTIFY_SENT_ERROR",
+                402: "REPORT_CREATE",
+                403: "REPORT_DELETE",
+                410: "REPORT_TEMPLATE_CHANGE",
+                412: "REPORT_TEMPLATE_CREATE",
+                413: "REPORT_TEMPLATE_DELETE",
+                502: "USER_TWOFACTOR_ENABLE",
+                503: "USER_TWOFACTOR_DISABLE",
+                600: "COMPLIANCE_CONFIG_CHANGE",
+                602: "COMPLIANCE_CONFIG_CREATE",
+                603: "COMPLIANCE_CONFIG_DELETE",
+                700: "TAG_CHANGE",
+                702: "TAG_CREATE",
+                703: "TAG_DELETE",
+                800: "PM_CONFIG_CHANGE",
+                802: "PM_CONFIG_CREATE",
+                803: "PM_CONFIG_DELETE",
+                900: "VAULT_CREATE",
+                901: "VAULT_UPDATE",
+                902: "VAULT_DELETE",
+                903: "VAULT_RESTORE",
+                904: "VAULT_ENTRY_CREATE",
+                905: "VAULT_ENTRY_UPDATE",
+                906: "VAULT_ENTRY_DELETE",
+                907: "VAULT_USER_CREATE",
+                908: "VAULT_USER_UPDATE",
+                909: "VAULT_USER_DELETE",
+                1000: "POWERSHELL_REPOSITORY_CREATE",
+                1001: "POWERSHELL_REPOSITORY_UPDATE",
+                1002: "POWERSHELL_REPOSITORY_DELETE",
+                1003: "POWERSHELL_REPOSITORY_SCRIPT_CREATE",
+                1004: "POWERSHELL_REPOSITORY_SCRIPT_UPDATE",
+                1005: "POWERSHELL_REPOSITORY_SCRIPT_DELETE",
+                1006: "POWERSHELL_REPOSITORY_USER_CREATE",
+                1007: "POWERSHELL_REPOSITORY_USER_UPDATE",
+                1008: "POWERSHELL_REPOSITORY_USER_DELETE",
+                1100: "RMM_SESSION_CREATE",
+                1102: "RMM_SESSION_DELETE",
+                1200: "SCHEDULED_TASK_CREATE",
+                1201: "SCHEDULED_TASK_UPDATE",
+                1202: "SCHEDULED_TASK_DELETE",
+                1203: "SCHEDULED_TASK_TRIGGER_CREATE",
+                1204: "SCHEDULED_TASK_TRIGGER_UPDATE",
+                1205: "SCHEDULED_TASK_TRIGGER_DELETE",
+            },
+            S2N: {
+                AGENT_SETTING: 0,
+                AGENT_PROPERTY: 1,
+                AGENT_CREATE: 2,
+                AGENT_DELETE: 3,
+                AGENT_GENERIC: 4,
+                AGENT_TAG_ADD: 22,
+                AGENT_TAG_REMOVE: 23,
+                CONTAINER_SETTING: 100,
+                CONTAINER_PROPERTY: 101,
+                CONTAINER_CREATE: 102,
+                CONTAINER_DELETE: 103,
+                CONTAINER_GENERIC: 104,
+                CONTAINER_INVENTORY: 105,
+                CONTAINER_REMOTEACCESS: 106,
+                CONTAINER_REMOTEACCESSPERFORMED: 107,
+                CONTAINER_POWERSHELLACCESS: 108,
+                CONTAINER_POWERSHELLACCESSPERFORMED: 109,
+                CONTAINER_SYSTEMSHUTDOWN: 110,
+                CONTAINER_TAG_ADD: 122,
+                CONTAINER_TAG_REMOVE: 123,
+                NOTE_CREATE: 202,
+                NOTE_DELETE: 203,
+                NOTIFY_SETTING: 300,
+                NOTIFY_CREATE: 302,
+                NOTIFY_DELETE: 303,
+                NOTIFY_SENT_OK: 310,
+                NOTIFY_SENT_ERROR: 311,
+                REPORT_CREATE: 402,
+                REPORT_DELETE: 403,
+                REPORT_TEMPLATE_CHANGE: 410,
+                REPORT_TEMPLATE_CREATE: 412,
+                REPORT_TEMPLATE_DELETE: 413,
+                USER_TWOFACTOR_ENABLE: 502,
+                USER_TWOFACTOR_DISABLE: 503,
+                COMPLIANCE_CONFIG_CHANGE: 600,
+                COMPLIANCE_CONFIG_CREATE: 602,
+                COMPLIANCE_CONFIG_DELETE: 603,
+                TAG_CHANGE: 700,
+                TAG_CREATE: 702,
+                TAG_DELETE: 703,
+                PM_CONFIG_CHANGE: 800,
+                PM_CONFIG_CREATE: 802,
+                PM_CONFIG_DELETE: 803,
+                VAULT_CREATE: 900,
+                VAULT_UPDATE: 901,
+                VAULT_DELETE: 902,
+                VAULT_RESTORE: 903,
+                VAULT_ENTRY_CREATE: 904,
+                VAULT_ENTRY_UPDATE: 905,
+                VAULT_ENTRY_DELETE: 906,
+                VAULT_USER_CREATE: 907,
+                VAULT_USER_UPDATE: 908,
+                VAULT_USER_DELETE: 909,
+                POWERSHELL_REPOSITORY_CREATE: 1000,
+                POWERSHELL_REPOSITORY_UPDATE: 1001,
+                POWERSHELL_REPOSITORY_DELETE: 1002,
+                POWERSHELL_REPOSITORY_SCRIPT_CREATE: 1003,
+                POWERSHELL_REPOSITORY_SCRIPT_UPDATE: 1004,
+                POWERSHELL_REPOSITORY_SCRIPT_DELETE: 1005,
+                POWERSHELL_REPOSITORY_USER_CREATE: 1006,
+                POWERSHELL_REPOSITORY_USER_UPDATE: 1007,
+                POWERSHELL_REPOSITORY_USER_DELETE: 1008,
+                RMM_SESSION_CREATE: 1100,
+                RMM_SESSION_DELETE: 1102,
+                SCHEDULED_TASK_CREATE: 1200,
+                SCHEDULED_TASK_UPDATE: 1201,
+                SCHEDULED_TASK_DELETE: 1202,
+                SCHEDULED_TASK_TRIGGER_CREATE: 1203,
+                SCHEDULED_TASK_TRIGGER_UPDATE: 1204,
+                SCHEDULED_TASK_TRIGGER_DELETE: 1205
+            },
+        },
+        AGENT_INCARNATION: {
+            N2S: {
+                0: "AGENT",
+                1: "SHADOW",
+                2: "DENIED_SHADOW",
+                3: "TEMPLATE",
+                4: "EXTERNAL",
+            },
+            S2N: {
+                "AGENT": 0,
+                "SHADOW": 1,
+                "DENIED_SHADOW": 2,
+                "TEMPLATE": 3,
+                "EXTERNAL": 4,
+            },
+        },
+        APIKEY_TYPE: {
+            N2S: {
+                0: "USER",
+                1: "CUSTOMER",
+                2: "CONTAINER",
+            },
+            S2N: {
+                "USER": 0,
+                "CUSTOMER": 1,
+                "CONTAINER": 2,
+            },
+        },
+        CONTAINER_TYPE: {
+            N2S: {
+                0: "MAC",
+                1: "SECMAC",
+                2: "CAC",
+                3: "TEMPLATE",
+                4: "EXTERNAL",
+            },
+            S2N: {
+                "MAC": 0,
+                "SECMAC": 1,
+                "CAC": 2,
+                "TEMPLATE": 3,
+                "EXTERNAL": 4,
+            },
+        },
+        INTERNAL_EVENT: {
+            N2S: {
+                0: "USER_CHANGE",
+                1: "NODE_ADD",
+                2: "NODE_UPDATE",
+                3: "NODE_REMOVE",
+                4: "REMOTE_RESULT",
+            },
+            S2N: {
+                "USER_CHANGE": 0,
+                "NODE_ADD": 1,
+                "NODE_UPDATE": 2,
+                "NODE_REMOVE": 3,
+                "REMOTE_RESULT": 4,
+            },
+        },
+        LICENSE_TYPE: {
+            N2S: {
+                0: "DEACTIVATED",
+                1: "DEMO",
+                2: "FREEWARE",
+                3: "FULL",
+            },
+            S2N: {
+                "DEACTIVATED": 0,
+                "DEMO": 1,
+                "FREEWARE": 2,
+                "FULL": 3,
+            },
+        },
+        NODE_STATUS: {
+            N2S: {
+                0: "NOT_INITIALIZED",
+                1: "SHUTDOWN",
+                2: "OK",
+                3: "ERROR",
+                4: "NO_HEARTBEAT",
+                5: "INHERIT",
+                6: "WORKING",
+            },
+            S2N: {
+                "NOT_INITIALIZED": 0,
+                "SHUTDOWN": 1,
+                "OK": 2,
+                "ERROR": 3,
+                "NO_HEARTBEAT": 4,
+                "INHERIT": 5,
+                "WORKING": 6,
+            },
+        },
+        NODE_TYPE: {
+            N2S: {
+                0: "USER",
+                1: "CUSTOMER",
+                2: "CONTAINER",
+                3: "AGENT",
+                4: "TEMPLATES",
+                5: "TEMPLATE",
+                6: "TEMPLATEAGENT",
+                7: "CUSTOMERS",
+                8: "EXTERNALS",
+                9: "EXTERNAL_CONTAINER",
+                10: "EXTERNAL_AGENT",
+                11: "REPORT",
+                12: "REPORT_TEMPLATE",
+                13: "COMPLIANCE_CONFIG",
+                14: "PM_CONFIG",
+                15: "VAULT",
+                16: "POWERSHELL_REPOSITORY",
+                17: "SCHEDULED_TASK",
+            },
+            S2N: {
+                "USER": 0,
+                "CUSTOMER": 1,
+                "CONTAINER": 2,
+                "AGENT": 3,
+                "TEMPLATES": 4,
+                "TEMPLATE": 5,
+                "TEMPLATEAGENT": 6,
+                "CUSTOMERS": 7,
+                "EXTERNALS": 8,
+                "EXTERNAL_CONTAINER": 9,
+                "EXTERNAL_AGENT": 10,
+                "REPORT": 11,
+                "REPORT_TEMPLATE": 12,
+                "COMPLIANCE_CONFIG": 13,
+                "PM_CONFIG": 14,
+                "VAULT": 15,
+                "POWERSHELL_REPOSITORY": 16,
+                "SCHEDULED_TASK": 17,
+            },
+        },
+        PUSH_CONTROL: {
+            N2S: {
+                0: 'ADD_OR_UPDATE_AGENT',
+                1: 'DELETE_AGENT',
+                2: 'REFRESH_AGENT',
+                3: 'UPDATE_CONTAINER',
+                4: 'RESTART_CONTAINER',
+                5: 'REMOTE_DRIVE',
+                6: 'REMOTE_SERVICE',
+                7: 'REMOTE_PROCESS',
+                8: 'REMOTE_INFORMATION',
+                9: 'REMOTE_ACTION',
+                10: 'CUSTOM_ACTION',
+                11: 'REMOTE_INSTALL',
+                12: 'REMOTE_INSTALL2',
+                13: 'REMOTE_ACTIVE_DIRECTORY',
+                14: 'SHUTDOWN_CONTAINER',
+                15: 'REFRESH_ONLINE_PROPERTIES',
+                16: 'ADD_OR_UPDATE_TASKS',
+            },
+            S2N: {
+                'ADD_OR_UPDATE_AGENT': 0,
+                'DELETE_AGENT': 1,
+                'REFRESH_AGENT': 2,
+                'UPDATE_CONTAINER': 3,
+                'RESTART_CONTAINER': 4,
+                'REMOTE_DRIVE': 5,
+                'REMOTE_SERVICE': 6,
+                'REMOTE_PROCESS': 7,
+                'REMOTE_INFORMATION': 8,
+                'REMOTE_ACTION': 9,
+                'CUSTOM_ACTION': 10,
+                'REMOTE_INSTALL': 11,
+                'REMOTE_INSTALL2': 12,
+                'REMOTE_ACTIVE_DIRECTORY': 13,
+                'SHUTDOWN_CONTAINER': 14,
+                'REFRESH_ONLINE_PROPERTIES': 15,
+                'ADD_OR_UPDATE_TASKS': 16,
+            },
+        },
+        LOGNOTE_TYPE: {
+            N2S: {
+                0: "WORKING",
+                1: "REOPEN",
+                2: "FALSE_ALERT",
+                3: "HINT",
+                4: "CHANGE",
+            },
+            S2N: {
+                "WORKING": 0,
+                "REOPEN": 1,
+                "FALSE_ALERT": 2,
+                "HINT": 3,
+                "CHANGE": 4,
+            },
+        },
+        USER_ROLE: {
+            N2S: {
+                0: "ADMIN",
+                1: "USER",
+                2: "LEAD",
+                3: 'INSTALLER',
+                4: 'ARCHITECT',
+                5: 'TECHIE',
+                6: 'HINTER',
+                7: 'HR',
+                8: 'REPORTING',
+                9: 'MAV',
+                10: 'PM',
+                11: 'PCVISIT',
+                12: 'POWERSHELL',
+                13: 'TANSS',
+                14: 'RMM',
+                15: 'TASKS',
+            },
+            S2N: {
+                ADMIN: 0,
+                USER: 1,
+                LEAD: 2,
+                INSTALLER: 3,
+                ARCHITECT: 4,
+                TECHIE: 5,
+                HINTER: 6,
+                HR: 7,
+                REPORTING: 8,
+                MAV: 9,
+                PM: 10,
+                PCVISIT: 11,
+                POWERSHELL: 12,
+                TANSS: 13,
+                RMM: 14,
+                TASKS: 15,
+            },
+        },
+    }
+
+    angular.module('ngSeApi').factory('SeaTypes', [
+        function () {
+            return SE_TYPES;
         }]);
 })();
 (function () {
@@ -1745,7 +2150,7 @@
             var remoteRequestMicroService = new SeaRequest('agent/{aId}/setting/{key}/remote', 'v3');
 
             function update(setting) {
-                return requestMicroService.put(setting);
+                return request.put(setting);
             }
 
             function list(aId) {
@@ -1790,8 +2195,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaAgentState', ['SeaRequest',
-        function seaAgentState(SeaRequest) {
+    angular.module('ngSeApi').factory('seaAgentState', ['SeaRequest', 'SeaTransform', 'SeaTransformTemplate',
+        function seaAgentState(SeaRequest, SeaTransform, SeaTransformTemplate) {
             var request = new SeaRequest('agent/{aId}/state/{method}'),
                 stateRequest = new SeaRequest('agent/{aId}/state/{sId}'),
                 hintRequest = new SeaRequest('agent/{aId}/state/{sId}/hint');
@@ -1825,7 +2230,10 @@
             }
 
             function hint(params) {
-                return hintRequestMicroService.post(params).then(formatHint);
+                var parser = new SeaTransform(SeaTransformTemplate.AGENT.STATE.HINT.CREATE);
+                var paramsParsed = parser.parse(params);
+
+                return hintRequestMicroService.post(paramsParsed).then(formatHint);
             }
 
             function stats(aId, params) {
@@ -1841,7 +2249,7 @@
                 params.aId = aId;
 
                 if (angular.isArray(params.aId)) {
-                    return requestMicroService.post(params, 'agent/state').then(function (statesById) {
+                    return request.post(params, 'agent/state').then(function (statesById) {
                         if (angular.isArray(statesById)) {
                             var n = {};
                             n[params.aId[0]] = statesById;
@@ -2047,14 +2455,7 @@
                 params = params || {};
                 params.action = 'login';
 
-                return requestMicroService.post(params).then(result => {
-                    var transform = new SeaTransform(SeaTransformTemplate.ME.ME);
-                    var transformed = transform.parse(result)
-                    console.log('transformed: ', transformed);
-                    return transformed;
-                }).catch(e => {
-                    return e;
-                });
+                return request.post(params);
             }
 
             function logout(params) {
@@ -2225,6 +2626,7 @@
     angular.module('ngSeApi').factory('seaContainerMisc', ['SeaRequest',
         function seaContainerMisc(SeaRequest) {
             var request = new SeaRequest('container/{cId}/{action}');
+            var requestMicroService = new SeaRequest('container/{cId}/{action}', 'v3');
 
             function formatActionlog(entry) {
                 entry.changeDate = new Date(entry.changeDate);
@@ -2274,7 +2676,7 @@
                 params = params || {};
                 params.cId = cId;
                 params.action = action;
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             return {
@@ -2369,6 +2771,7 @@
     angular.module('ngSeApi').factory('seaContainerNote', ['SeaRequest',
     function seaContainerNote(SeaRequest) {
             var request = new SeaRequest('container/{cId}/note/{nId}');
+            var requestMicroService = new SeaRequest('container/{cId}/note/{nId}', 'v3')
 
             function formatNote(note) {
                 note.postedOn = new Date(note.postedOn);
@@ -2376,7 +2779,7 @@
             }
 
             function create(params) {
-                return request.post(params).then(formatNote);
+                return requestMicroService.post(params).then(formatNote);
             }
 
             function list(cId) {
@@ -2397,7 +2800,7 @@
             }
         
             function destroy(cId, nId) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     nId: nId
                 });
@@ -2434,13 +2837,14 @@
     angular.module('ngSeApi').factory('seaContainerNotification', ['SeaRequest',
     function seaContainerNotification(SeaRequest) {
             var request = new SeaRequest('container/{cId}/notification/{nId}');
+            var requestMicroService = new SeaRequest('container/{cId}/notification/{nId}', 'v3');
 
             function create(params) {
                 return request.post(params);
             }
 
             function update(notification) {
-                return request.put(notification);
+                return requestMicroService.put(notification);
             }
 
             function list(cId) {
@@ -2502,6 +2906,7 @@
     angular.module('ngSeApi').factory('seaContainerProposal', ['SeaRequest',
     function seaContainerProposal(SeaRequest) {
             var request = new SeaRequest('container/{cId}/proposal/{pId}');
+            var requestMicroService = new SeaRequest('container/{cId}/proposal/{pId}', 'v3');
 
             function accept(cId, pId) {
                 return request.put({
@@ -2517,7 +2922,7 @@
             }
 
             function deny(cId, pId) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     pId: pId
                 });
@@ -2559,6 +2964,9 @@
             var request = new SeaRequest('container/{cId}/state/{method}'),
                 stateRequest = new SeaRequest('container/{cId}/state/{sId}'),
                 hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
+            var requestMicroService = new SeaRequest('container/{cId}/state/{method}', 'v3'),
+                stateRequestMicroService = new SeaRequest('container/{cId}/state/{sId}', 'v3'),
+                hintRequestMicroService = new SeaRequest('container/{cId}/state/{sId}/hint', 'v3');
 
             function formatState(state) {
                 state.date = new Date(state.date);
@@ -2586,7 +2994,7 @@
             }
 
             function hint(params) {
-                return hintRequest.post(params).then(formatHint);
+                return hintRequestMicroService.post(params).then(formatHint);
             }
 
             function stats(cId, params) {
@@ -2744,9 +3152,10 @@
     angular.module('ngSeApi').factory('seaContainerTemplate', ['SeaRequest',
     function seaContainerTemplate(SeaRequest) {
             var request = new SeaRequest('container/{cId}/template/{tId}');
+            var requestMicroService = new SeaRequest('container/{cId}/template/{tId}', 'v3');
 
             function create(cId) {
-                return request.post({
+                return requestMicroService.post({
                     cId: cId
                 });
             }
@@ -2782,49 +3191,50 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaCustomerApiKey', ['SeaRequest',
-    function seaCustomerTag(SeaRequest) {
+        function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/apiKey/{apiKey}'),
                 requestDistri = new SeaRequest('customer/apiKey/{apiKey}');
+            var requestMicroService = new SeaRequest('customer/{cId}/apiKey/{apiKey}', 'v3');
 
             function format(apiKey) {
-                if(apiKey.validUntil) {
+                if (apiKey.validUntil) {
                     apiKey.validUntil = new Date(apiKey.validUntil);
                 }
-                
-                if(apiKey.createdOn) {
+
+                if (apiKey.createdOn) {
                     apiKey.createdOn = new Date(apiKey.createdOn);
                 }
-                
+
                 return apiKey;
             }
-        
+
             function list(cId) {
                 var p;
-                
-                if(!cId) {
+
+                if (!cId) {
                     p = requestDistri.get();
                 } else {
                     p = request.get({
                         cId: cId
                     });
                 }
-                
+
                 return p.then(function (apiKeys) {
                     angular.forEach(apiKeys, format);
-                    
+
                     return apiKeys;
                 });
             }
-        
+
             function get(cId, query) {
                 query = query || {};
                 query.cId = cId;
-                
+
                 return request.get(query).then(format);
             }
 
             function destroy(cId, apiKey) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     apiKey: apiKey
                 });
@@ -2838,7 +3248,7 @@
                 list: function (cId) {
                     return list(cId);
                 },
-                
+
                 get: function (cId, query) {
                     return get(cId, query);
                 },
@@ -2847,18 +3257,20 @@
                     return destroy(cId, apiKey);
                 }
             };
-    }]);
+        }]);
 })();
 (function () {
     "use strict";
 
     angular.module('ngSeApi').factory('seaCustomerBucket', ['SeaRequest',
-    function seaCustomerDispatchTime(SeaRequest) {
+        function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/bucket/{bId}'),
                 userRequest = new SeaRequest('customer/bucket/{bId}/user/{uId}');
+            var requestMicroService = new SeaRequest('customer/bucket/{bId}', 'v3'),
+                userRequestMicroService = new SeaRequest('customer/bucket/{bId}/user/{uId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -2870,7 +3282,7 @@
             }
 
             function destroy(bId) {
-                return request.del({
+                return requestMicroService.del({
                     bId: bId
                 });
             }
@@ -2882,11 +3294,11 @@
             }
 
             function addUser(params) {
-                return userRequest.put(params);
+                return userRequestMicroService.put(params);
             }
 
             function removeUser(bId, uId) {
-                return userRequest.del({
+                return userRequestMicroService.del({
                     bId: bId,
                     uId: uId
                 });
@@ -2945,7 +3357,7 @@
                     }
                 }
             };
-    }]);
+        }]);
 })();
 (function () {
     "use strict";
@@ -2953,7 +3365,7 @@
     angular.module('ngSeApi').factory('seaCustomer', ['SeaRequest', 'seaCustomerApiKey', 'seaCustomerBucket', 'seaCustomerDispatchTime', 'seaCustomerExternalCall', 'seaCustomerLocation', 'seaCustomerManager', 'seaCustomerProperty', 'seaCustomerSetting', 'seaCustomerTag', 'seaCustomerTemplate', 'seaCustomerUsage', 'seaCustomerViewFilter',
         function seaCustomer(SeaRequest, seaCustomerApiKey, seaCustomerBucket, seaCustomerDispatchTime, seaCustomerExternalCall, seaCustomerLocation, seaCustomerManager, seaCustomerProperty, seaCustomerSetting, seaCustomerTag, seaCustomerTemplate, seaCustomerUsage, seaCustomerViewFilter) {
             var request = new SeaRequest('customer/{cId}');
-            var requestCreate = new SeaRequest('customer');
+            var requestMicroService = new SeaRequest('customer/{cId}', 'v3');
 
             function list() {
                 return request.get();
@@ -2970,7 +3382,7 @@
             }
             
             function create(customer) {
-                return requestCreate.post(customer);
+                return requestMicroService.post(customer);
             }
 
             return {
@@ -3038,9 +3450,10 @@
     angular.module('ngSeApi').factory('seaCustomerDispatchTime', ['SeaRequest',
     function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/dispatchTime/{dtId}');
+            var requestMicroService = new SeaRequest('customer/dispatchTime/{dtId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -3048,11 +3461,11 @@
             }
 
             function update(dispatchTime) {
-                return request.put(dispatchTime);
+                return requestMicroService.put(dispatchTime);
             }
 
             function destroy(dtId) {
-                return request.del({
+                return requestMicroService.del({
                     dtId: dtId
                 });
             }
@@ -3175,6 +3588,7 @@
     angular.module('ngSeApi').factory('seaCustomerManager', ['SeaRequest',
     function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/manager/{uId}');
+            var requestMicroService = new SeaRequest('customer/{cId}/manager/{uId}', 'v3');
 
             function list(cId) {
                 return request.get({
@@ -3183,14 +3597,14 @@
             }
 
             function addUser(cId, email) {
-                return request.put({
+                return requestMicroService.post({
                     cId: cId,
                     uId: email
                 });
             }
 
             function removeUser(cId, uId) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     uId: uId
                 });
@@ -3224,6 +3638,7 @@
     function seaCustomerProperty(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/property/{key}');
             var requestPost = new SeaRequest('customer/{cId}/property');
+            var requestMicroService = new SeaRequest('customer/{cId}/property/{key}', 'v3');
 
             function list(cId) {
                 return request.get({
@@ -3232,7 +3647,7 @@
             }
 
             function create(cId, key, value) {
-                return requestPost.post({
+                return requestMicroService.post({
                     cId: cId,
                     key: key,
                     value: value
@@ -3240,7 +3655,7 @@
             }
 
             function destroy(cId, key) {
-                return request.del({
+                return requestMicroService.del({
                     cId: cId,
                     key: key
                 });
@@ -3273,6 +3688,7 @@
     angular.module('ngSeApi').factory('seaCustomerSetting', ['SeaRequest',
     function seaCustomerSetting(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/setting');
+            var requestMicroService = new SeaRequest('customer/{cId}/setting', 'v3');
 
             function list(cId) {
                 return request.get({
@@ -3283,7 +3699,7 @@
             function update(cId, settings) {
                 settings = settings || {};
                 settings.cId = cId;
-                return request.put(settings);
+                return requestMicroService.put(settings);
             }
 
             return {
@@ -3308,9 +3724,10 @@
     angular.module('ngSeApi').factory('seaCustomerTag', ['SeaRequest',
     function seaCustomerTag(SeaRequest) {
             var request = new SeaRequest('customer/tag/{tId}');
+            var requestMicroService = new SeaRequest('customer/tag/{tId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -3318,11 +3735,11 @@
             }
 
             function update(tag) {
-                return request.put(tag);
+                return requestMicroService.put(tag);
             }
 
             function destroy(tId) {
-                return request.del({
+                return requestMicroService.del({
                     tId: tId
                 });
             }
@@ -3461,9 +3878,10 @@
     angular.module('ngSeApi').factory('seaCustomerViewFilter', ['SeaRequest',
     function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/viewFilter/{vfId}');
+            var requestMicroService = new SeaRequest('customer/viewFilter/{vfId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -3471,11 +3889,11 @@
             }
 
             function update(viewFilter) {
-                return request.put(viewFilter);
+                return requestMicroService.put(viewFilter);
             }
 
             function destroy(vfId) {
-                return request.del({
+                return requestMicroService.del({
                     vfId: vfId
                 });
             }
@@ -3709,6 +4127,7 @@
     angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting',
         function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting) {
             var request = new SeaRequest('me/{action}');
+            var requestMicroService = new SeaRequest('me/{action}', 'v3');
 
             function _formatNode(node) {
                 ['date', 'lastDate', 'silencedUntil'].forEach(function (key) {
@@ -3766,7 +4185,7 @@
 
             function updatePassword(params) {
                 params = angular.extend({}, { action: 'password' }, params);
-                return request.put(params);
+                return requestMicroService.put(params);
             }
 
             return {
@@ -3801,13 +4220,14 @@
     angular.module('ngSeApi').factory('seaMeMobilepush', ['SeaRequest',
     function seaMeMobilepush(SeaRequest) {
             var request = new SeaRequest('me/mobilepush/{handle}');
+            var requestMicroService = new SeaRequest('me/mobilepush/{handle}', 'v3');
 
             function list() {
                 return request.get();
             }
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function get(handle) {
@@ -3817,7 +4237,7 @@
             }
 
             function destroy(handle) {
-                return request.del({
+                return requestMicroService.del({
                     handle: handle
                 });
             }
@@ -3852,17 +4272,18 @@
     angular.module('ngSeApi').factory('seaMeNotification', ['SeaRequest',
     function seaMeNotification(SeaRequest) {
             var request = new SeaRequest('me/notification/{nId}');
+            var requestMicroService = new SeaRequest('me/notification/{nId}', 'v3');
 
             function list(params) {
                 return request.get(params);
             }
 
             function update(notification) {
-                return request.put(notification);
+                return requestMicroService.put(notification);
             }
 
             function destroy(nId) {
-                return request.del({
+                return requestMicroService.del({
                     nId: nId
                 });
             }
@@ -3889,7 +4310,7 @@
                  * @config {String} [deferId]
                  */
                 update: function (notification) {
-                    return get(notification);
+                    return update(notification);
                 },
 
                 destroy: function (nId) {
@@ -3905,6 +4326,8 @@
     function seaMeSetting(SeaRequest) {
             var request = new SeaRequest('me/setting');
             var requestAction = new SeaRequest('me/setting/{action}');
+            var requestMicroService = new SeaRequest('me/setting', 'v3');
+            var requestActionMicroService = new SeaRequest('me/setting/{action}', 'v3');
 
             function list() {
                 return request.get();
@@ -3912,11 +4335,11 @@
 
             function update(settings) {
                 settings = settings || {};
-                return request.put(settings);
+                return requestMicroService.put(settings);
             }
 
             function resetSecret(password) {
-                return requestAction.post({
+                return requestActionMicroService.post({
                     action: 'secret/reset',
                     password: password,
                 });
@@ -3949,6 +4372,7 @@
     angular.module('ngSeApi').factory('seaMeTwoFactor', ['SeaRequest',
         function seaMeLocation(SeaRequest) {
             var request = new SeaRequest('me/twofactor/{sub}');
+            var requestMicroService = new SeaRequest('me/twofactor/{sub}', 'v3');
 
             function get() {
                 return request.get();
@@ -3961,11 +4385,11 @@
             }
 
             function enable(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function disable(params) {
-                return request.del(params);
+                return requestMicroService.del(params);
             }
 
             return {
@@ -4706,12 +5130,13 @@
     "use strict";
 
     angular.module('ngSeApi').factory('seaRemotingNetwork', ['SeaRequest',
-    function seaRemotingPcvisit(SeaRequest) {
+    function seaRemotingNetwork(SeaRequest) {
             var request = new SeaRequest('network/{customerId}/{cId}/system/{action}');
+            var requestMicroService = new SeaRequest('network/{customerId}/{cId}/system/{action}', 'v3');
 
             function format(job) {
                 if (job && job.createdAt) {
-                    job.createdAta = new Date(job.createdAt);
+                    job.createdAt = new Date(job.createdAt);
                 }
 
                 return job;
@@ -4722,7 +5147,7 @@
             }
 
             function install(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
         
             function getInstallStatus(params) {
@@ -4961,7 +5386,7 @@
 
     angular.module('ngSeApi').factory('seaRemotingPowershell', ['SeaRequest',
     function seaRemotingPowershell(SeaRequest) {
-            var request = new SeaRequest('powershell/{customerId}/{cId}/{action}');
+            var request = new SeaRequest('powershell/{customerId}/{cId}/{action}', 'v3');
         
             function start(params) {
                 params = params || {};
@@ -5022,6 +5447,8 @@
     function seaCustomer(SeaRequest, seaReportingTemplate) {
             var request = new SeaRequest('reporting/{cId}/report'),
                 reportRequest = new SeaRequest('reporting/{cId}/report/{rId}');
+            var requestMicroService = new SeaRequest('reporting/{cId}/report', 'v3'),
+                reportRequestMicroService = new SeaRequest('reporting/{cId}/report/{rId}', 'v3');
 
             function formatReport(report) {
                 ['startDate', 'lastDate', 'nextDate'].forEach(function (prop) {
@@ -5040,7 +5467,7 @@
             }
         
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
         
             function list(cId) {
@@ -5069,7 +5496,7 @@
             }
         
             function destroy(cId, rId) {
-                return reportRequest.del({
+                return requestMicroService.del({
                     cId: cId,
                     rId: rId
                 });
@@ -5118,9 +5545,10 @@
     angular.module('ngSeApi').factory('seaReportingTemplate', ['SeaRequest',
         function seaReportingTemplate(SeaRequest) {
             var request = new SeaRequest('reporting/template/{rtId}');
+            var requestMicroService = new SeaRequest('reporting/template/{rtId}', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function list() {
@@ -5128,13 +5556,13 @@
             }
 
             function get(rId) {
-                return reportRequest.get({
+                return request.get({
                     rtId: rtId
                 });
             }
 
             function destroy(rId) {
-                return reportRequest.del({
+                return requestMicroService.del({
                     rtId: rtId
                 });
             }
@@ -5296,6 +5724,7 @@
     angular.module('ngSeApi').factory('seaUserSetting', ['SeaRequest',
     function seaUserSetting(SeaRequest) {
             var request = new SeaRequest('user/{uId}/setting');
+            var requestMicroService = new SeaRequest('user/{uId}/setting', 'v3');
 
             function list(uId) {
                 return request.get({
@@ -5306,7 +5735,7 @@
             function update(uId, settings) {
                 settings = settings || {};
                 settings.uId = uId;
-                return request.put(settings);
+                return requestMicroService.put(settings);
             }
 
             return {
@@ -5330,7 +5759,7 @@
 
     angular.module('ngSeApi').factory('seaUserSubstitude', ['SeaRequest',
     function seaUserSubstitude(SeaRequest) {
-            var request = new SeaRequest('user/{uId}/substitude/{substitudeId}');
+            var request = new SeaRequest('user/{uId}/substitude/{substitudeId}', 'v3');
 
             function set(uId, substId) {
                 return request.put({
@@ -5374,9 +5803,13 @@
                 requestUser = new SeaRequest('user/{uId}/{sub}'),
                 requestCustomer = new SeaRequest('user/{uId}/customer'),
                 requestUsers = new SeaRequest('user');
+            var requestMicroService = new SeaRequest('user/{uId}', 'v3'),
+                requestUserMicroService = new SeaRequest('user/{uId}/{sub}', 'v3'),
+                requestCustomerMicroService = new SeaRequest('user/{uId}/customer', 'v3'),
+                requestUsersMicroService = new SeaRequest('user', 'v3');
 
             function create(params) {
-                return request.post(params);
+                return requestMicroService.post(params);
             }
 
             function get(uId) {
@@ -5386,11 +5819,11 @@
             }
 
             function update(user) {
-                return request.put(user);
+                return requestMicroService.put(user);
             }
 
             function destroy(uId) {
-                return request.del({
+                return requestMicroService.del({
                     uId: uId
                 });
             }
