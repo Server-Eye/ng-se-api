@@ -3643,7 +3643,8 @@
             var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
             var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
             var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
-            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));
+            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));    
+            var taskScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/scheduled/task/{taskId}'));    
 
             function parseScript(script) {
                 return parseRequest.post(script);
@@ -3670,6 +3671,12 @@
                 });
             }
 
+            function getScriptByTaskId(taskId) {
+                return taskScriptRequest.get({
+                    taskId: taskId,
+                });
+            }
+
             return {
                 parseScript: function (script) {
                     return parseScript(script);
@@ -3689,8 +3696,10 @@
                 */
                 updateSettings: function (params) {
                     return updateSettings(params);
-                }
-
+                },
+                getScriptByTaskId: function(taskId) {
+                    return getScriptByTaskId(taskId);
+                },
             }
         }]);
 })();
@@ -4338,6 +4347,159 @@
                 destroy: function (rtId) {
                     return destroy(rtId);
                 }
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaScheduledTasksHelper', ['seaConfig',
+        function (seaConfig) {
+            function getUrl(path) {
+                return [seaConfig.getMicroServiceUrl(), seaConfig.getMicroServiceApiVersion(), 'scheduled', path].join('/');
+            }
+
+            return {
+                getUrl: getUrl
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaScheduledTasks', ['SeaRequest', 'seaScheduledTasksHelper', 'seaScheduledTasksTask', 'seaScheduledTasksUtil',
+        function (SeaRequest, seaScheduledTasksHelper, seaScheduledTasksTask, seaScheduledTasksUtil) {
+            var customerRequest =  new SeaRequest(seaScheduledTasksHelper.getUrl('task/customer/{customerId}'));
+            var containerRequest = new SeaRequest(seaScheduledTasksHelper.getUrl('task/container/{containerId}'));
+
+            function getByContainerId(containerId) {
+                return containerRequest.get({
+                    containerId: containerId,
+                });
+            }
+            
+            function getByCustomerId(customerId) {
+                return customerRequest.get({
+                    customerId: customerId,
+                });
+            }
+
+            return {
+                customer: {
+                    list: function (customerId) {
+                        return getByCustomerId(customerId);
+                    },
+                },
+                container: {
+                    list: function (containerId) {
+                        return getByContainerId(containerId)
+                    },
+                },
+                task: seaScheduledTasksTask,
+                util: seaScheduledTasksUtil,
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaScheduledTasksTask', ['SeaRequest', 'seaScheduledTasksHelper',
+        function (SeaRequest, seaScheduledTasksHelper) {
+            var request = new SeaRequest(seaScheduledTasksHelper.getUrl('task'));
+            var requestTask = new SeaRequest(seaScheduledTasksHelper.getUrl('task/{taskId}'));
+            var requestTaskAction = new SeaRequest(seaScheduledTasksHelper.getUrl('task/{taskId}/{action}'));
+
+            function get(taskId) {
+                return requestTask.get({
+                    taskId: taskId,
+                });
+            }
+
+            function create(params) {
+                return request.post(params);
+            }
+
+            function update(params) {
+                return requestTask.put(params);
+            }
+
+            function destroy(taskId, detach) {
+                return requestTask.del({
+                    taskId: taskId,
+                    detach: detach,
+                });
+            }
+
+            function copy(params) {
+                params = angular.extend({}, params, { action: 'copy' });
+                return requestTaskAction.post(params);
+            }
+
+            return {
+                get: function (taskId) {
+                    return get(taskId);
+                },
+                /**
+                 * create task
+                 * @param {Object} params
+                 * @config {String} containerId
+                 * @config {String} customerId
+                 * @config {String} name
+                 * @config {Array<String>} triggers
+                 * @config {String} [description]
+                 * @config {String} [powerShellRepositoryId]
+                 * @config {String} [powerShellRepositoryScriptId]
+                 * @config {String} [scriptData]
+                 * @config {String} [arguments]
+                 */
+                create: function (params) {
+                    return create(params);
+                },
+                /**
+                 * update task
+                 * @param {Object} params
+                 * @config {String} taskId
+                 * @config {String} name
+                 * @config {Array<String>} triggers
+                 * @config {String} [description]
+                 * @config {String} [powerShellRepositoryId]
+                 * @config {String} [powerShellRepositoryScriptId]
+                 * @config {String} [scriptData]
+                 * @config {String} [arguments]
+                 * @config {Boolean} [detach]
+                 */
+                update: function (params) {
+                    return update(params);
+                },
+                /**
+                 * destroy task
+                 * @param {String} taskId
+                 * @param {Boolean} [detach]
+                 */
+                destroy: function (taskId, detach) {
+                    return destroy(taskId, detach);
+                },
+                /**
+                 * copy task
+                 * @param {Object} params
+                 * @config {String} taskId
+                 * @config {Array<String>} containerIds
+                 */
+                copy: function (params) {
+                    return copy(params);
+                },
+            };
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('seaScheduledTasksUtil', ['seaScheduledTasksHelper', 'SeaRequest',
+        function (seaScheduledTasksHelper, SeaRequest) {
+
+
+            return {
+              
             };
         }]);
 })();
