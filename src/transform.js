@@ -78,10 +78,14 @@
         "assignedUser": "{{assignedUser}}",
         "mentionedUsers": "{{mentionedUsers}}",
         "private": "{{private}}",
-        "until": "{{until}}",
+        "until": "{{#? until}}",
         "aId": "{{aId}}",
         "sId": "{{sId}}",
     }
+
+    var TPL_CONTAINER_STATE_HINT_CREATE = JSON.parse(JSON.stringify(TPL_AGENT_STATE_HINT_CREATE));
+    delete TPL_CONTAINER_STATE_HINT_CREATE["aId"];
+    TPL_CONTAINER_STATE_HINT_CREATE["cId"] = "{{cId}}";
 
     angular.module('ngSeApi').factory('SeaTransformTemplate', [
         function SeaTransformTemplate() {
@@ -93,6 +97,13 @@
                     STATE: {
                         HINT: {
                             CREATE: TPL_AGENT_STATE_HINT_CREATE,
+                        },
+                    },
+                },
+                CONTAINER: {
+                    STATE: {
+                        HINT: {
+                            CREATE: TPL_CONTAINER_STATE_HINT_CREATE,
                         },
                     },
                 },

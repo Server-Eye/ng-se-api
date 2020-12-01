@@ -1369,10 +1369,14 @@
         "assignedUser": "{{assignedUser}}",
         "mentionedUsers": "{{mentionedUsers}}",
         "private": "{{private}}",
-        "until": "{{until}}",
+        "until": "{{#? until}}",
         "aId": "{{aId}}",
         "sId": "{{sId}}",
     }
+
+    var TPL_CONTAINER_STATE_HINT_CREATE = JSON.parse(JSON.stringify(TPL_AGENT_STATE_HINT_CREATE));
+    delete TPL_CONTAINER_STATE_HINT_CREATE["aId"];
+    TPL_CONTAINER_STATE_HINT_CREATE["cId"] = "{{cId}}";
 
     angular.module('ngSeApi').factory('SeaTransformTemplate', [
         function SeaTransformTemplate() {
@@ -1384,6 +1388,13 @@
                     STATE: {
                         HINT: {
                             CREATE: TPL_AGENT_STATE_HINT_CREATE,
+                        },
+                    },
+                },
+                CONTAINER: {
+                    STATE: {
+                        HINT: {
+                            CREATE: TPL_CONTAINER_STATE_HINT_CREATE,
                         },
                     },
                 },
@@ -2959,8 +2970,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest',
-        function seaContainerState(SeaRequest) {
+    angular.module('ngSeApi').factory('seaContainerState', ['SeaRequest', 'SeaTransform', 'SeaTransformTemplate',
+        function seaContainerState(SeaRequest, SeaTransform, SeaTransformTemplate) {
             var request = new SeaRequest('container/{cId}/state/{method}'),
                 stateRequest = new SeaRequest('container/{cId}/state/{sId}'),
                 hintRequest = new SeaRequest('container/{cId}/state/{sId}/hint');
@@ -2994,7 +3005,10 @@
             }
 
             function hint(params) {
-                return hintRequestMicroService.post(params).then(formatHint);
+                var parser = new SeaTransform(SeaTransformTemplate.CONTAINER.STATE.HINT.CREATE);
+                var paramsParsed = parser.parse(params);
+
+                return hintRequestMicroService.post(paramsParsed).then(formatHint);
             }
 
             function stats(cId, params) {
