@@ -17,7 +17,7 @@
             }
 
             function update(customer) {
-                return request.put(customer);
+                return requestMicroService.put(customer);
             }
             
             function create(customer) {

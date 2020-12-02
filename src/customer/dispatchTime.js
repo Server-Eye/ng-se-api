@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaCustomerDispatchTime', ['SeaRequest',
     function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/dispatchTime/{dtId}');
-            var requestMicroService = new SeaRequest('customer/dispatchTime/{dtId}', 'v3');
+            var requestMicroService = new SeaRequest('customer/dispatch-time/{dtId}', 'v3');
 
             function create(params) {
                 return requestMicroService.post(params);

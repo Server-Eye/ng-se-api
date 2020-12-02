@@ -5,7 +5,8 @@
     function seaCustomerProperty(SeaRequest) {
             var request = new SeaRequest('customer/{cId}/property/{key}');
             var requestPost = new SeaRequest('customer/{cId}/property');
-            var requestMicroService = new SeaRequest('customer/{cId}/property/{key}', 'v3');
+            var requestMicroService = new SeaRequest('customer/{cId}/property', 'v3');
+            var requestMicroServiceKey = new SeaRequest('customer/{cId}/property/{key}', 'v3');
 
             function list(cId) {
                 return request.get({
@@ -22,7 +23,7 @@
             }
 
             function destroy(cId, key) {
-                return requestMicroService.del({
+                return requestMicroServiceKey.del({
                     cId: cId,
                     key: key
                 });

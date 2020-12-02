@@ -4,7 +4,7 @@
     angular.module('ngSeApi').factory('seaCustomerViewFilter', ['SeaRequest',
     function seaCustomerDispatchTime(SeaRequest) {
             var request = new SeaRequest('customer/viewFilter/{vfId}');
-            var requestMicroService = new SeaRequest('customer/viewFilter/{vfId}', 'v3');
+            var requestMicroService = new SeaRequest('customer/view-filter/{vfId}', 'v3');
 
             function create(params) {
                 return requestMicroService.post(params);
