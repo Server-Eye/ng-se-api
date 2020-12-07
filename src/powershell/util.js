@@ -6,8 +6,9 @@
             var parseRequest = new SeaRequest(seaPowerShellHelper.getUrl('script/parse'));
             var agentsRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{repositoryId}/script/{scriptId}/agent'));
             var settingRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/agent/setting'));
-            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));    
-            var taskScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/scheduled/task/{taskId}'));    
+            var agentScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/agent/{agentId}'));
+            var taskScriptRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/script/scheduled/task/{taskId}'));
+            var tasksRequest = new SeaRequest(seaPowerShellHelper.getUrl('repository/{powerShellRepositoryId}/script/{powerShellRepositoryScriptId}/scheduled-task'));
 
             function parseScript(script) {
                 return parseRequest.post(script);
@@ -20,6 +21,13 @@
                 });
             }
             
+            function listTasks(repositoryId, scriptId) {
+                return tasksRequest.get({
+                    powerShellRepositoryId: repositoryId,
+                    powerShellRepositoryScriptId: scriptId,
+                });
+            }
+
             function getScriptByAgent(agentId) {
                 return agentScriptRequest.get({
                     agentId: agentId,
@@ -47,6 +55,9 @@
                 listAgents: function (repositoryId, scriptId) {
                     return listAgents(repositoryId, scriptId);
                 },
+                listTasks: function (repositoryId, scriptId) {
+                    return listTasks(repositoryId, scriptId);
+                },
                 getScriptByAgent: function (agentId) {
                     return getScriptByAgent(agentId);
                 },
@@ -60,7 +71,7 @@
                 updateSettings: function (params) {
                     return updateSettings(params);
                 },
-                getScriptByTaskId: function(taskId) {
+                getScriptByTaskId: function (taskId) {
                     return getScriptByTaskId(taskId);
                 },
             }
