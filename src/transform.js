@@ -83,6 +83,13 @@
         "sId": "{{sId}}",
     }
 
+    var TPL_ME_PASSWORD_UPDATE = {
+        "password": "{{password}}",
+        "passwordRepeat": "{{passwordre}}",
+        "validationPassword": "{{validationPassword}}",
+        "code": "{{#? code}}",
+    }
+
     var TPL_CONTAINER_STATE_HINT_CREATE = JSON.parse(JSON.stringify(TPL_AGENT_STATE_HINT_CREATE));
     delete TPL_CONTAINER_STATE_HINT_CREATE["aId"];
     TPL_CONTAINER_STATE_HINT_CREATE["cId"] = "{{cId}}";
@@ -105,6 +112,11 @@
                         HINT: {
                             CREATE: TPL_CONTAINER_STATE_HINT_CREATE,
                         },
+                    },
+                },
+                ME: {
+                    PASSWORD: {
+                        UPDATE: TPL_ME_PASSWORD_UPDATE,
                     },
                 },
             };

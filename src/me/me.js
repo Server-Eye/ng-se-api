@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting',
-        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting) {
+    angular.module('ngSeApi').factory('seaMe', ['SeaRequest', 'seaMeLocation', 'seaMeMobilepush', 'seaMeNotification', 'seaMeTwoFactor', 'seaMeSetting', 'SeaTransform', 'SeaTransformTemplate',
+        function seaMe(SeaRequest, seaMeLocation, seaMeMobilepush, seaMeNotification, seaMeTwoFactor, seaMeSetting, SeaTransform, SeaTransformTemplate) {
             var request = new SeaRequest('me/{action}');
             var requestMicroService = new SeaRequest('me/{action}', 'v3');
 
@@ -61,8 +61,11 @@
             }
 
             function updatePassword(params) {
-                params = angular.extend({}, { action: 'password' }, params);
-                return requestMicroService.put(params);
+                var parser = new SeaTransform(SeaTransformTemplate.ME.PASSWORD.UPDATE);
+                var paramsParsed = parser.parse(params);
+
+                paramsParsed = angular.extend({}, { action: 'password' }, paramsParsed);
+                return requestMicroService.put(paramsParsed);
             }
 
             return {
