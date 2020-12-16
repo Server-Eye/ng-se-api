@@ -3319,22 +3319,24 @@
     angular.module('ngSeApi').factory('seaPatch', ['SeaRequest', 'seaPatchContainer', 'seaPatchViewFilter', 'seaPatchHelper',
         function seaUser(SeaRequest, seaPatchContainer, seaPatchViewFilter, seaPatchHelper) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/customers')),
-            requestCategories = new SeaRequest(seaPatchHelper.getUrl('patch/categories'));
+                requestCategories = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/categories'));
 
             function listCustomers() {
                 return request.get();
-            }     
+            }
 
-            function listCategories() {
-                return requestCategories.get();
-            }            
-            
+            function listCategories(customerId) {
+                return requestCategories.get({ customerId: customerId });
+            }
+
             return {
                 customer: {
                     list: listCustomers
                 },
                 category: {
-                    list: listCategories,
+                    list: function (customerId) {
+                        return listCategories(customerId)
+                    },
                 },
                 container: seaPatchContainer,
                 viewFilter: seaPatchViewFilter,
