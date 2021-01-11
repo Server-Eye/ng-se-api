@@ -31,7 +31,7 @@
                     return;
                 }
 
-                var connectUrl = seaConfig.getSocketUrl();
+                var connectUrl = seaConfig.getBaseUrl();
                 
                 if(credentials) {
                     connectUrl += Object.keys(credentials).reduce(function (p, key) {
