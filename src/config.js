@@ -8,6 +8,7 @@
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
                 microServiceUrl: 'https://api-ms.server-eye.de',
+                socketUrl: 'https://api-socket.server-eye.de',
                 apiVersion: 2,
                 microServiceApiVersion: 3,
                 apiKey: null,
@@ -60,6 +61,10 @@
                 config.apiKey = apiKey;
             }
 
+            this.setSocketUrl = function(socketUrl) {
+                config.socketUrl = socketUrl;
+            }
+
             this.$get = function ($http) {
                 return {
                     getBaseUrl: function () {
@@ -94,7 +99,10 @@
                     },
                     getUrl: function (path) {
                         return [config.baseUrl, config.apiVersion, path].join('/');
-                    }
+                    },
+                    getSocketUrl: function() {
+                        return config.socketUrl;
+                    },
                 }
             };
         }]);
