@@ -14,6 +14,7 @@
                 patchUrl: 'https://patch.server-eye.de',
                 pmUrl: 'https://pm.server-eye.de',
                 microServiceUrl: 'https://api-ms.server-eye.de',
+                socketUrl: 'https://api.server-eye.de',
                 apiVersion: 2,
                 microServiceApiVersion: 3,
                 apiKey: null,
@@ -54,6 +55,10 @@
                 config.microServiceUrl = microServiceUrl;
             }
 
+            this.setSocketUrl = function (socketUrl) {
+                config.socketUrl = socketUrl;
+            }
+
             this.setApiVersion = function (apiVersion) {
                 config.apiVersion = apiVersion;
             }
@@ -82,6 +87,9 @@
                     },
                     getMicroServiceUrl: function () {
                         return config.microServiceUrl;
+                    },
+                    getSocketUrl: function () {
+                        return config.socketUrl;
                     },
                     getApiVersion: function () {
                         return config.apiVersion;
@@ -303,7 +311,7 @@
                     return;
                 }
 
-                var connectUrl = seaConfig.getBaseUrl();
+                var connectUrl = seaConfig.getSocketUrl();
                 
                 if(credentials) {
                     connectUrl += Object.keys(credentials).reduce(function (p, key) {
@@ -312,7 +320,9 @@
                     }, '?');
                 }
                 
-                sio = io(connectUrl);
+                sio = io(connectUrl, {
+                    transports: ['websocket', 'polling'],
+                });
 
                 settings.rooms = rooms;
 
