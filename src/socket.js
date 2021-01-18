@@ -41,7 +41,7 @@
                 }
                 
                 sio = io(connectUrl, {
-                    transports: ['websocket'],
+                    transports: ['websocket', 'polling'],
                 });
 
                 settings.rooms = rooms;
