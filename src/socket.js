@@ -31,7 +31,7 @@
                     return;
                 }
 
-                var connectUrl = seaConfig.getBaseUrl();
+                var connectUrl = seaConfig.getSocketUrl();
                 
                 if(credentials) {
                     connectUrl += Object.keys(credentials).reduce(function (p, key) {
@@ -40,7 +40,9 @@
                     }, '?');
                 }
                 
-                sio = io(connectUrl);
+                sio = io(connectUrl, {
+                    transports: ['websocket'],
+                });
 
                 settings.rooms = rooms;
 
