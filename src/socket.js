@@ -40,9 +40,7 @@
                     }, '?');
                 }
                 
-                sio = io(connectUrl, {
-                    transports: ['websocket', 'polling'],
-                });
+                sio = io(connectUrl);
 
                 settings.rooms = rooms;
 
