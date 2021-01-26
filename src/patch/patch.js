@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('seaPatch', ['SeaRequest', 'seaPatchContainer', 'seaPatchViewFilter', 'seaPatchHelper',
-        function seaUser(SeaRequest, seaPatchContainer, seaPatchViewFilter, seaPatchHelper) {
+    angular.module('ngSeApi').factory('seaPatch', ['SeaRequest', 'seaPatchContainer', 'seaPatchViewFilter', 'seaPatchHelper', 'seaPatchTask',
+        function seaUser(SeaRequest, seaPatchContainer, seaPatchViewFilter, seaPatchHelper, seaPatchTask) {
             var request = new SeaRequest(seaPatchHelper.getUrl('patch/customers')),
                 requestCategories = new SeaRequest(seaPatchHelper.getUrl('patch/{customerId}/categories'));
 
@@ -25,6 +25,7 @@
                 },
                 container: seaPatchContainer,
                 viewFilter: seaPatchViewFilter,
+                task: seaPatchTask,
             };
         }]);
 })();
