@@ -1,7 +1,7 @@
 {
     "name": "ng-se-api",
     "preferGlobal": true,
-    "version": "0.8.36",
+    "version": "0.8.37",
     "author": "Kim Schneider <kim.schneider@server-eye.de>",
     "description": "AngularJS Server-Eye api services",
     "contributors": [
