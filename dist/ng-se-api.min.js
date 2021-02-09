@@ -3388,11 +3388,11 @@
             }
 
             function create(params) {
-                request.post(params);
+                return request.post(params);
             }
 
             function update(params) {
-                request.put(params);
+                return request.put(params);
             }
 
             return {
