@@ -26,9 +26,9 @@
             $httpProvider.interceptors.push(function () {
                 return {
                     'request': function (reqConfig) {
-                        if (config.apiKey) {
-                            reqConfig.headers['x-api-key'] = config.apiKey;
-                        }
+                        // if (config.apiKey) {
+                        //     reqConfig.headers['x-api-key'] = config.apiKey;
+                        // }
 
                         return reqConfig;
                     },
