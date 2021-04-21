@@ -26,10 +26,11 @@
                 });
             }
 
-            function getTagGroupByCustomerId(customerId) {
-                return requestCustomerGroup.get({
+            function getTagGroupByCustomerId(customerId, params) {
+                params = params || {};
+                return requestCustomerGroup.get(angular.extend({}, {
                     customerId: customerId,
-                });
+                }, params));
             }
 
             return {
@@ -46,8 +47,8 @@
                     get: function (tagGroupId) {
                         return getTagGroupById(tagGroupId);
                     },
-                    listByCustomerId: function (customerId) {
-                        return getTagGroupByCustomerId(customerId);
+                    listByCustomerId: function (customerId, params) {
+                        return getTagGroupByCustomerId(customerId, params);
                     },
                 },
             };
