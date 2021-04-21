@@ -20,9 +20,7 @@
             $httpProvider.interceptors.push(function () {
                 return {
                     'request': function (reqConfig) {
-                        // if (config.apiKey) {
-                        //     reqConfig.headers['x-api-key'] = config.apiKey;
-                        // }
+                        reqConfig.headers['x-request-origin'] = "OCC";
 
                         return reqConfig;
                     },
