@@ -26,6 +26,7 @@
             $httpProvider.interceptors.push(function () {
                 return {
                     'request': function (reqConfig) {
+                        if (reqConfig.url && reqConfig.url.includes(config.patchUrl)) { return reqConfig; }
                         reqConfig.headers['x-request-origin'] = "OCC";
 
                         return reqConfig;
