@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').provider('seaConfig', ['$httpProvider',
-        function SeaConfigProvider($httpProvider) {
+    angular.module('ngSeApi').provider('seaConfig', ['$httpProvider', 'uuid',
+        function SeaConfigProvider($httpProvider, uuid) {
             var config = {
                 baseUrl: 'https://api.server-eye.de',
                 patchUrl: 'https://patch.server-eye.de',
@@ -22,6 +22,7 @@
                     'request': function (reqConfig) {
                         if (reqConfig.url && reqConfig.url.includes(config.patchUrl)) { return reqConfig; }
                         reqConfig.headers['x-request-origin'] = "OCC";
+                        reqConfig.headers['x-request-id'] = uuid.v4();
 
                         return reqConfig;
                     },

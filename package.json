@@ -19,8 +19,9 @@
         "url": "https://github.com/Server-Eye/ng-se-api.git"
     },
     "dependencies": {
-        "gulp": "3.9.x",
+        "angular-uuid": "0.0.4",
         "del": "2.2.x",
+        "gulp": "3.9.x",
         "gulp-bundle-assets": "^2.27.1"
     },
     "analyze": false,
