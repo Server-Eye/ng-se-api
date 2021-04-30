@@ -14,15 +14,16 @@
                 apiKey: null,
                 getUrl: function (path) {
                     return [this.baseUrl, this.apiVersion, path].join('/');
-                }
+                },
+                addTraces: false
             };
 
             $httpProvider.interceptors.push(function () {
                 return {
                     'request': function (reqConfig) {
                         if (reqConfig.url && reqConfig.url.includes(config.patchUrl)) { return reqConfig; }
+
                         reqConfig.headers['x-request-origin'] = "OCC";
-                        reqConfig.headers['x-request-id'] = simple_uuid();
 
                         return reqConfig;
                     },
@@ -72,6 +73,10 @@
                 config.apiKey = apiKey;
             }
 
+            this.setAddTraces = function (addTraces) {
+                config.addTraces = addTraces;
+            }
+
             this.$get = function ($http) {
                 return {
                     getBaseUrl: function () {
@@ -86,9 +91,6 @@
                     getMicroServiceUrl: function () {
                         return config.microServiceUrl;
                     },
-                    getMicroServiceUrl: function () {
-                        return config.microServiceUrl;
-                    },
                     getSocketUrl: function () {
                         return config.socketUrl;
                     },
@@ -98,14 +100,17 @@
                     getMicroServiceApiVersion: function () {
                         return config.microServiceApiVersion;
                     },
-                    getMicroServiceApiVersion: function () {
-                        return config.microServiceApiVersion;
-                    },
                     getApiKey: function () {
                         return config.apiKey;
                     },
                     setApiKey: function (apiKey) {
                         config.apiKey = apiKey;
+                    },
+                    getAddTraces: function (addTraces) {
+                        return addTraces;
+                    },
+                    setAddTraces: function (addTraces) {
+                        config.addTraces = addTraces;
                     },
                     getUrl: function (path) {
                         return [config.baseUrl, config.apiVersion, path].join('/');

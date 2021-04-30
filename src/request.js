@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http', 'SeaRequestHelperService',
-        function SeaRequest(seaConfig, $q, $http, SeaRequestHelperService) {
+    angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http', 'SeaTracer', 'SeaRequestHelperService',
+        function SeaRequest(seaConfig, $q, $http, SeaTracer, SeaRequestHelperService) {
             function SeaRequest(urlPath) {
                 this.urlPath = urlPath;
             }
@@ -68,6 +68,7 @@
                 }
 
                 SeaRequestHelperService.dumpRequest(conf);
+                SeaTracer.start(conf);
 
                 $http(conf).then(function (resp) {
                     var total = resp.headers('x-total-count');
@@ -76,9 +77,12 @@
                         resp.data.totalCount = total;
                     }
 
+                    SeaTracer.stop(resp);
+
                     deferred.resolve(resp.data);
                 }, function (err) {
                     SeaRequestHelperService.dumpResponse(err);
+                    SeaTracer.stop(err);
                     deferred.reject(err);
                 });
 
