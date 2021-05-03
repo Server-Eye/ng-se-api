@@ -33,12 +33,12 @@
 
                 var connectUrl = seaConfig.getSocketUrl();
                 
-                if(credentials) {
-                    connectUrl += Object.keys(credentials).reduce(function (p, key) {
-                        p += [ key, credentials[key] ].join('=');
-                        return p;
-                    }, '?');
-                }
+                // if(credentials) {
+                //     connectUrl += Object.keys(credentials).reduce(function (p, key) {
+                //         p += [ key, credentials[key] ].join('=');
+                //         return p;
+                //     }, '?');
+                // }
                 
                 sio = io(connectUrl);
 
