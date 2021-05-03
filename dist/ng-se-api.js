@@ -20,15 +20,16 @@
                 apiKey: null,
                 getUrl: function (path) {
                     return [this.baseUrl, this.apiVersion, path].join('/');
-                }
+                },
+                addTraces: false
             };
 
             $httpProvider.interceptors.push(function () {
                 return {
                     'request': function (reqConfig) {
                         if (reqConfig.url && reqConfig.url.includes(config.patchUrl)) { return reqConfig; }
+
                         reqConfig.headers['x-request-origin'] = "OCC";
-                        reqConfig.headers['x-request-id'] = simple_uuid();
 
                         return reqConfig;
                     },
@@ -38,13 +39,6 @@
                     }
                 };
             });
-
-            function simple_uuid() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
 
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
@@ -78,6 +72,10 @@
                 config.apiKey = apiKey;
             }
 
+            this.setAddTraces = function (addTraces) {
+                config.addTraces = addTraces;
+            }
+
             this.$get = function ($http) {
                 return {
                     getBaseUrl: function () {
@@ -92,9 +90,6 @@
                     getMicroServiceUrl: function () {
                         return config.microServiceUrl;
                     },
-                    getMicroServiceUrl: function () {
-                        return config.microServiceUrl;
-                    },
                     getSocketUrl: function () {
                         return config.socketUrl;
                     },
@@ -104,14 +99,14 @@
                     getMicroServiceApiVersion: function () {
                         return config.microServiceApiVersion;
                     },
-                    getMicroServiceApiVersion: function () {
-                        return config.microServiceApiVersion;
-                    },
                     getApiKey: function () {
                         return config.apiKey;
                     },
                     setApiKey: function (apiKey) {
                         config.apiKey = apiKey;
+                    },
+                    getAddTraces: function () {
+                        return config.addTraces;
                     },
                     getUrl: function (path) {
                         return [config.baseUrl, config.apiVersion, path].join('/');
@@ -128,8 +123,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http', 'SeaRequestHelperService',
-        function SeaRequest(seaConfig, $q, $http, SeaRequestHelperService) {
+    angular.module('ngSeApi').factory('SeaRequest', ['seaConfig', '$q', '$http', 'SeaTracer', 'SeaRequestHelperService',
+        function SeaRequest(seaConfig, $q, $http, SeaTracer, SeaRequestHelperService) {
             function SeaRequest(urlPath) {
                 this.urlPath = urlPath;
             }
@@ -195,6 +190,7 @@
                 }
 
                 SeaRequestHelperService.dumpRequest(conf);
+                SeaTracer.start(conf);
 
                 $http(conf).then(function (resp) {
                     var total = resp.headers('x-total-count');
@@ -203,9 +199,12 @@
                         resp.data.totalCount = total;
                     }
 
+                    SeaTracer.stop(resp, conf);
+
                     deferred.resolve(resp.data);
                 }, function (err) {
                     SeaRequestHelperService.dumpResponse(err);
+                    SeaTracer.stop(err, conf);
                     deferred.reject(err);
                 });
 
@@ -320,12 +319,12 @@
 
                 var connectUrl = seaConfig.getSocketUrl();
                 
-                if(credentials) {
-                    connectUrl += Object.keys(credentials).reduce(function (p, key) {
-                        p += [ key, credentials[key] ].join('=');
-                        return p;
-                    }, '?');
-                }
+                // if(credentials) {
+                //     connectUrl += Object.keys(credentials).reduce(function (p, key) {
+                //         p += [ key, credentials[key] ].join('=');
+                //         return p;
+                //     }, '?');
+                // }
                 
                 sio = io(connectUrl);
 
@@ -413,6 +412,99 @@
                 }
             }
     }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('SeaTracer', ['seaConfig', 'SeaUtils',
+        function SeaTracer(seaConfig, SeaUtils) {
+            var traces = {
+                // 'id': {
+                //     'internalTraceId': 'zipkinId',
+                //     'req': {
+                //         'ts': '2021-04-30T08:52:10.973Z',
+                //         'method': 'GET',
+                //         'url': 'https://',
+                //         'query': 'asda=aaaa&sasdsa=1qsd',
+                //         'body': {}
+                //     },
+                //     'res': {
+                //         'ts': '2021-04-30T08:52:10.975Z',
+                //         'data': {},
+                //         'status': 200
+                //     }
+                // }
+            };
+
+            function start(reqConfig) {
+                if (!seaConfig.getAddTraces() || !reqConfig) {
+                    return;
+                }
+
+                var id = reqConfig.headers['x-request-id'] = SeaUtils.simpleUUID();
+                traces[id] = {
+                    internalTraceId: id.substr(0, 18).replaceAll('-', ''),
+                    req: {
+                        ts: new Date().toISOString(),
+                        method: reqConfig.method,
+                        url: reqConfig.url,
+                        query: reqConfig.params,
+                        body: reqConfig.data,
+                    },
+                };
+            }
+
+            function stop(response, reqConfig) {
+                if (!seaConfig.getAddTraces() || !reqConfig) {
+                    return;
+                }
+                var id = reqConfig.headers['x-request-id'];
+                var trace = traces[id];
+
+                if (!trace || !response) {
+                    return;
+                }
+
+                angular.extend(trace, {
+                    res: {
+                        ts: new Date().toISOString(),
+                        data: response.data,
+                        status: response.status,
+                        statusText: response.statusText,
+                    },
+                });
+            }
+
+            function flush() {
+                var r = JSON.stringify(traces);
+                traces = {};
+                return r;
+            }
+
+            return {
+                start,
+                stop,
+                flush
+            }
+        }]);
+})();
+(function () {
+    "use strict";
+
+    angular.module('ngSeApi').factory('SeaUtils', [
+        function () {
+
+            function simpleUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            return {
+                simpleUUID: simpleUUID,
+            }
+        }]);
 })();
 (function () {
     "use strict";

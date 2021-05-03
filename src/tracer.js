@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    angular.module('ngSeApi').factory('SeaTracer', ['seaConfig',
-        function SeaTracer(seaConfig) {
+    angular.module('ngSeApi').factory('SeaTracer', ['seaConfig', 'SeaUtils',
+        function SeaTracer(seaConfig, SeaUtils) {
             var traces = {
                 // 'id': {
                 //     'internalTraceId': 'zipkinId',
@@ -26,7 +26,11 @@
                     return;
                 }
 
-                var id = reqConfig.headers['x-request-id'] = simple_uuid();
+                if(!reqConfig.headers) {
+                    reqConfig.headers = {};
+                }
+
+                var id = reqConfig.headers['x-request-id'] = SeaUtils.simpleUUID();
                 traces[id] = {
                     internalTraceId: id.substr(0, 18).replaceAll('-', ''),
                     req: {
@@ -34,12 +38,12 @@
                         method: reqConfig.method,
                         url: reqConfig.url,
                         query: reqConfig.params,
-                        body: reqConfig.data
-                    }
+                        body: reqConfig.data,
+                    },
                 };
             }
 
-            function stop(response) {
+            function stop(response, reqConfig) {
                 var id = reqConfig.headers['x-request-id'];
                 var trace = traces[id];
 
@@ -47,13 +51,13 @@
                     return;
                 }
 
-                Object.apply(trace, {
+                angular.extend(trace, {
                     res: {
                         ts: new Date().toISOString(),
                         data: response.data,
                         status: response.status,
-                        statusText: response.statusText
-                    }
+                        statusText: response.statusText,
+                    },
                 });
             }
 

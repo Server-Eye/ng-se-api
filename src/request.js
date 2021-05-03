@@ -77,12 +77,12 @@
                         resp.data.totalCount = total;
                     }
 
-                    SeaTracer.stop(resp);
+                    SeaTracer.stop(resp, conf);
 
                     deferred.resolve(resp.data);
                 }, function (err) {
                     SeaRequestHelperService.dumpResponse(err);
-                    SeaTracer.stop(err);
+                    SeaTracer.stop(err, conf);
                     deferred.reject(err);
                 });
 

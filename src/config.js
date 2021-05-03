@@ -34,13 +34,6 @@
                 };
             });
 
-            function simple_uuid() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
-
             this.setBaseUrl = function (baseUrl) {
                 config.baseUrl = baseUrl;
             }
@@ -106,11 +99,11 @@
                     setApiKey: function (apiKey) {
                         config.apiKey = apiKey;
                     },
-                    getAddTraces: function (addTraces) {
-                        return addTraces;
-                    },
                     setAddTraces: function (addTraces) {
                         config.addTraces = addTraces;
+                    },
+                    getAddTraces: function () {
+                        return config.addTraces;
                     },
                     getUrl: function (path) {
                         return [config.baseUrl, config.apiVersion, path].join('/');
