@@ -26,7 +26,7 @@
                     return;
                 }
 
-                if(!reqConfig.headers) {
+                if (!reqConfig.headers) {
                     reqConfig.headers = {};
                 }
 
@@ -44,6 +44,9 @@
             }
 
             function stop(response, reqConfig) {
+                if (!seaConfig.getAddTraces() || !reqConfig) {
+                    return;
+                }
                 var id = reqConfig.headers['x-request-id'];
                 var trace = traces[id];
 

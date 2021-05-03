@@ -105,6 +105,9 @@
                     setApiKey: function (apiKey) {
                         config.apiKey = apiKey;
                     },
+                    setAddTraces: function (addTraces) {
+                        config.addTraces = addTraces;
+                    },
                     getAddTraces: function () {
                         return config.addTraces;
                     },
@@ -439,6 +442,10 @@
             function start(reqConfig) {
                 if (!seaConfig.getAddTraces() || !reqConfig) {
                     return;
+                }
+
+                if (!reqConfig.headers) {
+                    reqConfig.headers = {};
                 }
 
                 var id = reqConfig.headers['x-request-id'] = SeaUtils.simpleUUID();
