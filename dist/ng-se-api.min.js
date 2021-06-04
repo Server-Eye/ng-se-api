@@ -4755,6 +4755,7 @@
         function (SeaRequest, seaTagHelper) {
             var requestGroup = new SeaRequest(seaTagHelper.getUrl('group/{tagGroupId}'));
             var requestCustomerGroup = new SeaRequest(seaTagHelper.getUrl('group/customer/{customerId}'));
+            var requestExplain = new SeaRequest(seaTagHelper.getUrl('group/{nodeType}/{nodeId}'));
 
             function createTagGroup(params) {
                 return requestGroup.post(params);
@@ -4783,6 +4784,13 @@
                 }, params));
             }
 
+            function explain(nodeId, nodeType) {
+                return requestExplain.get({
+                    nodeId: nodeId,
+                    nodeType: nodeType,
+                });
+            }
+
             return {
                 group: {
                     create: function (params) {
@@ -4799,6 +4807,18 @@
                     },
                     listByCustomerId: function (customerId, params) {
                         return getTagGroupByCustomerId(customerId, params);
+                    },
+                },
+                util: {
+                    container: {
+                        explain: function (containerId) {
+                            return explain(containerId, 'container');
+                        },
+                    },
+                    agent: {
+                        explain: function (agentId) {
+                            return explain(agentId, 'agent');
+                        },
                     },
                 },
             };
